@@ -1,12 +1,8 @@
 import createMiddleware from 'next-intl/middleware';
-import { locales, localePrefix } from './navigation';
+import { routing } from './navigation';
 
-// 1. Create the Intl Middleware
-const intlMiddleware = createMiddleware({
-  defaultLocale: 'en',
-  locales,
-  localePrefix
-});
+// 1. Create the Intl Middleware using the new routing object
+const intlMiddleware = createMiddleware(routing);
 
 // 2. Export it as 'proxy' to satisfy Next.js 15+
 export default function proxy(request: any) {
