@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Check, Zap, BookOpen, Gamepad2 } from 'lucide-react';
+import { Check, Star, Zap, BookOpen, Gamepad2, Film } from 'lucide-react';
 
 export default function PlusHome() {
   const tiers = [
@@ -38,12 +39,22 @@ export default function PlusHome() {
   ];
 
   return (
-    // We force a dark theme specifically for this page
-    <div className="min-h-screen bg-[#0f1014] text-white font-sans selection:bg-brand-yellow selection:text-brand-dark -mt-20 pt-20">
+    <div className="min-h-screen bg-[#0f1014] text-white font-sans selection:bg-brand-yellow selection:text-brand-dark">
       
-      {/* Cinematic Hero */}
+      {/* Navigation (Transparent) */}
+      <nav className="fixed w-full z-50 px-6 py-6 flex justify-between items-center bg-gradient-to-b from-black/80 to-transparent">
+        <div className="flex items-center gap-2">
+           <Image src="/logo.svg" width={32} height={32} alt="Logo" />
+           <span className="font-bold text-xl tracking-tight">IDEA <span className="text-brand-yellow">PLUS</span></span>
+        </div>
+        <button className="bg-white/10 backdrop-blur-md border border-white/20 px-6 py-2 rounded-full font-medium hover:bg-white hover:text-black transition">
+          Log In
+        </button>
+      </nav>
+
+      {/* Hero Section (Cinematic) */}
       <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
+        {/* Background Gradient/Image Placeholder */}
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f1014] via-[#0f1014]/50 to-transparent"></div>
         
@@ -61,6 +72,7 @@ export default function PlusHome() {
             </h1>
             <p className="text-lg md:text-2xl text-slate-300 mb-10 font-light max-w-2xl mx-auto">
               Books, Games, and Movies delivered to your door in Baghdad. 
+              One subscription. Endless entertainment.
             </p>
             <button className="bg-brand-yellow text-brand-dark text-lg font-bold px-10 py-4 rounded-full hover:scale-105 transition transform shadow-[0_0_20px_rgba(255,214,0,0.4)]">
               View Plans
@@ -69,7 +81,7 @@ export default function PlusHome() {
         </div>
       </section>
 
-      {/* Tiers Section */}
+      {/* The Tiers (PlayStation Style Cards) */}
       <section className="py-24 px-4 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">Choose Your Tier</h2>
@@ -91,6 +103,7 @@ export default function PlusHome() {
                   Most Popular
                 </div>
               )}
+
               <div className="mb-8">
                 <div className={`w-12 h-12 rounded-xl ${tier.color} flex items-center justify-center mb-6 text-brand-dark`}>
                   {tier.icon}
@@ -101,6 +114,7 @@ export default function PlusHome() {
                   <span className="text-sm text-slate-500">IQD / month</span>
                 </div>
               </div>
+
               <ul className="flex-1 space-y-4 mb-8">
                 {tier.features.map((feature, f) => (
                   <li key={f} className="flex items-start gap-3 text-sm text-slate-300">
@@ -109,6 +123,7 @@ export default function PlusHome() {
                   </li>
                 ))}
               </ul>
+
               <button className={`w-full py-4 rounded-xl font-bold transition-all ${tier.popular ? 'bg-brand-yellow text-brand-dark hover:bg-yellow-400' : 'bg-white/10 text-white hover:bg-white hover:text-black'}`}>
                 {tier.button}
               </button>
@@ -116,6 +131,29 @@ export default function PlusHome() {
           ))}
         </div>
       </section>
+
+      {/* Catalog Preview (Horizontal Scroll) */}
+      <section className="py-24 bg-gradient-to-b from-[#0f1014] to-brand-dark">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">New to the Library</h2>
+              <p className="text-slate-400">Just arrived this week.</p>
+            </div>
+            <a href="#" className="text-brand-pink hover:text-white transition text-sm font-bold flex items-center gap-1">
+              View All Catalog <Zap className="w-4 h-4" />
+            </a>
+          </div>
+          
+          {/* Placeholder for Movie/Game Covers */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 opacity-50">
+             {[1,2,3,4].map((item) => (
+               <div key={item} className="aspect-[2/3] bg-slate-800 rounded-xl animate-pulse"></div>
+             ))}
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
