@@ -86,4 +86,20 @@ export default function Footer() {
           <div className="text-center md:text-right max-w-2xl">
             <p className="mb-2">© 2026 The IDEA IQ.</p>
             <p>
-              All content, games titles, trade names and/or trade dress, trademarks, artwork and associated imagery are trademarks and/or copyright material
+              All content, games titles, trade names and/or trade dress, trademarks, artwork and associated imagery are trademarks and/or copyright material of their respective owners. All rights reserved.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function SocialIcon({ icon }: { icon: React.ReactNode }) {
+  return (
+    <a href="#" className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center text-slate-400 hover:bg-brand-pink hover:text-white transition-all">
+      {icon}
+    </a>
+  );
+}
