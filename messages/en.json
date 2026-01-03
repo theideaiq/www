@@ -1,0 +1,13 @@
+{
+  "HomePage": {
+    "title": "Innovation for Every Aspect of Life.",
+    "subtitle": "Shop, learn, play, and grow with The IDEA.",
+    "cta": "Get Started"
+  },
+  "Nav": {
+    "home": "Home",
+    "store": "Megastore",
+    "academy": "Academy",
+    "login": "Login"
+  }
+}
