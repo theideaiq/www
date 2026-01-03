@@ -2,40 +2,45 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+// 1. IMPORT LINK FROM NAVIGATION (Not next/link)
+import { Link } from '@/navigation'; 
 import { motion } from 'framer-motion';
 import { ShoppingBag, Gamepad2, GraduationCap, Building2, ArrowRight, Star, Truck, ShieldCheck } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // UI Kit
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 
 export default function Home() {
+  // 2. HOOK INTO THE DICTIONARY
+  const t = useTranslations('Home');
+
   const services = [
     {
-      title: "The Megastore",
-      desc: "Iraq's premium destination for electronics, books, and lifestyle.",
+      title: t('services.store_title'),
+      desc: t('services.store_desc'),
       icon: <ShoppingBag className="w-8 h-8 text-brand-pink" />,
       href: "/megastore",
       color: "border-brand-pink"
     },
     {
-      title: "IDEA Plus",
-      desc: "Rent PS5 games, books, and movies. Delivered to your door.",
+      title: t('services.plus_title'),
+      desc: t('services.plus_desc'),
       icon: <Gamepad2 className="w-8 h-8 text-brand-yellow" />,
       href: "/plus",
       color: "border-brand-yellow"
     },
     {
-      title: "The Academy",
-      desc: "Master new skills with cohort-based courses in Baghdad.",
+      title: t('services.academy_title'),
+      desc: t('services.academy_desc'),
       icon: <GraduationCap className="w-8 h-8 text-blue-500" />,
       href: "/academy", 
       color: "border-blue-500"
     },
     {
-      title: "The IDEA Suite",
-      desc: "Corporate solutions for procurement and recruitment.",
+      title: t('services.suite_title'),
+      desc: t('services.suite_desc'),
       icon: <Building2 className="w-8 h-8 text-brand-dark" />,
       href: "/suite",
       color: "border-brand-dark"
@@ -55,28 +60,27 @@ export default function Home() {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block py-1 px-3 rounded-full bg-brand-pink/10 text-brand-pink text-sm font-bold tracking-wide mb-6">
-              THE DIGITAL ECOSYSTEM FOR IRAQ
+              {t('badge')}
             </span>
             <h1 className="text-5xl md:text-7xl font-black tracking-tight text-brand-dark mb-6">
-              Innovation for <br/>
+              {t('title_start')} <br/>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-pink to-brand-yellow">
-                Every Aspect of Life.
+                {t('title_end')}
               </span>
             </h1>
             <p className="text-lg md:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Shop, learn, play, and grow with The IDEA. One account, infinite possibilities. 
-              Serving Baghdad and beyond.
+              {t('subtitle')}
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/register">
                 <Button className="h-14 px-8 text-lg w-full sm:w-auto">
-                  Get Started <ArrowRight className="ml-2" size={20} />
+                  {t('cta_primary')} <ArrowRight className="ml-2 rtl:rotate-180" size={20} />
                 </Button>
               </Link>
               <Link href="/about">
                 <Button variant="outline" className="h-14 px-8 text-lg w-full sm:w-auto">
-                  Our Story
+                  {t('cta_secondary')}
                 </Button>
               </Link>
             </div>
@@ -92,7 +96,7 @@ export default function Home() {
       {/* 2. SERVICES GRID */}
       <section className="py-24 px-4 max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-brand-dark">Explore Our Universe</h2>
+          <h2 className="text-3xl font-bold text-brand-dark">{t('explore_title')}</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -113,26 +117,26 @@ export default function Home() {
         <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-12">
           
           <div className="md:w-1/2">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">Built for the <br/><span className="text-brand-yellow">Modern Iraqi.</span></h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">{t('trust.title')} <br/><span className="text-brand-yellow">{t('trust.title_highlight')}</span></h2>
             <p className="text-slate-400 text-lg mb-8">
-              We understand the local challenges. That is why we built a platform that prioritizes trust, speed, and quality above all else.
+              {t('trust.desc')}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/10 rounded-lg"><Truck className="text-brand-pink"/></div>
-                <span className="font-medium">Same-Day Delivery</span>
+                <span className="font-medium">{t('trust.delivery')}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/10 rounded-lg"><ShieldCheck className="text-brand-yellow"/></div>
-                <span className="font-medium">Genuine Products</span>
+                <span className="font-medium">{t('trust.genuine')}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/10 rounded-lg"><Star className="text-brand-pink"/></div>
-                <span className="font-medium">Premium Support</span>
+                <span className="font-medium">{t('trust.support')}</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/10 rounded-lg"><Gamepad2 className="text-brand-yellow"/></div>
-                <span className="font-medium">Exclusive Content</span>
+                <span className="font-medium">{t('trust.content')}</span>
               </div>
             </div>
           </div>
@@ -141,7 +145,7 @@ export default function Home() {
              {/* Placeholder for a cool lifestyle image */}
              <div className="absolute inset-0 bg-gradient-to-tr from-brand-pink/20 to-brand-yellow/20"></div>
              <div className="absolute inset-0 flex items-center justify-center">
-                <Image src="/logo.svg" alt="IDEA Logo" width={100} height={100} className="opacity-50" />
+                <Image src="/icon.svg" alt="IDEA Logo" width={100} height={100} className="opacity-50" />
              </div>
           </div>
 
@@ -150,10 +154,10 @@ export default function Home() {
 
       {/* 4. CTA */}
       <section className="py-20 text-center px-4">
-        <h2 className="text-3xl font-bold text-brand-dark mb-6">Join 10,000+ Members Today</h2>
+        <h2 className="text-3xl font-bold text-brand-dark mb-6">{t('footer_cta')}</h2>
         <Link href="/register">
           <Button className="h-14 px-10 text-lg shadow-xl shadow-brand-pink/20">
-            Create Free Account
+            {t('footer_btn')}
           </Button>
         </Link>
       </section>
