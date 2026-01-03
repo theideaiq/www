@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
+  // We keep your existing settings here
+  experimental: {
+    reactCompiler: true, // Note: In Next.js 15, this usually lives inside 'experimental'
+  },
   images: {
     remotePatterns: [
       {
@@ -12,4 +18,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Wrap the config with the translation plugin
+export default withNextIntl(nextConfig);
