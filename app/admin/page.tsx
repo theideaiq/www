@@ -2,130 +2,192 @@
 
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { Package, Truck, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Package, RefreshCw, ShieldAlert, LogOut, CheckCircle, Truck } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
-// Connect to Database
+// UI Kit
+import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { PageLoader } from '@/components/ui/Spinner';
+import { Modal } from '@/components/ui/Modal';
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// Define what a "Rental" looks like
+// CHANGE THIS TO YOUR EMAIL
+const ADMIN_EMAIL = "shaheenfarjo@gmail.com"; 
+
 type Rental = {
   id: number;
   user_id: string;
   item_name: string;
   amount: number;
-  status: 'active' | 'delivered' | 'returned' | 'overdue';
+  status: 'active' | 'delivered' | 'returned';
   created_at: string;
 };
 
 export default function AdminDashboard() {
   const [rentals, setRentals] = useState<Rental[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authorized, setAuthorized] = useState(false);
+  const [showLogout, setShowLogout] = useState(false);
+  const router = useRouter();
 
-  // Function to fetch the latest orders
-  const fetchOrders = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('rentals')
-      .select('*')
-      .order('created_at', { ascending: false }); // Newest first
-
-    if (error) console.error('Error fetching:', error);
-    else setRentals(data || []);
-    setLoading(false);
-  };
-
-  // Fetch on load
   useEffect(() => {
-    fetchOrders();
+    checkUser();
   }, []);
 
-  // Function to update status (e.g., when a driver delivers it)
-  const updateStatus = async (id: number, newStatus: string) => {
-    await supabase.from('rentals').update({ status: newStatus }).eq('id', id);
-    fetchOrders(); // Refresh the list
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || user.email !== ADMIN_EMAIL) {
+      setAuthorized(false);
+      setLoading(false);
+    } else {
+      setAuthorized(true);
+      fetchOrders();
+    }
   };
 
+  const fetchOrders = async () => {
+    const { data } = await supabase
+      .from('rentals')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    setRentals(data || []);
+    setLoading(false);
+    toast.success("Data refreshed");
+  };
+
+  const updateStatus = async (id: number, newStatus: string) => {
+    const { error } = await supabase.from('rentals').update({ status: newStatus }).eq('id', id);
+    if (error) toast.error("Update failed");
+    else {
+      toast.success(`Order #${id} updated to ${newStatus}`);
+      fetchOrders();
+    }
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/');
+  };
+
+  if (loading) return <PageLoader />;
+
+  // ACCESS DENIED SCREEN
+  if (!authorized) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-center p-4">
+        <ShieldAlert className="w-24 h-24 text-red-500 mb-6" />
+        <h1 className="text-3xl font-bold text-brand-dark mb-2">Restricted Access</h1>
+        <p className="text-slate-500 mb-8">This area is for IDEA HQ staff only.</p>
+        <Button onClick={() => router.push('/')} variant="dark">Return to Safety</Button>
+      </div>
+    );
+  }
+
+  // THE DASHBOARD
   return (
-    <div className="min-h-screen bg-slate-100 p-8 pt-24">
+    <div className="min-h-screen bg-slate-100 p-4 md:p-8 pt-28">
       <div className="max-w-7xl mx-auto">
         
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold text-brand-dark">Operations Command</h1>
-            <p className="text-slate-500">Manage rentals, deliveries, and returns.</p>
+            <p className="text-slate-500">Manage active deliveries and returns.</p>
           </div>
-          <button 
-            onClick={fetchOrders}
-            className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm hover:bg-slate-50 text-slate-600 font-medium"
-          >
-            <RefreshCw size={18} /> Refresh
-          </button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => fetchOrders}>
+              <RefreshCw size={18} className="mr-2" /> Refresh
+            </Button>
+            <Button variant="ghost" onClick={() => setShowLogout(true)}>
+              <LogOut size={18} />
+            </Button>
+          </div>
         </div>
 
-        {/* The Order Board */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-slate-50 border-b border-slate-200">
-              <tr>
-                <th className="p-4 font-semibold text-slate-600">Order ID</th>
-                <th className="p-4 font-semibold text-slate-600">Customer</th>
-                <th className="p-4 font-semibold text-slate-600">Item</th>
-                <th className="p-4 font-semibold text-slate-600">Status</th>
-                <th className="p-4 font-semibold text-slate-600 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {loading ? (
-                <tr><td colSpan={5} className="p-8 text-center text-slate-400">Loading mission data...</td></tr>
-              ) : rentals.map((order) => (
-                <tr key={order.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-4 font-mono text-sm text-slate-500">#{order.id}</td>
-                  <td className="p-4 font-medium text-brand-dark">User {order.user_id}</td>
-                  <td className="p-4 text-brand-pink font-bold">{order.item_name}</td>
-                  <td className="p-4">
-                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide
-                      ${order.status === 'active' ? 'bg-yellow-100 text-yellow-800' : ''}
-                      ${order.status === 'delivered' ? 'bg-blue-100 text-blue-800' : ''}
-                      ${order.status === 'returned' ? 'bg-green-100 text-green-800' : ''}
-                    `}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right space-x-2">
-                    {/* STAFF BUTTONS */}
-                    {order.status === 'active' && (
-                      <button 
-                        onClick={() => updateStatus(order.id, 'delivered')}
-                        className="text-xs bg-brand-dark text-white px-3 py-1.5 rounded hover:bg-slate-700"
-                      >
-                        Mark Delivered
-                      </button>
-                    )}
-                    {order.status === 'delivered' && (
-                      <button 
-                        onClick={() => updateStatus(order.id, 'returned')}
-                        className="text-xs bg-green-500 text-white px-3 py-1.5 rounded hover:bg-green-600"
-                      >
-                        Confirm Return
-                      </button>
-                    )}
-                  </td>
+        {/* Orders Table Card */}
+        <Card className="overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead className="bg-slate-50 border-b border-slate-200">
+                <tr>
+                  <th className="p-4 font-semibold text-slate-600">ID</th>
+                  <th className="p-4 font-semibold text-slate-600">Item</th>
+                  <th className="p-4 font-semibold text-slate-600">Status</th>
+                  <th className="p-4 font-semibold text-slate-600">Time</th>
+                  <th className="p-4 font-semibold text-slate-600 text-right">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {rentals.map((order) => (
+                  <tr key={order.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="p-4 font-mono text-sm text-slate-500">#{order.id}</td>
+                    <td className="p-4 font-bold text-brand-dark">{order.item_name}</td>
+                    <td className="p-4">
+                      <Badge variant={
+                        order.status === 'active' ? 'warning' :
+                        order.status === 'delivered' ? 'success' :
+                        'neutral'
+                      }>
+                        {order.status}
+                      </Badge>
+                    </td>
+                    <td className="p-4 text-sm text-slate-500">
+                      {new Date(order.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="p-4 text-right">
+                      {order.status === 'active' && (
+                        <Button 
+                          onClick={() => updateStatus(order.id, 'delivered')}
+                          className="h-8 px-3 text-xs"
+                          variant="dark"
+                        >
+                          <Truck size={14} className="mr-1" /> Mark Delivered
+                        </Button>
+                      )}
+                      {order.status === 'delivered' && (
+                        <Button 
+                          onClick={() => updateStatus(order.id, 'returned')}
+                          className="h-8 px-3 text-xs"
+                          variant="outline"
+                        >
+                          <CheckCircle size={14} className="mr-1" /> Confirm Return
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           
-          {rentals.length === 0 && !loading && (
+          {rentals.length === 0 && (
             <div className="p-12 text-center text-slate-400">
               <Package size={48} className="mx-auto mb-4 opacity-50" />
-              No active orders right now. Time for tea! ☕
+              All quiet on the western front.
             </div>
           )}
-        </div>
+        </Card>
+
+        {/* Logout Modal */}
+        <Modal 
+          isOpen={showLogout} 
+          onClose={() => setShowLogout(false)} 
+          title="End Shift?"
+        >
+          <p className="text-slate-600 mb-6">Are you sure you want to log out of the command center?</p>
+          <div className="flex justify-end gap-3">
+            <Button variant="ghost" onClick={() => setShowLogout(false)}>Cancel</Button>
+            <Button variant="primary" onClick={handleLogout}>Log Out</Button>
+          </div>
+        </Modal>
 
       </div>
     </div>
