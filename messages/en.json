@@ -6,13 +6,7 @@
     "academy": "Academy",
     "business": "Business",
     "login": "Sign In",
-    "join": "Join Now",
-    "account": "Account",
-    "cart": "Shopping Cart",
-    "menu_open": "Open menu",
-    "menu_close": "Close menu",
-    "switch_lang_ar": "Switch to Arabic",
-    "switch_lang_en": "Switch to English"
+    "join": "Join Now"
   },
   "Home": {
     "badge": "THE DIGITAL ECOSYSTEM FOR IRAQ",
@@ -32,15 +26,6 @@
       "suite_title": "The IDEA Suite",
       "suite_desc": "Corporate solutions for procurement and recruitment."
     },
-"Account": {
-  "title": "My Account",
-  "sign_out": "Sign Out",
-  "logged_out": "Logged out successfully",
-  "active_rentals": "Active Rentals",
-  "no_rentals": "You haven't rented anything yet.",
-  "browse_catalog": "Browse Catalog",
-  "rented_on": "Rented on"
-    },
     "trust": {
       "title": "Built for the",
       "title_highlight": "Modern Iraqi.",
@@ -52,5 +37,14 @@
     },
     "footer_cta": "Join 10,000+ Members Today",
     "footer_btn": "Create Free Account"
+  },
+  "Account": {
+    "title": "My Account",
+    "sign_out": "Sign Out",
+    "logged_out": "Logged out successfully",
+    "active_rentals": "Active Rentals",
+    "no_rentals": "You haven't rented anything yet.",
+    "browse_catalog": "Browse Catalog",
+    "rented_on": "Rented on"
   }
 }
