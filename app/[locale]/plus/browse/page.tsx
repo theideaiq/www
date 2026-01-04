@@ -164,7 +164,8 @@ function CategoryRow({ title, items, onRent, rentingId, icon }: any) {
               <h4 className="font-bold text-sm truncate text-white">{item.title}</h4>
               <div className="flex justify-between items-center mt-2">
                 <span className="text-xs text-brand-yellow font-bold">{item.daily_rate.toLocaleString()} IQD/day</span>
-                <Badge variant="outline" className="text-[10px] border-slate-600 text-slate-400 py-0 h-5">In Stock</Badge>
+                {/* Changed variant to 'neutral' and kept the border classes to simulate outline */}
+<Badge variant="neutral" className="text-[10px] bg-transparent border border-slate-600 text-slate-400 py-0 h-5">In Stock</Badge>
               </div>
             </div>
 
