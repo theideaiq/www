@@ -3,6 +3,10 @@
 const WAYL_API_URL = "https://api.thewayl.com/api/v1"; 
 const WAYL_MERCHANT_TOKEN = process.env.WAYL_MERCHANT_TOKEN;
 
+if (!process.env.WAYL_WEBHOOK_SECRET) {
+  console.warn("WARNING: WAYL_WEBHOOK_SECRET is not set. Payment webhooks may be insecure.");
+}
+
 // Helper to generate a unique ID (Required by Wayl)
 const generateRefId = () => `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -40,7 +44,7 @@ export const wayl = {
           // You will need to create these pages next!
           redirectionUrl: "https://theideaiq.com/checkout/success",
           webhookUrl: "https://theideaiq.com/api/webhooks/wayl",
-          webhookSecret: "secure_secret_123" // In production, move this to env vars
+          webhookSecret: process.env.WAYL_WEBHOOK_SECRET
         })
       });
 
