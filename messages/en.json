@@ -6,7 +6,13 @@
     "academy": "Academy",
     "business": "Business",
     "login": "Sign In",
-    "join": "Join Now"
+    "join": "Join Now",
+    "account": "Account",
+    "cart": "Shopping Cart",
+    "menu_open": "Open menu",
+    "menu_close": "Close menu",
+    "switch_lang_ar": "Switch to Arabic",
+    "switch_lang_en": "Switch to English"
   },
   "Home": {
     "badge": "THE DIGITAL ECOSYSTEM FOR IRAQ",

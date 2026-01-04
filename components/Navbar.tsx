@@ -41,24 +41,42 @@ export default function Navbar({ locale }: { locale: string }) {
             <div className="flex items-center gap-2 border-r border-slate-200 pr-6 mr-2">
                 <Globe size={18} className="text-slate-400" />
                 {locale === 'en' ? (
-                    <Link href={pathname} locale="ar" className="font-arabic font-bold text-slate-700 hover:text-brand-pink">
+                    <Link
+                      href={pathname}
+                      locale="ar"
+                      className="font-arabic font-bold text-slate-700 hover:text-brand-pink focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2 rounded-sm outline-none"
+                      aria-label={t('switch_lang_ar')}
+                    >
                         عربي
                     </Link>
                 ) : (
-                    <Link href={pathname} locale="en" className="font-sans font-bold text-slate-700 hover:text-brand-pink">
+                    <Link
+                      href={pathname}
+                      locale="en"
+                      className="font-sans font-bold text-slate-700 hover:text-brand-pink focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2 rounded-sm outline-none"
+                      aria-label={t('switch_lang_en')}
+                    >
                         English
                     </Link>
                 )}
             </div>
 
-            <Link href="/account" className="text-slate-600 hover:text-brand-dark">
+            <Link
+              href="/account"
+              className="text-slate-600 hover:text-brand-dark focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2 rounded-full p-1 outline-none transition-colors"
+              aria-label={t('account')}
+            >
               <User size={22} />
             </Link>
-            <Link href="/cart" className="relative text-slate-600 hover:text-brand-dark">
+            <Link
+              href="/cart"
+              className="relative text-slate-600 hover:text-brand-dark focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2 rounded-full p-1 outline-none transition-colors"
+              aria-label={t('cart')}
+            >
               <ShoppingCart size={22} />
               <span className="absolute -top-2 -right-2 bg-brand-pink text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
             </Link>
-            <Link href="/register">
+            <Link href="/register" className="focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2 rounded-full outline-none">
                 <button className="bg-brand-dark text-white px-5 py-2 rounded-full font-bold hover:bg-slate-800 transition shadow-lg shadow-brand-dark/20">
                 {t('join')}
                 </button>
@@ -67,7 +85,11 @@ export default function Navbar({ locale }: { locale: string }) {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
-            <button onClick={() => setIsOpen(!isOpen)} className="text-slate-700">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-slate-700 focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2 rounded-lg p-1 outline-none transition-colors"
+              aria-label={isOpen ? t('menu_close') : t('menu_open')}
+            >
               {isOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
