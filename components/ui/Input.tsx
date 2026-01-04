@@ -5,15 +5,19 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-export function Input({ label, error, className, ...props }: InputProps) {
+export function Input({ label, error, className, id, ...props }: InputProps) {
+  const generatedId = React.useId();
+  const inputId = id || generatedId;
+
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+        <label htmlFor={inputId} className="block text-sm font-medium text-slate-700 mb-1.5">
           {label}
         </label>
       )}
       <input
+        id={inputId}
         className={`
           w-full px-4 py-3 rounded-lg border bg-white transition-all outline-none
           ${error 
