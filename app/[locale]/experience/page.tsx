@@ -90,19 +90,21 @@ function Connections({ nodes }: { nodes: SonicNode[] }) {
     )
 }
 
-// The invisible plane that detects clicks
+// The invisible plane that detects clicks/touches
 function ClickPlane({ onPlaceNode }: { onPlaceNode: (pos: THREE.Vector3) => void }) {
   return (
     <mesh 
       rotation={[-Math.PI / 2, 0, 0]} 
-      position={[0, -2, 0]} // Below the camera center
-      onClick={(e) => {
-        e.stopPropagation();
+      position={[0, -2, 0]} 
+      // FIX: Use onPointerDown for instant mobile response
+      onPointerDown={(e) => {
+        e.stopPropagation(); // Stop camera from stealing the touch
         onPlaceNode(e.point);
       }}
     >
-      <planeGeometry args={[50, 50]} />
-      <meshBasicMaterial visible={false} />
+      <planeGeometry args={[100, 100]} />
+      {/* FIX: Must be transparent (not visible=false) to detect raycasts */}
+      <meshBasicMaterial color="black" transparent opacity={0} />
     </mesh>
   );
 }
@@ -115,7 +117,7 @@ export default function SonicEcosystemPage() {
   const [muted, setMuted] = useState(false);
   const [nodes, setNodes] = useState<SonicNode[]>([]);
   
-  // Tone.js Synths Refs (so they don't recreate on render)
+  // Tone.js Synths Refs
   const synthRef = useRef<Tone.PolySynth | null>(null);
   const reverbRef = useRef<Tone.Reverb | null>(null);
 
@@ -130,28 +132,29 @@ export default function SonicEcosystemPage() {
         }).connect(reverbRef.current);
         synthRef.current.volume.value = -6;
 
-        // Fetch existing nodes from Supabase
+        // Fetch existing nodes
         const { data, error } = await supabase
             .from('sonic_nodes')
             .select('*')
             .order('created_at', { ascending: false })
-            .limit(100); // Limit to 100 for performance
+            .limit(100);
 
         if (!error && data) {
             const formattedNodes = data.map((dbNode: any) => ({
                 id: dbNode.id,
+                // FIX: TypeScript Tuple Casting
                 position: [dbNode.position.x, dbNode.position.y, dbNode.position.z] as [number, number, number],
                 color: BRAND_COLORS[Math.floor(Math.random() * BRAND_COLORS.length)],
                 note: dbNode.note,
                 timestamp: Date.parse(dbNode.created_at)
             }));
-            setNodes(formattedNodes.reverse()); // Oldest first for connections
+            // FIX: Ensure reverse() doesn't cause type issues
+            setNodes(formattedNodes.reverse()); 
         }
         setLoading(false);
     }
     init();
 
-    // Cleanup audio on unmount
     return () => {
         synthRef.current?.dispose();
         reverbRef.current?.dispose();
@@ -161,8 +164,13 @@ export default function SonicEcosystemPage() {
 
   // 2. Handle User Interaction (Start Experience)
   const handleStart = async () => {
-    await Tone.start(); // Browsers require user interaction to start audio context
-    Tone.Transport.start();
+    try {
+        await Tone.start();
+        Tone.Transport.start();
+    } catch (e) {
+        console.warn("Audio Context failed to start (normal in some browsers)", e);
+    }
+    
     setStarted(true);
     // Play a welcoming chord
     synthRef.current?.triggerAttackRelease(['C3', 'G3', 'C4'], '2n');
@@ -172,7 +180,7 @@ export default function SonicEcosystemPage() {
   const handlePlaceNode = async (point: THREE.Vector3) => {
     if (muted) return;
 
-    // Calculate note based on X position (pan)
+    // Calculate note based on X position
     const noteIndex = Math.floor(((point.x + 10) / 20) * SCALE.length);
     const clampedIndex = Math.max(0, Math.min(SCALE.length - 1, noteIndex));
     const note = SCALE[clampedIndex];
@@ -189,10 +197,10 @@ export default function SonicEcosystemPage() {
       timestamp: Date.now()
     };
 
-    // Optimistic UI update (add immediately)
+    // Optimistic UI update
     setNodes((prev) => [...prev, newNode]);
 
-    // Save to database quietly
+    // Save to database
     await supabase.from('sonic_nodes').insert({
         id: newNode.id,
         position: { x: newNode.position[0], y: newNode.position[1], z: newNode.position[2] },
@@ -222,10 +230,10 @@ export default function SonicEcosystemPage() {
                     {started && <ClickPlane onPlaceNode={handlePlaceNode} />}
                 </group>
 
-                 {/* Floating Brand Text in 3D space */}
+                 {/* Floating Brand Text */}
                 <Float speed={1} rotationIntensity={0.1} floatIntensity={0.2} position={[0, 6, -10]}>
                     <Text
-                        font="/fonts/Inter-Bold.woff" // You might need to ensure a font exists or remove this prop
+                        font="/fonts/Inter-Bold.woff" // Ensure this font exists or remove this line
                         fontSize={2}
                         color="#ffffff"
                         anchorX="center"
@@ -243,7 +251,7 @@ export default function SonicEcosystemPage() {
                     </Text>
                 </Float>
 
-                {/* Post-Processing for the "Awwwards" Glow */}
+                {/* FIX: Removed disableNormalPass */}
                 <EffectComposer>
                     <Bloom luminanceThreshold={1} intensity={1.5} levels={9} mipmapBlur />
                     <Noise opacity={0.05} />
@@ -258,13 +266,13 @@ export default function SonicEcosystemPage() {
                     minPolarAngle={Math.PI / 3}
                     maxDistance={30}
                     minDistance={5}
-                    autoRotate={!started} // Rotate slightly before entering
+                    autoRotate={!started}
                     autoRotateSpeed={0.5}
                 />
             </Suspense>
         </Canvas>
         
-        {/* 2. UI OVERLAYS (Framer Motion) */}
+        {/* 2. UI OVERLAYS */}
         <AnimatePresence>
             {/* Loading Screen */}
             {loading && (
@@ -276,7 +284,7 @@ export default function SonicEcosystemPage() {
                 </motion.div>
             )}
 
-            {/* Start Screen Overlay */}
+            {/* Start Screen */}
             {!started && !loading && (
                 <motion.div 
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, pointerEvents: 'none' }}
@@ -297,18 +305,18 @@ export default function SonicEcosystemPage() {
                     >
                         Enter Experience <Volume2 className="ml-4" />
                     </Button>
-                    <p className="text-slate-500 text-sm mt-6">Recommended: Headphones & Desktop</p>
+                    <p className="text-slate-500 text-sm mt-6">Recommended: Headphones</p>
                 </motion.div>
             )}
         </AnimatePresence>
 
-        {/* Minimal HUD once started */}
+        {/* Minimal HUD */}
         {started && (
              <motion.div 
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1 }}
                 className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-4"
             >
-                <p className="text-slate-400 text-sm uppercase tracking-widest">Click anywhere to contribute your sound</p>
+                <p className="text-slate-400 text-sm uppercase tracking-widest pointer-events-none">Tap to contribute your sound</p>
                  <button onClick={() => setMuted(!muted)} className="text-slate-400 hover:text-white transition">
                     {muted ? <VolumeX /> : <Volume2 />}
                  </button>
