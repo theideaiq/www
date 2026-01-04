@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ghost, Terminal, Gamepad2, Coffee, AlertTriangle, ArrowLeft, RefreshCw } from 'lucide-react';
@@ -55,15 +55,9 @@ const scenarios = [
 ];
 
 export default function NotFound() {
-  const [scenario, setScenario] = useState(scenarios[0]);
-  const [mounted, setMounted] = useState(false);
-
-  // Pick a random reality on load
-  useEffect(() => {
-    const random = scenarios[Math.floor(Math.random() * scenarios.length)];
-    setScenario(random);
-    setMounted(true);
-  }, []);
+  // ⚡ Bolt Optimization: Initialize state randomly without useEffect to avoid double-render.
+  // Using suppressHydrationWarning to handle the inevitable mismatch.
+  const [scenario, setScenario] = useState(() => scenarios[Math.floor(Math.random() * scenarios.length)]);
 
   const reroll = () => {
     let newScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
@@ -74,10 +68,11 @@ export default function NotFound() {
     setScenario(newScenario);
   };
 
-  if (!mounted) return null; // Prevent hydration mismatch
-
   return (
-    <div className={`min-h-screen w-full flex flex-col items-center justify-center p-4 transition-colors duration-700 ${scenario.theme}`}>
+    <div
+      suppressHydrationWarning
+      className={`min-h-screen w-full flex flex-col items-center justify-center p-4 transition-colors duration-700 ${scenario.theme}`}
+    >
       
       <AnimatePresence mode="wait">
         <motion.div
@@ -88,16 +83,17 @@ export default function NotFound() {
           transition={{ duration: 0.4 }}
           className="text-center max-w-lg"
         >
-          <div className="flex justify-center">{scenario.icon}</div>
+          <div className="flex justify-center" suppressHydrationWarning>{scenario.icon}</div>
           
-          <h1 className="text-6xl font-black tracking-tighter mb-4">{scenario.title}</h1>
-          <p className="text-xl mb-12 opacity-80 font-medium leading-relaxed">
+          <h1 className="text-6xl font-black tracking-tighter mb-4" suppressHydrationWarning>{scenario.title}</h1>
+          <p className="text-xl mb-12 opacity-80 font-medium leading-relaxed" suppressHydrationWarning>
             {scenario.message}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
               href="/"
+              suppressHydrationWarning
               className={`px-8 py-3 rounded-full font-bold border-2 transition-all transform hover:scale-105 flex items-center gap-2 ${scenario.accent}`}
             >
               <ArrowLeft size={20} />

@@ -23,14 +23,13 @@ function SearchIcon() {
 
 export default function GlobalLoader() {
   const [isVisible, setIsVisible] = useState(true);
-  const [message, setMessage] = useState(LOADING_MESSAGES[0]);
+
+  // ⚡ Bolt Optimization: Initialize state with random value to avoid double-render effect.
+  // We use suppressHydrationWarning on the output elements to handle the client/server mismatch.
+  const [message] = useState(() => LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]);
 
   useEffect(() => {
-    // 1. Pick a random message on mount
-    const randomMsg = LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
-    setMessage(randomMsg);
-
-    // 2. Hide after 2 seconds (Simulate boot time)
+    // Hide after 2 seconds (Simulate boot time)
     const timer = setTimeout(() => {
       setIsVisible(false);
     }, 2000);
@@ -69,8 +68,8 @@ export default function GlobalLoader() {
               transition={{ delay: 0.2 }}
               className="flex items-center gap-3 text-slate-300 font-mono text-sm"
             >
-              <span className="animate-spin text-brand-pink">{message.icon}</span>
-              <p>{message.text}</p>
+              <span className="animate-spin text-brand-pink" suppressHydrationWarning>{message.icon}</span>
+              <p suppressHydrationWarning>{message.text}</p>
             </motion.div>
 
             {/* Progress Bar */}
