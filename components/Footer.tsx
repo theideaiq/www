@@ -20,13 +20,13 @@ export default function Footer() {
               <span className="text-xl font-bold tracking-tight">The IDEA<span className="text-brand-yellow">.</span></span>
             </Link>
             <p className="text-slate-400 text-sm mb-6 max-w-xs">
-              Baghdad's premier digital ecosystem. Shopping, Rentals, Education, and Corporate Solutions in one unified platform.
+              Baghdad&apos;s premier digital ecosystem. Shopping, Rentals, Education, and Corporate Solutions in one unified platform.
             </p>
             <div className="flex gap-4">
-              <SocialIcon icon={<Instagram size={18} />} />
-              <SocialIcon icon={<Twitter size={18} />} />
-              <SocialIcon icon={<Linkedin size={18} />} />
-              <SocialIcon icon={<Facebook size={18} />} />
+              <SocialIcon icon={<Instagram size={18} />} label="Follow us on Instagram" />
+              <SocialIcon icon={<Twitter size={18} />} label="Follow us on Twitter" />
+              <SocialIcon icon={<Linkedin size={18} />} label="Follow us on LinkedIn" />
+              <SocialIcon icon={<Facebook size={18} />} label="Follow us on Facebook" />
             </div>
           </div>
 
@@ -96,9 +96,9 @@ export default function Footer() {
   );
 }
 
-function SocialIcon({ icon }: { icon: React.ReactNode }) {
+function SocialIcon({ icon, label }: { icon: React.ReactNode, label: string }) {
   return (
-    <a href="#" className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center text-slate-400 hover:bg-brand-pink hover:text-white transition-all">
+    <a href="#" aria-label={label} className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center text-slate-400 hover:bg-brand-pink hover:text-white transition-all">
       {icon}
     </a>
   );
