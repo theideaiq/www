@@ -1,63 +1,95 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/client';
-import { SkipForward, Play, Volume2, VolumeX, Radio, Disc3, Mic2, Pause } from 'lucide-react';
+import { SkipForward, Play, Volume2, VolumeX, Radio, Disc3, Mic2, Pause, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// Revert to standard import as submodule might be problematic in this env
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false }) as any;
 
+interface QueueItem {
+  id: string;
+  video_id: string;
+  title: string;
+  thumbnail: string;
+  status: string;
+  created_at: string;
+}
+
 export default function JukeboxHost() {
-  const [queue, setQueue] = useState<any[]>([]);
-  const [currentVideo, setCurrentVideo] = useState<any>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+  const [queue, setQueue] = useState<QueueItem[]>([]);
+  const [currentVideo, setCurrentVideo] = useState<QueueItem | null>(null);
   
-  // AUDIO FIX: Start muted to allow mobile autoplay, then manually unmute
+  // Player state
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Audio state
   const [isMuted, setIsMuted] = useState(true); 
   const [volume, setVolume] = useState(1);
 
   const supabase = createClient();
+  const playerRef = useRef<any>(null);
 
-  useEffect(() => {
-    fetchQueue();
-    const channel = supabase
-      .channel('jukebox_queue')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jukebox_queue' }, (payload) => {
-        setQueue((prev) => [...prev, payload.new]);
-      })
-      .subscribe();
-    return () => { supabase.removeChannel(channel); };
-  }, []);
+  // Derived origin for player config
+  const origin = typeof window !== 'undefined' ? window.location.origin : undefined;
 
-  useEffect(() => {
-    if (isReady && !currentVideo && queue.length > 0) {
-      playNext();
-    }
-  }, [queue, currentVideo, isReady]);
-
-  const fetchQueue = async () => {
+  const fetchQueue = useCallback(async () => {
     const { data } = await supabase
       .from('jukebox_queue')
       .select('*')
       .eq('status', 'pending')
       .order('created_at', { ascending: true });
-    if (data) setQueue(data);
-  };
+    if (data) setQueue(data as QueueItem[]);
+  }, [supabase]);
 
-  const playNext = async () => {
+  const playNext = useCallback(async () => {
     if (queue.length === 0) {
       setCurrentVideo(null);
-      setIsPlaying(false);
       return;
     }
     const next = queue[0];
     const remaining = queue.slice(1);
     setCurrentVideo(next);
     setQueue(remaining);
+    setError(null);
+    setIsPlaying(true);
+    
     await supabase.from('jukebox_queue').update({ status: 'played' }).eq('id', next.id);
+  }, [queue, supabase]);
+
+  // Initial load and subscription
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchQueue();
+    const channel = supabase
+      .channel('jukebox_queue')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jukebox_queue' }, (payload) => {
+        setQueue((prev) => [...prev, payload.new as QueueItem]);
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchQueue, supabase]);
+
+  // Auto-play logic
+  useEffect(() => {
+    if (isReady && !currentVideo && queue.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      playNext();
+    }
+  }, [queue, currentVideo, isReady, playNext]);
+
+  const handlePlayerError = (e: any) => {
+    console.error("ReactPlayer Error:", e);
+    setError("Playback Error");
+  };
+
+  const handleReady = () => {
+    console.log("Player Ready");
   };
 
   // --- START SCREEN ---
@@ -83,27 +115,42 @@ export default function JukeboxHost() {
   }
 
   return (
-    // ✅ FIX: Added 'pt-20' so the UI doesn't hide behind the navbar
     <div className="relative min-h-screen w-full bg-black overflow-hidden font-sans text-white flex flex-col md:flex-row pt-20">
       
       {/* === BACKGROUND PLAYER (Audio Source) === */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="w-full h-full relative opacity-40">
            <ReactPlayer
+             ref={playerRef}
              key={currentVideo?.video_id || 'empty'}
              url={currentVideo ? `https://www.youtube.com/watch?v=${currentVideo.video_id}` : ''}
-             playing={true}
+             playing={isPlaying}
              volume={volume}
-             // ✅ CRITICAL FIX: Controlled by state. Starts true (muted) so video plays, then you click to unmute.
              muted={isMuted}
              playsinline={true}
              width="100%"
              height="100%"
              style={{ position: 'absolute', top: 0, left: 0, objectFit: 'cover' }}
              onEnded={playNext}
-             onStart={() => setIsPlaying(true)}
-             onPause={() => setIsPlaying(false)}
-             config={{ youtube: { playerVars: { controls: 0, showinfo: 0, disablekb: 1, playsinline: 1 } } }}
+             onStart={() => {
+                console.log("Playback Started");
+                setError(null);
+             }}
+             onError={handlePlayerError}
+             onReady={handleReady}
+             config={{ 
+               youtube: { 
+                 playerVars: { 
+                   controls: 0, 
+                   showinfo: 0, 
+                   disablekb: 1, 
+                   playsinline: 1,
+                   origin: origin,
+                   modestbranding: 1,
+                   rel: 0
+                 } 
+               } 
+             }}
            />
         </div>
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/60 backdrop-blur-sm"></div>
@@ -113,11 +160,10 @@ export default function JukeboxHost() {
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 min-h-[50vh] md:min-h-full border-r border-white/5">
          
          <motion.div 
-           animate={{ rotate: isPlaying ? 360 : 0 }}
+           animate={{ rotate: (isPlaying && !error) ? 360 : 0 }}
            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
            className="relative w-64 h-64 md:w-[450px] md:h-[450px] rounded-full shadow-2xl border-8 border-slate-900 bg-black flex items-center justify-center"
          >
-           {/* Vinyl Textures */}
            <div className="absolute inset-0 rounded-full border-[2px] border-white/10 opacity-50"></div>
            <div className="absolute inset-0 rounded-full border-[40px] border-neutral-900/80 pointer-events-none"></div>
            
@@ -130,17 +176,34 @@ export default function JukeboxHost() {
            </div>
          </motion.div>
 
+         {error && (
+            <div className="mt-4 flex items-center gap-2 text-red-500 font-bold bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">
+                <AlertCircle size={20} />
+                <span>{error}</span>
+                <button onClick={() => playNext()} className="underline text-sm ml-2">Skip</button>
+            </div>
+         )}
+
          <div className="mt-8 text-center space-y-4 max-w-2xl">
-            <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight drop-shadow-lg">
+            <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight drop-shadow-lg line-clamp-2">
               {currentVideo?.title || "Jukebox Ready"}
             </h1>
-            {/* MANUAL UNMUTE BUTTON (Required for Mobile) */}
-            <button 
-              onClick={() => setIsMuted(!isMuted)}
-              className={`inline-flex items-center gap-2 px-6 py-2 rounded-full font-bold uppercase tracking-widest transition-all ${isMuted ? 'bg-red-600 animate-pulse text-white' : 'bg-white/10 text-slate-400'}`}
-            >
-              {isMuted ? <><VolumeX size={18} /> TAP TO UNMUTE</> : <><Volume2 size={18} /> AUDIO ON</>}
-            </button>
+            
+            <div className="flex flex-wrap items-center justify-center gap-4">
+                <button 
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold uppercase tracking-widest transition-all ${isPlaying ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-brand-pink text-white hover:bg-pink-600 shadow-[0_0_20px_rgba(233,30,99,0.5)]'}`}
+                >
+                  {isPlaying ? <><Pause size={18} /> PAUSE</> : <><Play size={18} /> PLAY</>}
+                </button>
+
+                <button 
+                  onClick={() => setIsMuted(!isMuted)}
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-full font-bold uppercase tracking-widest transition-all ${isMuted ? 'bg-red-600 animate-pulse text-white shadow-lg' : 'bg-white/10 text-slate-400'}`}
+                >
+                  {isMuted ? <><VolumeX size={18} /> UNMUTE</> : <><Volume2 size={18} /> AUDIO ON</>}
+                </button>
+            </div>
          </div>
       </div>
 
