@@ -9,9 +9,9 @@ import {
   Briefcase, Gamepad2, Palette, Clapperboard, 
   Users, Sparkles, ArrowRight, Megaphone
 } from 'lucide-react';
-import { Button } from '@/components/ui/Button'; // Assuming you have this from previous steps
+import { Button } from '@/components/ui/Button';
 
-// Data structure mapping the Telegram channels from your screenshot to our UI
+// Data structure mapping the Telegram channels
 const clubChannels = [
   {
     id: 'announcements',
@@ -103,7 +103,8 @@ const itemVariants = {
 };
 
 export default function ClubPage() {
-  const telegram Link = "https://t.me/theideaclub";
+  // ✅ FIX: Removed the space in the variable name
+  const telegramLink = "https://t.me/theideaclub";
 
   return (
     <div className="min-h-screen bg-brand-dark text-white font-sans selection:bg-brand-pink selection:text-white overflow-hidden">
@@ -158,7 +159,7 @@ export default function ClubPage() {
           {clubChannels.map((channel) => (
             <motion.a
               key={channel.id}
-              href={telegramLink} // Linking them all to main group for now, as deep links are tricky
+              href={telegramLink} // Linking them all to main group for now
               target="_blank"
               rel="noopener noreferrer"
               variants={itemVariants}
