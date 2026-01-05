@@ -1,6 +1,6 @@
 All Rights Reserved
 
-Copyright © 2022 The IDEA
+Copyright © 2017-2026 The IDEA
 
 Created by The IDEA
 
