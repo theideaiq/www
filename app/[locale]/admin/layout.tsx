@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { PageLoader } from '@/components/ui/Spinner';
 
 // CHANGE TO YOUR ADMIN EMAIL
-const ADMIN_EMAIL = "shaheenfarjo@gmail.com"; 
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -36,7 +36,7 @@ export default function LoginPage() {
     } else {
       toast.success("Welcome back!");
       // Check if admin (simple check)
-      if (email === "shaheenfarjo@gmail.com") {
+      if (email === process.env.NEXT_PUBLIC_ADMIN_EMAIL) {
         router.push('/admin');
       } else {
         router.push('/account');
