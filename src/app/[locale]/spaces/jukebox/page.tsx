@@ -6,6 +6,7 @@ import { Search, Plus, Check, Disc3, Music, Info, Mic2, Radio, Clock } from 'luc
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
+import { decodeHtmlEntities } from '@/lib/string-utils';
 
 interface VideoResult {
   id: string;
@@ -136,7 +137,9 @@ export default function JukeboxGuest() {
                 </div>
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-center h-full">
-                <h3 className="font-bold text-sm leading-snug line-clamp-2 text-white group-hover:text-brand-yellow transition-colors mb-1" dangerouslySetInnerHTML={{ __html: video.title }}></h3>
+                <h3 className="font-bold text-sm leading-snug line-clamp-2 text-white group-hover:text-brand-yellow transition-colors mb-1">
+                  {decodeHtmlEntities(video.title)}
+                </h3>
                 <p className="text-xs text-slate-400 font-medium flex items-center gap-1">{video.channel}</p>
               </div>
               <button 
