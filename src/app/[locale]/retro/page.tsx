@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
-import { Gamepad2, Disc, Tv, Zap, MonitorPlay, ArrowDown, Play, LucideIcon } from 'lucide-react';
+import { Gamepad2, Disc, Tv, Zap, MonitorPlay, ArrowDown, Play, LucideIcon, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import * as Tone from 'tone';
 
-// --- DATA: The Eras of Iraqi Gaming ---
-// FIX: We store the component itself (LucideIcon), not a JSX Element
+// --- DATA: The Eras ---
 interface Era {
   id: string;
   year: string;
@@ -15,9 +15,10 @@ interface Era {
   description: string;
   color: string;
   bg: string;
-  icon: LucideIcon; // <--- Changed from JSX.Element to Component Type
+  icon: LucideIcon;
   memories: string[];
   quote: string;
+  synthType: "square" | "sawtooth" | "sine"; // Different sound for each era
 }
 
 const ERAS: Era[] = [
@@ -29,9 +30,10 @@ const ERAS: Era[] = [
     description: "The era of the 'Sakhr' computer and cloned NES consoles. We didn't save games; we memorized them. The screen flickered, the controllers were blocky, and Captain Majid was the hero.",
     color: "#4ade80", 
     bg: "bg-slate-950",
-    icon: Gamepad2, // <--- Passing the component directly
+    icon: Gamepad2,
     memories: ["Captain Majid", "Super Mario Bros", "Duck Hunt", "Contra"],
-    quote: "Blow into the cartridge if it doesn't work."
+    quote: "Blow into the cartridge if it doesn't work.",
+    synthType: "square" // 8-bit Nintendo sound
   },
   {
     id: "era-90s",
@@ -41,9 +43,10 @@ const ERAS: Era[] = [
     description: "The startup sound that defined a generation. Gaming cafes (salas) opened on every corner. We learned teamwork from Crash Bash and rivalry from Tekken 3.",
     color: "#a855f7", 
     bg: "bg-[#111827]",
-    icon: Disc, // <--- Passing the component directly
+    icon: Disc,
     memories: ["Pepsiman", "Winning Eleven 3", "Crash Bandicoot", "Tekken 3", "Driver"],
-    quote: "Roberto Carlos at Forward. Speed 99."
+    quote: "Roberto Carlos at Forward. Speed 99.",
+    synthType: "sawtooth" // Sharper, techy sound
   },
   {
     id: "era-00s",
@@ -53,37 +56,87 @@ const ERAS: Era[] = [
     description: "The PS2 era. The world got bigger. We spent hours in GTA San Andreas (often the modded 'Baghdad' versions) and perfected our master league teams.",
     color: "#3b82f6", 
     bg: "bg-black",
-    icon: MonitorPlay, // <--- Passing the component directly
+    icon: MonitorPlay,
     memories: ["GTA: San Andreas", "God of War", "Need for Speed: Underground", "PES 6"],
-    quote: "Red Screen of Death = Pure Panic."
+    quote: "Red Screen of Death = Pure Panic.",
+    synthType: "sine" // Smooth, modern sound
   }
 ];
 
 // --- COMPONENTS ---
 
-// 1. CRT Scanline Overlay
 const CRTOverlay = () => (
   <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden opacity-10">
     <div className="h-full w-full bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
   </div>
 );
 
-// 2. Parallax Floating Item
 const FloatingItem = ({ children, speed = 1, className }: { children: React.ReactNode, speed?: number, className?: string }) => {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [0, -200 * speed]);
   return <motion.div style={{ y }} className={className}>{children}</motion.div>;
 };
 
-// 3. Era Section
-const EraSection = ({ data, index }: { data: Era, index: number }) => {
+// --- AUDIO LOGIC ---
+// We create a custom hook to handle the synthesis so it doesn't clutter the UI code
+const useRetroSound = () => {
+  const synth = useRef<Tone.PolySynth | null>(null);
+  const [isMuted, setIsMuted] = useState(true);
+
+  useEffect(() => {
+    // Initialize Synth on Mount
+    synth.current = new Tone.PolySynth(Tone.Synth).toDestination();
+    synth.current.volume.value = -10; // Lower volume so it's not annoying
+    
+    return () => {
+      synth.current?.dispose();
+    };
+  }, []);
+
+  const playHover = useCallback((type: "square" | "sawtooth" | "sine") => {
+    if (isMuted || !synth.current) return;
+    
+    // Configure synth on the fly based on Era
+    synth.current.set({ oscillator: { type } });
+    
+    // Play a random short note from a pentatonic scale
+    const notes = ["C5", "D5", "E5", "G5", "A5"];
+    const randomNote = notes[Math.floor(Math.random() * notes.length)];
+    synth.current.triggerAttackRelease(randomNote, "32n");
+  }, [isMuted]);
+
+  const playStart = useCallback(async () => {
+    if (!synth.current) return;
+    await Tone.start(); // Unlock Audio Context
+    setIsMuted(false);
+    
+    // "Power Up" Sound
+    synth.current.set({ oscillator: { type: "square" } });
+    synth.current.triggerAttackRelease(["C4", "E4", "G4", "C5"], "8n");
+  }, []);
+
+  const toggleMute = () => {
+    if (isMuted) {
+      Tone.start();
+      setIsMuted(false);
+    } else {
+      setIsMuted(true);
+    }
+  };
+
+  return { playHover, playStart, toggleMute, isMuted };
+};
+
+
+// 3. Era Section (Now with Audio Props)
+const EraSection = ({ data, index, playSound }: { data: Era, index: number, playSound: (t: any) => void }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { margin: "-30% 0px -30% 0px" });
 
   return (
     <section ref={ref} className={`min-h-screen sticky top-0 flex items-center justify-center overflow-hidden ${data.bg} transition-colors duration-700`}>
       
-      {/* Background Ambience */}
+      {/* Dynamic Backgrounds */}
       <div className="absolute inset-0 opacity-20">
          <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-${data.color}/20`} />
          {index === 0 && <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/pixel-weave.png')]" />}
@@ -93,7 +146,6 @@ const EraSection = ({ data, index }: { data: Era, index: number }) => {
 
       <div className="container relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-6">
         
-        {/* Text Content */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
@@ -118,10 +170,11 @@ const EraSection = ({ data, index }: { data: Era, index: number }) => {
                {data.memories.map((mem, i) => (
                  <motion.span 
                     key={i}
+                    onMouseEnter={() => playSound(data.synthType)} // PLAY SOUND ON HOVER
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
                     transition={{ delay: 0.5 + (i * 0.1) }}
-                    className="px-3 py-1 bg-white/10 text-white rounded-md text-sm font-medium hover:bg-white hover:text-black transition-colors cursor-default"
+                    className="px-3 py-1 bg-white/10 text-white rounded-md text-sm font-medium hover:bg-white hover:text-black transition-colors cursor-default hover:scale-105 active:scale-95"
                  >
                    {mem}
                  </motion.span>
@@ -134,21 +187,17 @@ const EraSection = ({ data, index }: { data: Era, index: number }) => {
           </div>
         </motion.div>
 
-        {/* Visuals / 3D-ish Elements */}
         <div className="relative h-[500px] flex items-center justify-center">
-           {/* Main Icon */}
            <motion.div 
              animate={isInView ? { scale: [0.9, 1.1, 1], rotate: [0, 5, -5, 0] } : { scale: 0.5 }}
              transition={{ duration: 5, repeat: Infinity, repeatType: "reverse" }}
              className="relative z-20 text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.3)]"
            >
              <div style={{ color: data.color }}>
-                {/* FIX: Render the component directly with the size prop */}
                 <data.icon size={200} />
              </div>
            </motion.div>
 
-           {/* Floating Particles */}
            <FloatingItem speed={0.5} className="absolute top-0 right-10 text-white/10">
               <Tv size={80} />
            </FloatingItem>
@@ -156,7 +205,6 @@ const EraSection = ({ data, index }: { data: Era, index: number }) => {
               <Zap size={60} />
            </FloatingItem>
            
-           {/* Circle Glow */}
            <div className={`absolute inset-0 bg-gradient-to-r from-${data.color}/0 via-${data.color}/10 to-${data.color}/0 blur-3xl`} />
         </div>
 
@@ -169,6 +217,8 @@ const EraSection = ({ data, index }: { data: Era, index: number }) => {
 
 export default function RetroPage() {
   const { scrollYProgress } = useScroll();
+  const { playHover, playStart, toggleMute, isMuted } = useRetroSound();
+  
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
@@ -176,10 +226,19 @@ export default function RetroPage() {
   });
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans selection:bg-brand-pink selection:text-white">
+    <div className="bg-black min-h-screen text-white font-sans selection:bg-brand-pink selection:text-white cursor-default">
       <CRTOverlay />
       
-      {/* Progress Bar */}
+      {/* Sound Toggle */}
+      <div className="fixed top-24 right-6 z-50">
+        <button 
+          onClick={toggleMute}
+          className="bg-black/50 backdrop-blur border border-white/20 p-3 rounded-full hover:bg-white hover:text-black transition-all"
+        >
+          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        </button>
+      </div>
+
       <motion.div
         className="fixed top-0 left-0 right-0 h-1 bg-brand-pink origin-left z-50"
         style={{ scaleX }}
@@ -196,13 +255,16 @@ export default function RetroPage() {
             transition={{ duration: 1 }}
             className="relative z-10 text-center px-4"
          >
-            <motion.div 
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="mb-6 inline-flex items-center gap-2 text-brand-yellow font-mono uppercase tracking-[0.2em] text-sm"
+            {/* The Start Button */}
+            <motion.button 
+              onClick={playStart}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mb-8 inline-flex items-center gap-2 bg-brand-yellow/20 text-brand-yellow border border-brand-yellow px-6 py-2 rounded-full font-mono uppercase tracking-[0.2em] text-sm hover:bg-brand-yellow hover:text-black transition-colors"
             >
-              <Play size={12} fill="currentColor" /> Insert Coin to Start
-            </motion.div>
+              <Play size={12} fill="currentColor" /> 
+              {isMuted ? "Click to Enable Sound" : "Sound Enabled"}
+            </motion.button>
             
             <h1 className="text-7xl md:text-9xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">
               RETRO<br/>ROOM
@@ -224,16 +286,20 @@ export default function RetroPage() {
          </motion.div>
       </section>
 
-      {/* 2. THE JOURNEY (Stacked Sticky Sections) */}
+      {/* 2. THE JOURNEY */}
       <div className="relative">
          {ERAS.map((era, index) => (
-           <EraSection key={era.id} data={era} index={index} />
+           <EraSection 
+             key={era.id} 
+             data={era} 
+             index={index} 
+             playSound={playHover} // Pass sound function down
+           />
          ))}
       </div>
 
-      {/* 3. CTA SECTION */}
+      {/* 3. CTA */}
       <section className="h-[80vh] flex flex-col items-center justify-center bg-[#0F172A] relative px-4 text-center">
-         {/* Grid Background */}
          <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
          
          <div className="relative z-10 max-w-4xl">
@@ -246,7 +312,7 @@ export default function RetroPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <Button className="h-16 px-12 text-xl bg-brand-pink hover:bg-pink-600 rounded-full font-bold shadow-[0_0_30px_rgba(233,30,99,0.4)]">
+              <Button onClick={() => playHover("square")} className="h-16 px-12 text-xl bg-brand-pink hover:bg-pink-600 rounded-full font-bold shadow-[0_0_30px_rgba(233,30,99,0.4)]">
                 Book a Session
               </Button>
               <Button variant="outline" className="h-16 px-12 text-xl border-slate-700 text-white hover:bg-white hover:text-black rounded-full font-bold">
@@ -255,7 +321,6 @@ export default function RetroPage() {
             </div>
          </div>
       </section>
-
     </div>
   );
 }
