@@ -2,16 +2,17 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Image from 'next/image'; // Use Next.js Image for optimization
 import { createClient } from '@/lib/supabase/client';
 import { SkipForward, Music } from 'lucide-react';
 
-// 1. THE FIX: Cast to 'any' to bypass strict TypeScript checks on Dynamic Imports
-// This fixes: "Property 'url' does not exist..."
+// 1. DYNAMIC IMPORT (Prevents "window is not defined" error)
+// We cast to 'any' to avoid the TypeScript build error you saw earlier.
 const ReactPlayer = dynamic(() => import('react-player'), { 
   ssr: false,
   loading: () => (
     <div className="w-full h-full bg-gray-900 flex items-center justify-center text-gray-500 animate-pulse">
-      Loading Player System...
+      Loading System...
     </div>
   )
 }) as any;
@@ -20,11 +21,13 @@ export default function JukeboxHost() {
   const [queue, setQueue] = useState<any[]>([]);
   const [currentVideo, setCurrentVideo] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isClient, setIsClient] = useState(false); // To ensure client-side rendering
   
   const supabase = createClient();
 
   // 2. REALTIME LISTENER
   useEffect(() => {
+    setIsClient(true);
     fetchQueue();
 
     const channel = supabase
@@ -39,6 +42,7 @@ export default function JukeboxHost() {
 
   // 3. AUTO-PLAY LOGIC
   useEffect(() => {
+    // If nothing is playing and we have songs, play the next one
     if (!currentVideo && queue.length > 0) {
       playNext();
     }
@@ -67,8 +71,12 @@ export default function JukeboxHost() {
     setCurrentVideo(next);
     setQueue(remaining);
 
+    // Mark as played so it doesn't repeat on refresh
     await supabase.from('jukebox_queue').update({ status: 'played' }).eq('id', next.id);
   };
+
+  // Prevent hydration mismatch
+  if (!isClient) return <div className="min-h-screen bg-black" />;
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8 font-sans">
@@ -76,14 +84,24 @@ export default function JukeboxHost() {
       {/* --- THE PLAYER --- */}
       <div className="w-full max-w-4xl aspect-video bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-white/10 mb-8 relative">
         <ReactPlayer
-          // 2. THE FIX: Use a standard clean YouTube URL
+          // FORCE RESET: This ensures the player fully reloads for every new song
+          key={currentVideo?.video_id || 'empty'}
+          
+          // ✅ THE FIX: Standard YouTube URL with correct '${}' syntax
           url={currentVideo ? `https://www.youtube.com/watch?v=${currentVideo.video_id}` : ''}
+          
+          // MOBILE SETTINGS
           playing={true}
           controls={true}
+          muted={true}        // <--- Essential for mobile autoplay
+          playsinline={true}  // <--- Essential for iOS
+
           width="100%"
           height="100%"
+          
           onEnded={playNext} 
           onStart={() => setIsPlaying(true)}
+          onError={(e: any) => console.log('Player Error:', e)}
         />
 
         {/* Empty State Overlay */}
@@ -124,9 +142,18 @@ export default function JukeboxHost() {
             queue.map((item, i) => (
                 <div key={item.id} className="flex items-center gap-4 p-3 bg-white/5 rounded-lg border border-white/5">
                   <span className="text-gray-500 font-mono text-sm w-6">#{i + 1}</span>
+                  
+                  {/* Thumbnail Image */}
                   <div className="relative w-12 h-8 rounded overflow-hidden flex-shrink-0">
-                      <img src={item.thumbnail} className="object-cover w-full h-full" alt="thumb" />
+                      <Image 
+                        src={item.thumbnail} 
+                        alt="thumbnail"
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
                   </div>
+                  
                   <p className="truncate font-medium text-gray-300">{item.title}</p>
                 </div>
             ))
