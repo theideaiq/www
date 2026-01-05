@@ -5,9 +5,7 @@ import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/client';
 import { SkipForward, Music } from 'lucide-react';
 
-// 1. DYNAMIC IMPORT (Required)
-// We import from 'react-player' root to avoid build errors.
-// ssr: false prevents "window is not defined" crashes.
+// 1. DYNAMIC IMPORT
 const ReactPlayer = dynamic(() => import('react-player'), { 
   ssr: false,
   loading: () => (
@@ -22,15 +20,12 @@ export default function JukeboxHost() {
   const [currentVideo, setCurrentVideo] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   
-  // Initialize Supabase Client
   const supabase = createClient();
 
   // 2. REALTIME LISTENER
   useEffect(() => {
-    // Load initial list
     fetchQueue();
 
-    // Listen for new songs added by guests
     const channel = supabase
       .channel('jukebox_queue')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'jukebox_queue' }, (payload) => {
@@ -43,7 +38,6 @@ export default function JukeboxHost() {
 
   // 3. AUTO-PLAY LOGIC
   useEffect(() => {
-    // If nothing is playing and we have songs, play the next one
     if (!currentVideo && queue.length > 0) {
       playNext();
     }
@@ -72,7 +66,6 @@ export default function JukeboxHost() {
     setCurrentVideo(next);
     setQueue(remaining);
 
-    // Update DB so this song doesn't play again on refresh
     await supabase.from('jukebox_queue').update({ status: 'played' }).eq('id', next.id);
   };
 
@@ -90,12 +83,8 @@ export default function JukeboxHost() {
           height="100%"
           onEnded={playNext} 
           onStart={() => setIsPlaying(true)}
-          // Identifying config to ensure YouTube mode is used
-          config={{
-            youtube: {
-              playerVars: { showinfo: 1 }
-            }
-          }}
+          // FIX: Removed the 'config' block causing the TypeScript error. 
+          // ReactPlayer detects YouTube automatically.
         />
 
         {/* Empty State Overlay */}
