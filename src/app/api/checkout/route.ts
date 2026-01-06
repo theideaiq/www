@@ -5,8 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 // Connect to Supabase to verify user is logged in
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://example.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'example-key',
 );
 
 export async function POST(req: Request) {
