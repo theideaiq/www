@@ -1,15 +1,15 @@
 version: 2
 updates:
-  - package-ecosystem: "npm" # pnpm uses the npm ecosystem in Dependabot
-    directory: "/"
+  - package-ecosystem: 'npm' # pnpm uses the npm ecosystem in Dependabot
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     groups:
       dependencies:
         patterns:
-          - "*"
+          - '*'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'

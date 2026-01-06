@@ -19,7 +19,6 @@ import { motion } from 'framer-motion';
 
 // Revert to standard import as submodule might be problematic in this env
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ReactPlayer = dynamic(() => import('react-player'), {
   ssr: false,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
