@@ -7,7 +7,7 @@ We welcome contributions! Please follow these guidelines to ensure a smooth proc
 1.  **Fork and Clone**: Fork the repository and clone it locally.
 2.  **Install Dependencies**:
     ```bash
-    npm install
+    pnpm install
     ```
 3.  **Environment Variables**:
     Create a `.env.local` file in the root directory and add the required environment variables:
@@ -18,12 +18,12 @@ We welcome contributions! Please follow these guidelines to ensure a smooth proc
     ```
 4.  **Run Development Server**:
     ```bash
-    npm run dev
+    pnpm run dev
     ```
 
 ## Code Quality & Standards
 
--   **Linting**: We use ESLint. Run `npm run lint` before committing to ensure your code follows the standards.
+-   **Linting**: We use ESLint. Run `pnpm run lint` before committing to ensure your code follows the standards.
 -   **Translations**: We use `next-intl`. If you add text, please use `t()` and add keys to `messages/en.json` (and other languages if applicable).
 -   **Component Structure**: Place reusable components in `components/` and page-specific logic in `app/`.
 -   **Animations**: Use `framer-motion` for animations, preferably in client components.
@@ -37,7 +37,7 @@ We welcome contributions! Please follow these guidelines to ensure a smooth proc
 3.  **Pull Requests**:
     -   Push your branch and open a PR against `main`.
     -   Describe your changes clearly.
-    -   Ensure the build passes (`npm run build`).
+    -   Ensure the build passes (`pnpm run build`).
 
 ## Testing
 

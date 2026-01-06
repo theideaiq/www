@@ -24,7 +24,7 @@ This is a modern web application built with [Next.js 16](https://nextjs.org/), l
 ### Prerequisites
 
 -   Node.js (v18+ recommended)
--   npm
+-   pnpm
 
 ### Installation
 
@@ -36,7 +36,7 @@ This is a modern web application built with [Next.js 16](https://nextjs.org/), l
 
 2.  **Install dependencies**:
     ```bash
-    npm install
+    pnpm install
     ```
 
 3.  **Configure Environment Variables**:
@@ -51,7 +51,7 @@ This is a modern web application built with [Next.js 16](https://nextjs.org/), l
 
 4.  **Run the development server**:
     ```bash
-    npm run dev
+    pnpm run dev
     ```
 
     Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -67,10 +67,10 @@ This is a modern web application built with [Next.js 16](https://nextjs.org/), l
 
 ## Scripts
 
--   `npm run dev`: Starts the development server.
--   `npm run build`: Builds the application for production.
--   `npm run start`: Starts the production server.
--   `npm run lint`: Runs ESLint to check for code quality issues.
+-   `pnpm run dev`: Starts the development server.
+-   `pnpm run build`: Builds the application for production.
+-   `pnpm run start`: Starts the production server.
+-   `pnpm run lint`: Runs ESLint to check for code quality issues.
 
 ## Learn More
 

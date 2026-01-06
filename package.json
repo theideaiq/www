@@ -33,6 +33,11 @@
     "tone": "^15.1.22",
     "uuid": "^13.0.0"
   },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@10.20.0",
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
