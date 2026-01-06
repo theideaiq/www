@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.*
+.pnp.js
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -34,6 +35,8 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env*.local
+.env
 
 # vercel
 .vercel
@@ -41,3 +44,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# --- NEW ADDITIONS FOR CLEANUP ---
+
+# General Logs (catches everything ending in .log)
+*.log
+
+# Specific Project Logs
+dev_server.log
+
+# Jupyter / Python Garbage
+.ipynb_checkpoints/
+
+# IDE Settings (Optional - keeps your personal settings out of the repo)
+.vscode/
+.idea/
