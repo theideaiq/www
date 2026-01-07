@@ -5,21 +5,23 @@
  * React will automatically escape the characters, preventing XSS.
  * DO NOT use this result with dangerouslySetInnerHTML.
  */
+const ENTITIES: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&nbsp;': ' ',
+  '&apos;': "'",
+};
+
+const ENTITY_REGEX = /&[a-zA-Z0-9#]+;/g;
+
 export function decodeHtmlEntities(text: string): string {
   if (!text) return '';
 
-  const entities: Record<string, string> = {
-    '&amp;': '&',
-    '&lt;': '<',
-    '&gt;': '>',
-    '&quot;': '"',
-    '&#39;': "'",
-    '&nbsp;': ' ',
-    '&apos;': "'",
-  };
-
-  return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => {
-    if (entities[match]) return entities[match];
+  return text.replace(ENTITY_REGEX, (match) => {
+    if (ENTITIES[match]) return ENTITIES[match];
 
     // Handle numeric entities
     if (match.match(/^&#\d+;$/)) {
