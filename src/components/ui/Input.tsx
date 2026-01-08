@@ -19,6 +19,7 @@ export function Input({
 }: InputProps) {
   const generatedId = React.useId();
   const inputId = id || generatedId;
+  const errorId = `${inputId}-error`;
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
 
@@ -36,6 +37,8 @@ export function Input({
         <input
           id={inputId}
           type={isPassword ? (showPassword ? 'text' : 'password') : type}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
           className={cn(
             'w-full px-4 py-3 rounded-lg border bg-white transition-all outline-none',
             error
@@ -57,7 +60,11 @@ export function Input({
           </button>
         )}
       </div>
-      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+      {error && (
+        <p id={errorId} className="mt-1 text-sm text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

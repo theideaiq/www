@@ -31,8 +31,17 @@ describe('Input Component', () => {
     expect(input).toHaveAttribute('type', 'password');
   });
 
-  it('displays error message', () => {
-    render(<Input error="Invalid email" />);
-    expect(screen.getByText('Invalid email')).toBeInTheDocument();
+  it('displays error message and sets aria attributes', () => {
+    render(<Input error="Invalid email" id="email-error-test" />);
+    const errorMessage = screen.getByText('Invalid email');
+    const input = screen.getByRole('textbox');
+
+    expect(errorMessage).toBeInTheDocument();
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute(
+      'aria-describedby',
+      'email-error-test-error',
+    );
+    expect(errorMessage).toHaveAttribute('id', 'email-error-test-error');
   });
 });

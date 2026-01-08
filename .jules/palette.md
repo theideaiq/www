@@ -1,4 +1,3 @@
-## 2024-05-23 - Accessibility Patterns in Next.js
-
-**Learning:** Icon-only buttons in the Navbar were missing accessible names, making them invisible to screen readers.
-**Action:** Always add `aria-label` to icon-only buttons or links, and ensure translations are used for multilingual support.
+## 2026-01-07 - Input Component Accessibility
+**Learning:** Screen readers require explicit association between inputs and their error messages. Merely rendering the error text near the input is insufficient for non-visual users to know the input is invalid or what the error is.
+**Action:** When creating form inputs, always generate a unique ID for the error message, add `aria-invalid` to the input when in an error state, and link them using `aria-describedby`.
