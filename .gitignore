@@ -59,3 +59,4 @@ dev_server.log
 # IDE Settings (Optional - keeps your personal settings out of the repo)
 .vscode/
 .idea/
+apps/web/.next
