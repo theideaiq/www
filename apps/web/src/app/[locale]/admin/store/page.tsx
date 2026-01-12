@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { Select } from '@/components/ui/Select';
+import { PRODUCT_CATEGORIES, validateProduct } from '@/lib/validators';
 import { createClient } from '@supabase/supabase-js';
 import { Plus, Trash2 } from 'lucide-react';
 import type React from 'react';
@@ -42,6 +43,13 @@ export default function StoreManager() {
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const validationError = validateProduct(newProduct);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
     const { error } = await supabase.from('products').insert([
       {
         title: newProduct.title,
@@ -123,11 +131,7 @@ export default function StoreManager() {
           />
           <Select
             label="Category"
-            options={[
-              { value: 'Gaming', label: 'Gaming' },
-              { value: 'Laptops', label: 'Laptops' },
-              { value: 'Phones', label: 'Phones' },
-            ]}
+            options={PRODUCT_CATEGORIES.map((c) => ({ value: c, label: c }))}
             value={newProduct.category}
             onChange={(e) =>
               setNewProduct({ ...newProduct, category: e.target.value })
