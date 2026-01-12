@@ -7,15 +7,28 @@ import { createClient } from '@/lib/supabase/client';
 import { motion } from 'framer-motion';
 import { BookOpen, Check, Gamepad2, Loader2, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { toast } from 'react-hot-toast';
+
+interface Tier {
+  id: string;
+  name: string;
+  price: string;
+  amount: number;
+  color: string;
+  icon: ReactNode;
+  features: string[];
+  button: string;
+  popular?: boolean;
+  textColor?: string;
+}
 
 export default function PlusHome() {
   const supabase = createClient();
   const router = useRouter();
   const [loadingTier, setLoadingTier] = useState<string | null>(null);
 
-  const tiers = [
+  const tiers: Tier[] = [
     {
       id: 'essential',
       name: 'IDEA Essential',
@@ -64,8 +77,7 @@ export default function PlusHome() {
     },
   ];
 
-  // biome-ignore lint/suspicious/noExplicitAny: migration
-  const handleSubscribe = async (tier: any) => {
+  const handleSubscribe = async (tier: Tier) => {
     setLoadingTier(tier.id);
 
     // 1. Check if user is logged in
