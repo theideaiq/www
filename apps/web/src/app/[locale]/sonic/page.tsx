@@ -10,6 +10,7 @@ import {
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
 import { Button } from '@repo/ui';
+import { Logger } from '@repo/utils';
 import { createClient } from '@supabase/supabase-js';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, Volume2, VolumeX } from 'lucide-react';
@@ -193,7 +194,7 @@ export default function SonicEcosystemPage() {
       await Tone.start();
       Tone.Transport.start();
     } catch (e) {
-      console.warn(e);
+        Logger.warn('Sonic Error', { error: e });
     }
 
     setStarted(true);

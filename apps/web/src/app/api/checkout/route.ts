@@ -1,5 +1,6 @@
+import { Logger } from '@repo/utils';
 import { NextResponse } from 'next/server';
-import { wayl } from '@/lib/wayl';
+import { wayl } from '@/services/wayl';
 
 export async function POST(req: Request) {
   try {
@@ -49,11 +50,13 @@ export async function POST(req: Request) {
     // 2. Return the link to the frontend
     return NextResponse.json({ url: paymentUrl });
 
-    // biome-ignore lint/suspicious/noExplicitAny: migration
-  } catch (error: any) {
-    console.error('Checkout Error:', error);
+  } catch (error) {
+    Logger.error('Checkout Error:', error);
     return NextResponse.json(
-      { error: error.message || 'Payment creation failed' },
+      {
+        error:
+          error instanceof Error ? error.message : 'Payment creation failed',
+      },
       { status: 500 },
     );
   }

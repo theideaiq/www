@@ -130,6 +130,7 @@ export default function Home() {
                 width={100}
                 height={100}
                 className="opacity-50"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>

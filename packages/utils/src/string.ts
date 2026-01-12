@@ -5,6 +5,7 @@
  * React will automatically escape the characters, preventing XSS.
  * DO NOT use this result with dangerouslySetInnerHTML.
  */
+
 const ENTITIES: Record<string, string> = {
   '&amp;': '&',
   '&lt;': '<',

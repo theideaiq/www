@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/Badge';
 import { PageLoader } from '@/components/ui/Spinner';
 import { useRouter } from '@/i18n/navigation'; // Use localized router
 import { createClient } from '@/lib/supabase/client';
+import { Logger } from '@repo/utils';
 
 const supabase = createClient();
 
@@ -27,7 +28,7 @@ export default function PlusBrowsePage() {
       .from('rental_catalog')
       .select('*')
       .order('id');
-    if (error) console.error(error);
+    if (error) Logger.error('Browse Page Error:', error);
     setItems(data || []);
     setLoading(false);
   }, []);

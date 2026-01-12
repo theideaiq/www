@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@repo/ui';
+import { Logger } from '@repo/utils';
 import { AlertTriangle, RefreshCcw } from 'lucide-react';
 import { useEffect } from 'react';
 
@@ -14,7 +15,7 @@ export default function ErrorPage({
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error);
+    Logger.error('Page Error:', error);
   }, [error]);
 
   return (

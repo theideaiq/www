@@ -2,6 +2,7 @@
 
 import { AlertOctagon } from 'lucide-react';
 import { useEffect } from 'react';
+import { Logger } from '@repo/utils';
 import './globals.css'; // We must import CSS manually since Layout is gone
 
 export default function GlobalError({
@@ -12,7 +13,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    Logger.error('Global Error:', error);
   }, [error]);
 
   return (
