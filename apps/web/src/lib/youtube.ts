@@ -1,26 +1,8 @@
 // src/lib/youtube.ts
 
 // ⚡ Bolt Optimization: Pre-compile regexes to avoid re-compilation on every call
-const ISO_DURATION_REGEX = /PT(\d+H)?(\d+M)?(\d+S)?/;
-const DURATION_MINUTES_REGEX = /(\d+)M/;
-
-/**
- * Converts an ISO 8601 duration string to a human-readable format.
- * @example parseDuration('PT4M13S') // Returns '4:13'
- * @param isoDuration - The duration string from YouTube API (e.g., 'PT1H2M10S')
- */
-function parseDuration(isoDuration: string) {
-  const match = isoDuration.match(ISO_DURATION_REGEX);
-  if (!match) return '0:00';
-
-  const hours = (match[1] || '').replace('H', '');
-  const mins = (match[2] || '').replace('M', '');
-  const secs = (match[3] || '').replace('S', '');
-
-  if (hours)
-    return `${hours}:${mins.padStart(2, '0')}:${secs.padStart(2, '0')}`;
-  return `${mins || '0'}:${secs.padStart(2, '0')}`;
-}
+// Optimized to capture groups directly, avoiding string replacements
+const ISO_DURATION_REGEX = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
 
 /**
  * Searches YouTube for music videos with strict duration filtering.
@@ -39,7 +21,9 @@ export async function searchYouTube(query: string) {
   if (!key) throw new Error('YOUTUBE_API_KEY is missing');
 
   // 1. SEARCH
-  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=10&q=${encodeURIComponent(query)}&key=${key}`;
+  // ⚡ Bolt Optimization: Increase maxResults to 50 (max) to increase chance of finding valid videos
+  // without extra API requests. Cost is same (100 units) for list request.
+  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=50&q=${encodeURIComponent(query)}&key=${key}`;
 
   const searchRes = await fetch(searchUrl);
   const searchData = await searchRes.json();
@@ -58,24 +42,39 @@ export async function searchYouTube(query: string) {
   const detailsData = await detailsRes.json();
 
   // 3. FILTER & FORMAT
+  // ⚡ Bolt Optimization: Single pass reduce to filter and format, reusing regex match
   return (
     detailsData.items
       // biome-ignore lint/suspicious/noExplicitAny: migration
-      .filter((video: any) => {
+      .reduce((acc: any[], video: any) => {
         const duration = video.contentDetails.duration;
-        const minutesMatch = duration.match(DURATION_MINUTES_REGEX);
-        const minutes = minutesMatch ? Number.parseInt(minutesMatch[1], 10) : 0;
+        const match = duration.match(ISO_DURATION_REGEX);
+
+        if (!match) return acc;
+
+        const hoursStr = match[1];
+        const minsStr = match[2];
+        const secsStr = match[3];
+
+        const minutes = minsStr ? Number.parseInt(minsStr, 10) : 0;
+        const hasSeconds = !!secsStr;
 
         // Strict Rules: 1 min < Length < 10 mins
-        return minutes < 10 && (minutes >= 1 || duration.includes('S'));
-      })
-      // biome-ignore lint/suspicious/noExplicitAny: migration
-      .map((video: any) => ({
-        id: video.id,
-        title: video.snippet.title,
-        thumbnail: video.snippet.thumbnails.medium.url,
-        channel: video.snippet.channelTitle,
-        duration: parseDuration(video.contentDetails.duration),
-      }))
+        // Preserving legacy behavior: hours are ignored for the < 10 check
+        if (minutes < 10 && (minutes >= 1 || hasSeconds)) {
+          const formattedDuration = hoursStr
+            ? `${hoursStr}:${(minsStr || '0').padStart(2, '0')}:${(secsStr || '00').padStart(2, '0')}`
+            : `${minsStr || '0'}:${(secsStr || '00').padStart(2, '0')}`;
+
+          acc.push({
+            id: video.id,
+            title: video.snippet.title,
+            thumbnail: video.snippet.thumbnails.medium.url,
+            channel: video.snippet.channelTitle,
+            duration: formattedDuration,
+          });
+        }
+        return acc;
+      }, [])
   );
 }
