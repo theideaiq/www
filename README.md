@@ -12,7 +12,7 @@ The system is designed as a centralized routing hub and application suite.
 
 ```mermaid
 graph TD
-    User((User)) -->|HTTPS| Web[Web App (Next.js 16)]
+    User((User)) -->|HTTPS| Web["Web App (Next.js 16)"]
 
     subgraph "Infrastructure"
         Web -->|Data & Auth| Supabase[Supabase]
@@ -25,6 +25,7 @@ graph TD
         Supabase --> Storage[Storage]
         Supabase --> Edge[Edge Functions]
     end
+
 ```
 
 ## 📦 Packages & Apps
