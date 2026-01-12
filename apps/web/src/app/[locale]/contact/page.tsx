@@ -1,12 +1,11 @@
 'use client';
 
+// Import your new UI System
+import { Button } from '@repo/ui';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-
-// Import your new UI System
-import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';

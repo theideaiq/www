@@ -1,10 +1,7 @@
 'use client';
 
-import { Badge } from '@/components/ui/Badge';
 // UI Kit
-import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { Input } from '@/components/ui/Input';
+import { Button } from '@repo/ui';
 import { motion } from 'framer-motion';
 import {
   Book,
@@ -21,6 +18,9 @@ import {
 import Image from 'next/image';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { Badge } from '@/components/ui/Badge';
+import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
 
 // Mock Data (The Marketplace)
 const PRODUCTS = [

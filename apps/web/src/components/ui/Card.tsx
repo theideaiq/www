@@ -1,5 +1,5 @@
-import { cn } from '@/lib/cn';
 import type React from 'react';
+import { cn } from '@repo/utils';
 
 export function Card({
   children,

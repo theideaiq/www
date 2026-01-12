@@ -1,13 +1,12 @@
 'use client';
 
+import { Button } from '@repo/ui';
 import { createClient } from '@supabase/supabase-js';
 import { ArrowRight, Chrome, Lock } from 'lucide-react'; // Added Chrome icon for Google
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
-
-import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 
