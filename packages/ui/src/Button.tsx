@@ -1,4 +1,4 @@
-import { cn } from '@/lib/cn';
+import { cn } from '@repo/utils';
 import { Loader2 } from 'lucide-react';
 import type React from 'react';
 

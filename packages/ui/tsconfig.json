@@ -1,0 +1,10 @@
+{
+  "extends": "@repo/config/tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "target": "ESNext",
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

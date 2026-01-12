@@ -1,48 +1,75 @@
-# Next.js 16 Project
+# The IDEA IQ Monorepo
 
-This is a modern web application built with [Next.js 16](https://nextjs.org/), leveraging [Supabase](https://supabase.com/) for the backend and [Tailwind CSS 4](https://tailwindcss.com/) for styling.
+![CI Status](https://github.com/theideaiq/monorepo/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-Proprietary-red)
+![Version](https://img.shields.io/badge/version-0.0.0-blue)
 
-## Features
+A modern, high-performance monorepo for **The IDEA IQ**, built with **Next.js 16**, **Tailwind CSS 4**, and **Supabase**.
 
-- **App Router**: Utilizes the latest Next.js App Router for efficient routing and layouts.
-- **Internationalization**: Built-in support for multiple languages using `next-intl`.
-- **Authentication**: Secure authentication via Supabase.
-- **Animations**: Smooth UI transitions and animations powered by `framer-motion` and `Three.js` (via `@react-three/fiber`).
-- **Styling**: Modern, utility-first styling with Tailwind CSS v4.
+## 🏗 Architecture
 
-## Tech Stack
+The system is designed as a centralized routing hub and application suite.
 
-- **Framework**: Next.js 16
-- **Language**: TypeScript
-- **Backend**: Supabase (PostgreSQL, Auth)
-- **Styling**: Tailwind CSS 4
-- **State/Payment**: Wayl integration (via `lib/wayl.ts`)
-- **Icons**: Lucide React
+```mermaid
+graph TD
+    User((User)) -->|HTTPS| Web[Web App (Next.js 16)]
 
-## Getting Started
+    subgraph "Infrastructure"
+        Web -->|Data & Auth| Supabase[Supabase]
+        Web -->|Payments & State| Wayl[Wayl]
+    end
+
+    subgraph "Supabase Services"
+        Supabase --> Auth[Authentication]
+        Supabase --> DB[(PostgreSQL)]
+        Supabase --> Storage[Storage]
+        Supabase --> Edge[Edge Functions]
+    end
+```
+
+## 📦 Packages & Apps
+
+This monorepo is managed with [Turbo](https://turbo.build/) and [pnpm](https://pnpm.io/).
+
+- **Apps**
+  - [`apps/web`](./apps/web): The main corporate landing page and application (Next.js 16).
+
+- **Packages**
+  - [`packages/ui`](./packages/ui): Shared UI components (Tailwind 4 + React).
+  - [`packages/config`](./packages/config): Shared configurations (Biome, TypeScript).
+  - [`packages/utils`](./packages/utils): Shared utility functions.
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v18+ recommended)
-- pnpm
+- **Node.js**: v24.12.0 or higher
+- **pnpm**: v9 or higher
 
 ### Installation
 
-1.  **Clone the repository**:
+1.  **Clone the repository:**
 
     ```bash
     git clone <repository-url>
     cd <project-directory>
     ```
 
-2.  **Install dependencies**:
+2.  **Install dependencies:**
 
     ```bash
     pnpm install
     ```
 
-3.  **Configure Environment Variables**:
-    Create a `.env.local` file in the root directory based on the following template:
+3.  **Environment Setup:**
+
+    Copy the example environment file in `apps/web`:
+
+    ```bash
+    cp apps/web/.env.example apps/web/.env.local
+    ```
+
+    Update `apps/web/.env.local` with your credentials:
 
     ```env
     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -52,39 +79,44 @@ This is a modern web application built with [Next.js 16](https://nextjs.org/), l
     NEXT_PUBLIC_SITE_URL=http://localhost:3000
     ```
 
-4.  **Run the development server**:
+4.  **Run Development Server:**
 
     ```bash
-    pnpm run dev
+    pnpm dev
     ```
 
-    Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+    The web app will be available at [http://localhost:3000](http://localhost:3000).
 
-## Project Structure
+## 🛠 Tooling
 
-- `app/`: Application source code (pages, layouts, api routes).
-  - `[locale]/`: Locale-dependent routes.
-- `components/`: Reusable React components.
-- `lib/`: Utility libraries and configurations (e.g., `wayl.ts`).
-- `messages/`: Translation files for `next-intl`.
-- `public/`: Static assets.
+- **Build System**: [Turborepo](https://turbo.build/)
+- **Package Manager**: [pnpm](https://pnpm.io/)
+- **Linting & Formatting**: [Biome](https://biomejs.dev/)
+- **Versioning**: [Changesets](https://github.com/changesets/changesets)
 
-## Scripts
+### Commands
 
-- `pnpm run dev`: Starts the development server.
-- `pnpm run build`: Builds the application for production.
-- `pnpm run start`: Starts the production server.
-- `pnpm run lint`: Runs ESLint to check for code quality issues.
+- `pnpm dev`: Start all apps in development mode.
+- `pnpm build`: Build all apps and packages.
+- `pnpm lint`: Lint all code using Biome.
+- `pnpm test`: Run tests across the workspace.
+- `pnpm changeset`: Generate a changeset for versioning.
 
-## Learn More
+## 🧠 Memory (.jules)
 
-To learn more about the technologies used:
+The `.jules/` directory contains journal files that serve as long-term memory and context for AI agents working on this project. These files document architectural decisions, design patterns, security protocols, and operational learnings.
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Supabase Documentation](https://supabase.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Framer Motion](https://www.framer.com/motion/)
+- **architect.md**: System architecture and design patterns.
+- **palette.md**: UI/UX design tokens and accessibility standards.
+- **sentinel.md**: Security protocols and vulnerability patterns.
+- **bolt.md**: Performance optimization guidelines.
 
-## License
+Please **do not delete** these files, as they ensure continuity and high-quality assistance from AI tools.
 
-[Add License Information Here]
+## 📄 License
+
+**All Rights Reserved.**
+
+Copyright © 2017-2026 The IDEA.
+
+This software is proprietary. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited.

@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
-import { useRouter } from '@/i18n/navigation';
+import { Button } from '@repo/ui';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
+import { useRouter } from '@/i18n/navigation';
 
 export default function AccessDenied() {
   const router = useRouter();

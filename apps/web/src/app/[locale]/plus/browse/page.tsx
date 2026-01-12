@@ -1,13 +1,13 @@
 'use client';
 
+// UI
+import { Button } from '@repo/ui';
 import { motion } from 'framer-motion';
 import { ArrowLeft, BookOpen, Camera, Info, PlayCircle } from 'lucide-react';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { Badge } from '@/components/ui/Badge';
-// UI
-import { Button } from '@/components/ui/Button';
 import { PageLoader } from '@/components/ui/Spinner';
 import { useRouter } from '@/i18n/navigation'; // Use localized router
 import { createClient } from '@/lib/supabase/client';

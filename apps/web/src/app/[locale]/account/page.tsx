@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge } from '@/components/ui/Badge';
+import { Button } from '@repo/ui';
 import { createClient } from '@supabase/supabase-js';
 import {
   Clock,
@@ -14,8 +14,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import Tilt from 'react-parallax-tilt'; // For the 3D Card effect
-
-import { Button } from '@/components/ui/Button';
+import { Badge } from '@/components/ui/Badge';
 import { Card } from '@/components/ui/Card';
 import { PageLoader } from '@/components/ui/Spinner';
 // Use the localized router and translations

@@ -5,6 +5,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  transpilePackages: ['@repo/ui', '@repo/utils'],
   images: {
     remotePatterns: [
       {
