@@ -7,10 +7,14 @@ const withAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const isMobile = process.env.APP_ENV === 'mobile';
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   transpilePackages: ['@repo/ui', '@repo/utils'],
+  output: isMobile ? 'export' : undefined,
   images: {
+    unoptimized: isMobile,
     remotePatterns: [
       {
         protocol: 'https',

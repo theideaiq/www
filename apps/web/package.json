@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "node scripts/check-env.js && next build",
+    "build:mobile": "cross-env APP_ENV=mobile node scripts/check-env.js && node scripts/build-mobile.js",
     "start": "next start",
     "lint": "biome lint .",
     "format": "biome format --write .",
@@ -17,6 +18,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/app": "^8.0.0",
+    "@capacitor/browser": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/haptics": "^8.0.0",
+    "@capacitor/ios": "^8.0.0",
+    "@capacitor/keyboard": "^8.0.0",
+    "@capacitor/preferences": "^8.0.0",
+    "@capacitor/push-notifications": "^8.0.0",
+    "@capacitor/splash-screen": "^8.0.0",
+    "@capacitor/status-bar": "^8.0.0",
     "@next/third-parties": "^16.1.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
@@ -44,6 +56,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.11",
+    "@capacitor/cli": "^8.0.0",
     "@next/bundle-analyzer": "^16.1.1",
     "@playwright/test": "^1.57.0",
     "@repo/config": "workspace:*",
@@ -57,6 +70,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.16",
+    "cross-env": "^10.1.0",
     "jsdom": "^27.4.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",

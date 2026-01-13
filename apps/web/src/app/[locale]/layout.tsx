@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 // NEW: Imports for translation data
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
 import ToastProvider from '@/components/providers/ToastProvider';
@@ -28,6 +29,11 @@ export const metadata = {
   description: 'Innovation for Every Aspect of Life',
 };
 
+// Required for static export with next-intl
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
@@ -35,6 +41,9 @@ type Props = {
 
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
+
+  // Enable static rendering
+  setRequestLocale(locale);
 
   // 1. Validate the locale against your config
   // biome-ignore lint/suspicious/noExplicitAny: migration
