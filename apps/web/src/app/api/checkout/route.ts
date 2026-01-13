@@ -54,8 +54,7 @@ export async function POST(req: Request) {
     Logger.error('Checkout Error:', error);
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : 'Payment creation failed',
+        error: 'Payment creation failed',
       },
       { status: 500 },
     );

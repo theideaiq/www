@@ -1,5 +1,5 @@
-## 2024-05-23 - Hardcoded Webhook Secret in Helper Library
+## 2025-02-14 - Information Leakage in Checkout API
 
-**Vulnerability:** A hardcoded `webhookSecret` ("secure_secret_123") was found in `lib/wayl.ts`, which is used for generating payment links.
-**Learning:** Developers often hardcode secrets during development for convenience and forget to replace them with environment variables before production. Comments indicating "move this to env vars" are a clear sign of technical debt that became a security risk.
-**Prevention:** Use environment variables from the start, even for development values (e.g., use a dummy value in `.env.local` instead of hardcoding in the source).
+**Vulnerability:** The Checkout API (`/api/checkout`) was catching errors from the `wayl` service and returning `error.message` directly to the client in the JSON response.
+**Learning:** Returning raw error messages can expose internal system details, database connection strings, or third-party service errors to potential attackers. This information can be used to fingerprint the system or identify further attack vectors.
+**Prevention:** Always catch exceptions at the API boundary and return a generic error message (e.g., "Payment creation failed") to the client. Log the specific error details internally for debugging purposes.

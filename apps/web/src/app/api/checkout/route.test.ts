@@ -117,6 +117,6 @@ describe('Checkout API Route', () => {
     const json = await res.json();
 
     expect(res.status).toBe(500);
-    expect(json.error).toBe('Wayl service down');
+    expect(json.error).toBe('Payment creation failed');
   });
 });
