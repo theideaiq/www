@@ -126,11 +126,11 @@ export default function PlusHome() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0f1014] text-white font-sans -mt-20 pt-20">
+    <div className="min-h-screen bg-brand-deep text-white font-sans -mt-20 pt-20">
       {/* Hero Section */}
       <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f1014] via-[#0f1014]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-deep via-brand-deep/50 to-transparent" />
 
         <div className="relative z-10 text-center max-w-4xl px-4">
           <motion.div

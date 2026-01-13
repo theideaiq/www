@@ -52,9 +52,9 @@ export default function MegastorePage() {
   return (
     <div className="min-h-screen bg-slate-50 pt-20">
       {/* 1. HERO (PlayStation Store Style) */}
-      <section className="relative h-[60vh] bg-[#0f1014] overflow-hidden flex items-center">
+      <section className="relative h-[60vh] bg-brand-deep overflow-hidden flex items-center">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1552820728-8b83bb6b773f?q=80&w=2070')] bg-cover bg-center opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f1014] via-[#0f1014]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-deep via-brand-deep/60 to-transparent" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 w-full">
           <motion.div

@@ -51,7 +51,7 @@ export default function GlobalLoader() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.5, ease: 'easeInOut' }}
-          className="fixed inset-0 z-[9999] bg-[#0f1014] flex flex-col items-center justify-center text-white"
+          className="fixed inset-0 z-[9999] bg-brand-deep flex flex-col items-center justify-center text-white"
         >
           <div className="flex flex-col items-center gap-6">
             {/* Logo Animation */}
