@@ -14,6 +14,7 @@
     "seed": "tsx scripts/seed-products.ts"
   },
   "dependencies": {
+    "@react-email/components": "^1.0.4",
     "@repo/ui": "workspace:*",
     "@repo/utils": "workspace:*",
     "@supabase/ssr": "^0.8.0",
@@ -27,8 +28,10 @@
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-email": "^5.2.3",
     "react-hot-toast": "^2.6.0",
     "recharts": "^2.12.2",
+    "resend": "^6.7.0",
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.4.0",
     "uuid": "^13.0.0",
