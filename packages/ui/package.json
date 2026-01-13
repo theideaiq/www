@@ -18,7 +18,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
     "@repo/utils": "workspace:*",
+    "class-variance-authority": "^0.7.1",
     "framer-motion": "^12.25.0",
     "lucide-react": "^0.562.0"
   },
