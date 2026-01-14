@@ -86,9 +86,9 @@ try {
 
   // Run build
   console.log('Starting build...');
-  execSync('cross-env APP_ENV=mobile next build', {
+  execSync('cross-env NEXT_PUBLIC_APP_ENV=mobile next build', {
     stdio: 'inherit',
-    env: { ...process.env, APP_ENV: 'mobile' },
+    env: { ...process.env, NEXT_PUBLIC_APP_ENV: 'mobile' },
   });
   console.log('Build completed successfully.');
 } catch (error) {

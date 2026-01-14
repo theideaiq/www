@@ -1,3 +1,4 @@
+import './src/env';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
@@ -7,7 +8,7 @@ const withAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const isMobile = process.env.APP_ENV === 'mobile';
+const isMobile = process.env.NEXT_PUBLIC_APP_ENV === 'mobile';
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
