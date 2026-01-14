@@ -10,6 +10,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import Footer from '@/components/layout/Footer';
 import Navbar from '@/components/layout/Navbar';
 import SkipLink from '@/components/layout/SkipLink';
+import JsonLd from '@/components/seo/JsonLd';
 import QueryProvider from '@/components/providers/QueryProvider';
 import ToastProvider from '@/components/providers/ToastProvider';
 import { routing } from '@/i18n/navigation';
@@ -82,6 +83,8 @@ export default async function LocaleLayout({ children, params }: Props) {
   const messages = await getMessages();
 
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://www.theideaiq.com';
 
   return (
     <html lang={locale} dir={dir}>
@@ -92,6 +95,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         font-sans antialiased bg-slate-50
       `}
       >
+        <JsonLd baseUrl={baseUrl} />
         {/* 3. Wrap everything in the Client Provider */}
         <NextIntlClientProvider locale={locale} messages={messages}>
           <QueryProvider>
