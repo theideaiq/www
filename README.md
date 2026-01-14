@@ -76,7 +76,7 @@ This monorepo is managed with [Turborepo](https://turbo.build/) and [pnpm](https
 
     ```bash
     cp apps/web/.env.example apps/web/.env.local
-    cp apps/web/.env.example apps/admin/.env.local
+    cp apps/admin/.env.example apps/admin/.env.local
     ```
 
 4.  **Run Development Server:**

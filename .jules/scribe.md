@@ -21,3 +21,8 @@ Rule: All navigation components and hooks must be imported from `@/i18n/navigati
 
 Insight: The `apps/web/.env.example` file was referenced in the root README installation steps but was missing from the repository, causing installation failures.
 Rule: Documentation instructions must be verified by running them in a clean environment to ensure referenced files exist.
+
+## 2025-01-14 - Copy-Paste Documentation Errors
+
+Insight: The `README.md` contained copy-paste errors in the setup instructions (copying web env to admin), which would cause application crashes due to missing variables.
+Rule: Do not assume similar-looking commands are identical. Always verify setup instructions by running them line-by-line in a clean environment.
