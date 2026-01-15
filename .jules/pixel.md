@@ -9,3 +9,7 @@
 ## 2025-05-21 - Semantic Link Styling
 **Learning:** Detected invalid HTML nesting (`<Link><button>`) in `Navbar`, causing accessibility and hydration issues. This often happens when developers want a link to "look like a button" but use composition incorrectly.
 **Action:** Do not nest `<button>` inside `<Link>`. Instead, apply button utility classes directly to the `<Link>` component or use `asChild` if using a UI library component that supports polymorphism.
+
+## 2025-05-23 - Standardizing Overlay Styles
+**Learning:** `Sheet` and `Modal` components used different overlay styles (`bg-black/80` vs `bg-black/60 backdrop-blur-sm`). This created visual inconsistency when switching between interaction patterns.
+**Action:** Standardized on `bg-black/60 backdrop-blur-sm` for a more modern, consistent look across all overlay components. Also aligned close button interactions to use `hover:text-brand-pink`.
