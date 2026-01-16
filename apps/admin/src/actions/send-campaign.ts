@@ -2,11 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import React from 'react';
-import { logAdminAction } from '@/lib/audit';
 import { Resend } from 'resend';
 import { BrandedTemplate } from '@/emails/BrandedTemplate';
-import { createClient } from '@/lib/supabase/server';
 import { env } from '@/env';
+import { logAdminAction } from '@/lib/audit';
+import { createClient } from '@/lib/supabase/server';
 
 const BATCH_SIZE = 50;
 

@@ -86,4 +86,18 @@ const nextConfig: NextConfig = {
   },
 };
 
+// Add Supabase URL to remotePatterns if available
+if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL);
+    nextConfig.images?.remotePatterns?.push({
+      protocol: 'https',
+      hostname: url.hostname,
+    });
+  } catch (e) {
+    // biome-ignore lint/suspicious/noConsole: Build time error
+    console.warn('Failed to add Supabase URL to images.remotePatterns', e);
+  }
+}
+
 export default withAnalyzer(withNextIntl(nextConfig));

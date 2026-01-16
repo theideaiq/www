@@ -1,6 +1,6 @@
+import path from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-import path from 'path';
 
 // Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -21,6 +21,7 @@ if (!supabaseUrl || (!supabaseKey && !supabaseServiceKey)) {
 }
 
 // Prefer Service Key for seeding to bypass potential RLS
+// biome-ignore lint/style/noNonNullAssertion: Checked above
 const supabase = createClient(supabaseUrl, supabaseServiceKey || supabaseKey!);
 
 const accounts = [

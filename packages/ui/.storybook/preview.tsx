@@ -1,6 +1,6 @@
-import type { Preview } from "@storybook/react-vite";
-import React, { useEffect } from "react";
-import "../src/globals.css";
+import type { Preview } from '@storybook/react-vite';
+import { useEffect } from 'react';
+import '../src/globals.css';
 
 const preview: Preview = {
   parameters: {
@@ -25,8 +25,8 @@ const preview: Preview = {
         title: 'Dark Mode',
         icon: 'moon',
         items: [
-            { value: false, title: 'Light', icon: 'sun' },
-            { value: true, title: 'Dark', icon: 'moon' },
+          { value: false, title: 'Light', icon: 'sun' },
+          { value: true, title: 'Dark', icon: 'moon' },
         ],
         dynamicTitle: true,
       },

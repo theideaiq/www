@@ -1,9 +1,10 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
-import { logAdminAction } from '@/lib/audit';
 import { revalidatePath } from 'next/cache';
+import { logAdminAction } from '@/lib/audit';
+import { createClient } from '@/lib/supabase/server';
 
+// biome-ignore lint/suspicious/noExplicitAny: Product data type is loose
 export async function createProduct(data: any) {
   const supabase = await createClient();
   const { data: product, error } = await supabase
@@ -14,11 +15,15 @@ export async function createProduct(data: any) {
 
   if (error) throw new Error(error.message);
 
-  await logAdminAction('create_product', 'inventory', { product_id: product.id, name: data.name });
+  await logAdminAction('create_product', 'inventory', {
+    product_id: product.id,
+    name: data.name,
+  });
   revalidatePath('/products');
   return product;
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: Product data type is loose
 export async function updateProduct(id: string, updates: any) {
   const supabase = await createClient();
   const { error } = await supabase
@@ -28,7 +33,10 @@ export async function updateProduct(id: string, updates: any) {
 
   if (error) throw new Error(error.message);
 
-  await logAdminAction('update_product', 'inventory', { product_id: id, updates });
+  await logAdminAction('update_product', 'inventory', {
+    product_id: id,
+    updates,
+  });
   revalidatePath('/products');
 }
 
@@ -41,16 +49,16 @@ export async function updateStock(id: string, newCount: number) {
 
   if (error) throw new Error(error.message);
 
-  await logAdminAction('update_stock', 'inventory', { product_id: id, new_stock: newCount });
+  await logAdminAction('update_stock', 'inventory', {
+    product_id: id,
+    new_stock: newCount,
+  });
   revalidatePath('/products');
 }
 
 export async function deleteProduct(id: string) {
   const supabase = await createClient();
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', id);
+  const { error } = await supabase.from('products').delete().eq('id', id);
 
   if (error) throw new Error(error.message);
 

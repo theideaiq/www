@@ -1,7 +1,5 @@
 'use client';
 
-// UI Kit
-import { env } from '@/env';
 import { Badge, Button } from '@repo/ui';
 import { createClient } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
@@ -9,6 +7,8 @@ import { BookOpen, Check, Gamepad2, Loader2, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useState } from 'react';
 import { toast } from 'react-hot-toast';
+// UI Kit
+import { env } from '@/env';
 
 interface Tier {
   id: string;

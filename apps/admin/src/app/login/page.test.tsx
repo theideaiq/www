@@ -1,9 +1,9 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import LoginPage from './page';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import toast from 'react-hot-toast';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createClient } from '@/lib/supabase/client';
+import LoginPage from './page';
 
 // Mock Next.js navigation
 vi.mock('next/navigation', () => ({
@@ -30,7 +30,9 @@ vi.mock('@repo/ui', () => ({
       {isLoading ? 'Loading...' : children}
     </button>
   ),
-  Card: ({ children, className }: any) => <div className={className}>{children}</div>,
+  Card: ({ children, className }: any) => (
+    <div className={className}>{children}</div>
+  ),
   Input: ({ label, ...props }: any) => (
     <label>
       {label}
@@ -66,7 +68,7 @@ describe('LoginPage', () => {
     signInData: any,
     signInError: any,
     profileData: any,
-    profileError: any
+    profileError: any,
   ) => {
     mockSupabase.auth.signInWithPassword.mockResolvedValue({
       data: signInData,
@@ -95,13 +97,17 @@ describe('LoginPage', () => {
       { user: { id: 'user-123' } },
       null,
       { role: 'superadmin' },
-      null
+      null,
     );
 
     render(<LoginPage />);
 
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'admin@example.com' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'admin@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: 'password' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
     await waitFor(() => {
@@ -115,13 +121,17 @@ describe('LoginPage', () => {
       { user: { id: 'user-123' } },
       null,
       { role: 'Admin' }, // Capitalized to test case insensitivity
-      null
+      null,
     );
 
     render(<LoginPage />);
 
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'admin@example.com' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'admin@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: 'password' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
     await waitFor(() => {
@@ -135,17 +145,23 @@ describe('LoginPage', () => {
       { user: { id: 'user-123' } },
       null,
       null, // Profile not found
-      null
+      null,
     );
 
     render(<LoginPage />);
 
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'user@example.com' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'user@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: 'password' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Profile not found for this user.');
+      expect(toast.error).toHaveBeenCalledWith(
+        'Profile not found for this user.',
+      );
       expect(mockSupabase.auth.signOut).toHaveBeenCalled();
     });
   });
@@ -155,17 +171,23 @@ describe('LoginPage', () => {
       { user: { id: 'user-123' } },
       null,
       null,
-      { message: 'Database connection error' } // Profile fetch error
+      { message: 'Database connection error' }, // Profile fetch error
     );
 
     render(<LoginPage />);
 
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'user@example.com' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'user@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: 'password' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Failed to verify permissions: Database connection error');
+      expect(toast.error).toHaveBeenCalledWith(
+        'Failed to verify permissions: Database connection error',
+      );
       expect(mockSupabase.auth.signOut).toHaveBeenCalled();
     });
   });
@@ -175,17 +197,23 @@ describe('LoginPage', () => {
       { user: { id: 'user-123' } },
       null,
       { role: 'user' },
-      null
+      null,
     );
 
     render(<LoginPage />);
 
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'user@example.com' } });
-    fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password' } });
+    fireEvent.change(screen.getByLabelText(/Email/i), {
+      target: { value: 'user@example.com' },
+    });
+    fireEvent.change(screen.getByLabelText(/Password/i), {
+      target: { value: 'password' },
+    });
     fireEvent.click(screen.getByRole('button', { name: /Sign In/i }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Access Denied: Admin privileges required. Found role: user');
+      expect(toast.error).toHaveBeenCalledWith(
+        'Access Denied: Admin privileges required. Found role: user',
+      );
       expect(mockSupabase.auth.signOut).toHaveBeenCalled();
     });
   });

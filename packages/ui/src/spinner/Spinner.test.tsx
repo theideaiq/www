@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { PageLoader, Spinner } from './Spinner';
+import { PageLoader, Spinner } from '.';
 
 describe('Spinner', () => {
   it('renders correctly', () => {

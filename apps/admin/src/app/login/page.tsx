@@ -47,9 +47,10 @@ export default function LoginPage() {
         .maybeSingle();
 
       if (profileError) {
-        console.error('Profile fetch error:', profileError);
         await supabase.auth.signOut();
-        throw new Error(`Failed to verify permissions: ${profileError.message}`);
+        throw new Error(
+          `Failed to verify permissions: ${profileError.message}`,
+        );
       }
 
       if (!profile) {
@@ -62,7 +63,9 @@ export default function LoginPage() {
 
       if (roleNormalized !== 'admin' && roleNormalized !== 'superadmin') {
         await supabase.auth.signOut();
-        throw new Error(`Access Denied: Admin privileges required. Found role: ${role}`);
+        throw new Error(
+          `Access Denied: Admin privileges required. Found role: ${role}`,
+        );
       }
 
       toast.success('Welcome back, Admin');

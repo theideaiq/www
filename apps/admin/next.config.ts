@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'i.ytimg.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+      },
     ],
   },
   async headers() {
@@ -37,7 +41,7 @@ const nextConfig: NextConfig = {
 
     const csp = [
       "default-src 'self'",
-      `img-src 'self' data: blob: images.unsplash.com i.ytimg.com ${supabaseDomain}`,
+      `img-src 'self' data: blob: images.unsplash.com i.ytimg.com ui-avatars.com ${supabaseDomain}`,
       "style-src 'self' 'unsafe-inline'",
       `connect-src 'self' ${supabaseDomain}`,
       "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // unsafe-eval needed for Next.js in dev, unsafe-inline for scripts
@@ -79,5 +83,19 @@ const nextConfig: NextConfig = {
     ];
   },
 };
+
+// Add Supabase URL to remotePatterns if available
+if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+  try {
+    const url = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL);
+    nextConfig.images?.remotePatterns?.push({
+      protocol: 'https',
+      hostname: url.hostname,
+    });
+  } catch (e) {
+    // biome-ignore lint/suspicious/noConsole: Build time error
+    console.warn('Failed to add Supabase URL to images.remotePatterns', e);
+  }
+}
 
 export default withAnalyzer(nextConfig);

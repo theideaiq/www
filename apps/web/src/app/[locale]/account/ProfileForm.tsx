@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { updateProfile } from '@/actions/account';
 import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { updateProfile } from '@/actions/account';
 
+// biome-ignore lint/suspicious/noExplicitAny: Profile type is loose for now
 export default function ProfileForm({ profile }: { profile: any }) {
   const t = useTranslations('Account');
   const [loading, setLoading] = useState(false);
@@ -14,17 +15,23 @@ export default function ProfileForm({ profile }: { profile: any }) {
     try {
       await updateProfile(formData);
       toast.success('Profile updated');
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <form action={handleSubmit} className="bg-white p-6 rounded-lg shadow border border-slate-100 max-w-md">
+    <form
+      action={handleSubmit}
+      className="bg-white p-6 rounded-lg shadow border border-slate-100 max-w-md"
+    >
       <div className="mb-4">
-        <label htmlFor="fullName" className="block text-sm font-medium text-slate-700 mb-1">
+        <label
+          htmlFor="fullName"
+          className="block text-sm font-medium text-slate-700 mb-1"
+        >
           Full Name
         </label>
         <input

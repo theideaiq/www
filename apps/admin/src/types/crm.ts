@@ -18,7 +18,7 @@ export interface MarketingSegment {
   criteria: {
     role?: string;
     crm_status?: CRMStatus;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   created_at: string;
 }

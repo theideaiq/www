@@ -1,6 +1,6 @@
+import path from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
-import path from 'path';
 
 // Load environment variables from .env.local or .env
 // We assume this script is run from the root or we point to the right file.
@@ -21,6 +21,7 @@ if (!supabaseUrl || (!supabaseKey && !supabaseServiceKey)) {
 }
 
 // Use Service Key if available to bypass RLS, otherwise Anon Key (might fail if RLS blocks inserts)
+// biome-ignore lint/style/noNonNullAssertion: Checked above
 const supabase = createClient(supabaseUrl, supabaseServiceKey || supabaseKey!);
 
 // Mock Data copied from apps/web/src/services/products.ts to avoid importing ts files directly in a script if tsconfig/modules are tricky

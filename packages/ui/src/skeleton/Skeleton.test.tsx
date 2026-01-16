@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Skeleton } from './Skeleton';
+import { Skeleton } from '.';
 
 describe('Skeleton', () => {
   it('renders correctly', () => {

@@ -17,7 +17,8 @@
       "!**/public",
       "!**/.turbo",
       "!**/coverage",
-      "!**/src/app/globals.css"
+      "!**/src/app/globals.css",
+      "!**/packages/ui/src/globals.css"
     ]
   },
   "formatter": {

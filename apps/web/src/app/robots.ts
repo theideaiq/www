@@ -1,5 +1,5 @@
-import { env } from '@/env';
 import type { MetadataRoute } from 'next';
+import { env } from '@/env';
 
 export const dynamic = 'force-static';
 

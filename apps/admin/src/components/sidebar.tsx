@@ -2,7 +2,6 @@
 
 import { cn } from '@repo/utils';
 import {
-  BarChart3,
   BadgeDollarSign,
   LayoutDashboard,
   Loader2,
@@ -14,8 +13,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
 import { type ComponentProps, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
 
 const sidebarItems = [
   {
