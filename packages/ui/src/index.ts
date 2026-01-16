@@ -1,10 +1,10 @@
 export * from './Badge';
 export * from './Button';
 export * from './Card';
-export { default as GlobalLoader } from './GlobalLoader';
 export * from './Input';
 export * from './Modal';
 export * from './Select';
 export * from './Sheet';
+export * from './skeleton/Skeleton';
 export * from './Spinner';
 export * from './Textarea';

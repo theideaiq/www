@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Cairo, Poppins } from 'next/font/google';
 import '../globals.css';
 import { GoogleTagManager } from '@next/third-parties/google';
-import { GlobalLoader } from '@repo/ui';
 import { notFound } from 'next/navigation';
 // NEW: Imports for translation data
 import { NextIntlClientProvider } from 'next-intl';
@@ -98,7 +97,6 @@ export default async function LocaleLayout({ children, params }: Props) {
         {/* 3. Wrap everything in the Client Provider */}
         <NextIntlClientProvider locale={locale} messages={messages}>
           <QueryProvider>
-            <GlobalLoader />
             <SkipLink />
             <ToastProvider />
             <Navbar locale={locale} />
