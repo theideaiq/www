@@ -1,18 +1,15 @@
 'use client';
 
 import { env } from '@/env';
+import { createClient } from '@/lib/supabase/client';
 import { Button, Card, Input } from '@repo/ui';
-import { createClient } from '@supabase/supabase-js';
 import { ArrowRight, Chrome, Lock } from 'lucide-react'; // Added Chrome icon for Google
 import { useRouter } from 'next/navigation';
 import type React from 'react';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
-const supabase = createClient(
-  env.NEXT_PUBLIC_SUPABASE_URL,
-  env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
+const supabase = createClient();
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

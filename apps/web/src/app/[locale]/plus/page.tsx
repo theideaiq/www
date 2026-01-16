@@ -2,8 +2,8 @@
 
 // UI Kit
 import { env } from '@/env';
+import { createClient } from '@/lib/supabase/client';
 import { Badge, Button } from '@repo/ui';
-import { createClient } from '@supabase/supabase-js';
 import { motion } from 'framer-motion';
 import { BookOpen, Check, Gamepad2, Loader2, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -23,10 +23,7 @@ interface Tier {
   textColor?: string;
 }
 
-const supabase = createClient(
-  env.NEXT_PUBLIC_SUPABASE_URL,
-  env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
+const supabase = createClient();
 
 export default function PlusHome() {
   const router = useRouter();
