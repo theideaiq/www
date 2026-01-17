@@ -1,8 +1,23 @@
 {
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "extends": ["./packages/config/biome.json"],
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": [
+      "**/node_modules",
+      "**/.next",
+      "**/out",
+      "**/build",
+      "**/dist",
+      "**/public",
+      "**/.turbo",
+      "**/coverage",
+      "**/src/app/globals.css"
+    ]
   }
 }
