@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { createMiddlewareClient } from '@/lib/supabase/middleware';
 import type { UserRole } from '@/types/auth';
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { supabase, response } = await createMiddlewareClient(request);
   const path = request.nextUrl.pathname;
 
@@ -109,6 +109,8 @@ export async function proxy(request: NextRequest) {
 
   return response;
 }
+
+export default middleware;
 
 export const config = {
   matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
