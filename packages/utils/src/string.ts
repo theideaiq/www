@@ -1,11 +1,6 @@
 /**
  * Safely decodes HTML entities in a string.
- * This is useful for displaying text from APIs (like YouTube) that return encoded HTML.
- * Note: When using this in a React component, render the result directly (e.g. <div>{decoded}</div>).
- * React will automatically escape the characters, preventing XSS.
- * DO NOT use this result with dangerouslySetInnerHTML.
  */
-
 const ENTITIES: Record<string, string> = {
   '&amp;': '&',
   '&lt;': '<',
@@ -17,7 +12,6 @@ const ENTITIES: Record<string, string> = {
 };
 
 const ENTITY_REGEX = /&[a-zA-Z0-9#]+;/g;
-// ⚡ Bolt Optimization: Hoist regex to avoid re-compilation and use .test() for performance
 const NUMERIC_ENTITY_REGEX = /^&#\d+;$/;
 
 export function decodeHtmlEntities(text: string): string {
@@ -28,9 +22,21 @@ export function decodeHtmlEntities(text: string): string {
 
     // Handle numeric entities
     if (NUMERIC_ENTITY_REGEX.test(match)) {
-      return String.fromCharCode(Number.parseInt(match.slice(2, -1), 10));
+      // ⚡ Optimization: Use fromCodePoint for Emoji/Astral support
+      return String.fromCodePoint(Number.parseInt(match.slice(2, -1), 10));
     }
 
     return match;
   });
+}
+
+// ⚡ Add this helper for your E-commerce slugs
+export function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')     // Replace spaces with -
+    .replace(/[^\w\-]+/g, '') // Remove all non-word chars
+    .replace(/\-\-+/g, '-');  // Replace multiple - with single -
 }
