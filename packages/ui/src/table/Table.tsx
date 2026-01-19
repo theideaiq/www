@@ -1,6 +1,9 @@
 import { cn } from '@repo/utils';
 import * as React from 'react';
 
+/**
+ * A responsive table component.
+ */
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>

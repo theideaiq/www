@@ -11,9 +11,17 @@ const ENTITIES: Record<string, string> = {
   '&apos;': "'",
 };
 
+// Pre-compiled regex for performance (avoids recompilation in loops).
 const ENTITY_REGEX = /&[a-zA-Z0-9#]+;/g;
 const NUMERIC_ENTITY_REGEX = /^&#\d+;$/;
 
+/**
+ * Decodes HTML entities in a string to their corresponding characters.
+ * Handles named entities and numeric entities (decimal).
+ *
+ * @param text - The string containing HTML entities.
+ * @returns The decoded string.
+ */
 export function decodeHtmlEntities(text: string): string {
   if (!text) return '';
 
@@ -22,7 +30,7 @@ export function decodeHtmlEntities(text: string): string {
 
     // Handle numeric entities
     if (NUMERIC_ENTITY_REGEX.test(match)) {
-      // ⚡ Optimization: Use fromCodePoint for Emoji/Astral support
+      // Use fromCodePoint for Emoji/Astral support
       return String.fromCodePoint(Number.parseInt(match.slice(2, -1), 10));
     }
 
@@ -30,7 +38,15 @@ export function decodeHtmlEntities(text: string): string {
   });
 }
 
-// ⚡ Add this helper for your E-commerce slugs
+/**
+ * Converts a string into a URL-friendly slug.
+ *
+ * @param text - The text to slugify.
+ * @returns The slugified string.
+ *
+ * @example
+ * slugify("Hello World!") // -> "hello-world"
+ */
 export function slugify(text: string): string {
   return text
     .toString()

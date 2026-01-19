@@ -3,6 +3,13 @@ import { createClient } from '@/lib/supabase/server';
 const WINDOW_SIZE_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS = 5; // 5 requests per minute
 
+/**
+ * Checks if a specific key has exceeded the rate limit.
+ * Implements a sliding window strategy using Supabase.
+ *
+ * @param key - The unique key to rate limit (e.g., user ID or IP).
+ * @returns A promise resolving to `true` if allowed, `false` if blocked.
+ */
 export async function checkRateLimit(key: string): Promise<boolean> {
   const supabase = await createClient();
 
@@ -30,7 +37,7 @@ export async function checkRateLimit(key: string): Promise<boolean> {
   const timeDiff = now.getTime() - lastRequest.getTime();
 
   if (timeDiff > WINDOW_SIZE_MS) {
-    // Reset
+    // Reset window
     await supabase
       .from('rate_limits')
       .update({
@@ -45,7 +52,7 @@ export async function checkRateLimit(key: string): Promise<boolean> {
     return false;
   }
 
-  // Increment
+  // Increment count
   await supabase
     .from('rate_limits')
     .update({

@@ -21,11 +21,12 @@ export default function PlusBrowsePage() {
   const [rentingId, setRentingId] = useState<number | null>(null);
 
   const fetchCatalog = useCallback(async () => {
-    // 1. Fetch the items from the catalog table
+    // Optimized selection to fetch only used fields
     const { data, error } = await supabase
       .from('rental_catalog')
-      .select('*')
+      .select('id, title, category, daily_rate, image_url, description')
       .order('id');
+
     if (error) Logger.error('Browse Page Error:', error);
     setItems(data || []);
     setLoading(false);
@@ -184,10 +185,8 @@ function CategoryRow({ title, items, onRent, rentingId, icon }: any) {
                   {item.description}
                 </p>
                 <Button
-                  // REMOVED size="sm" - Fixed the build error
                   onClick={() => onRent(item)}
                   isLoading={rentingId === item.id}
-                  // Added "h-9 text-sm" here to make it small manually
                   className="w-full h-9 text-sm bg-white text-black hover:bg-brand-pink hover:text-white"
                 >
                   {rentingId === item.id ? 'Requesting...' : 'Rent Now'}
@@ -204,7 +203,6 @@ function CategoryRow({ title, items, onRent, rentingId, icon }: any) {
                 <span className="text-xs text-brand-yellow font-bold">
                   {item.daily_rate.toLocaleString()} IQD/day
                 </span>
-                {/* Changed variant to 'neutral' and kept the border classes to simulate outline */}
                 <Badge
                   variant="neutral"
                   className="text-[10px] bg-transparent border border-slate-600 text-slate-400 py-0 h-5"

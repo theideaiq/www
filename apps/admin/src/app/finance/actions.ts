@@ -21,6 +21,9 @@ interface PnLResult {
   breakdown: Record<string, number>; // Category breakdown
 }
 
+/**
+ * Calculates Profit and Loss for a given period.
+ */
 export async function getProfitAndLoss(
   startDate: string,
   endDate: string,
@@ -102,13 +105,27 @@ export async function getProfitAndLoss(
 export async function getLedgerEntries(): Promise<LedgerTransaction[]> {
   const supabase = await createClient();
 
+  // Optimized selection to avoid fetching unused fields (e.g. metadata blobs)
   const { data, error } = await supabase
     .from('ledger_entries')
     .select(`
-      *,
+      id,
+      transaction_date,
+      description,
+      reference_id,
       lines:ledger_lines (
-        *,
-        account:chart_of_accounts (*)
+        id,
+        entry_id,
+        account_id,
+        debit,
+        credit,
+        account:chart_of_accounts (
+          id,
+          code,
+          name,
+          type,
+          category
+        )
       )
     `)
     .order('transaction_date', { ascending: false });
@@ -126,7 +143,7 @@ export async function getChartOfAccounts(): Promise<ChartOfAccount[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('chart_of_accounts')
-    .select('*')
+    .select('id, code, name, type, category')
     .order('code');
   if (error) redirect('/login');
   return data as ChartOfAccount[];
@@ -150,7 +167,7 @@ export async function createJournalEntry(
       transaction_date: date,
       description,
     })
-    .select()
+    .select('id, transaction_date, description')
     .single();
 
   if (entryError) redirect('/login');
@@ -186,7 +203,7 @@ export async function getStaff(): Promise<HRStaffPlan[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('hr_staff_plan')
-    .select('*')
+    .select('id, role_title, department, monthly_salary, annual_increase_pct, status')
     .order('role_title');
   if (error) redirect('/login');
   return data as HRStaffPlan[];
@@ -229,8 +246,8 @@ export async function getEquityData(): Promise<EquityData> {
   const supabase = await createClient();
 
   const [holdersResult, roundsResult] = await Promise.all([
-    supabase.from('equity_holders').select('*'),
-    supabase.from('equity_rounds').select('*'),
+    supabase.from('equity_holders').select('id, name, type, round_id, shares_owned, vesting_start_date'),
+    supabase.from('equity_rounds').select('id, name, valuation_cap, price_per_share'),
   ]);
 
   if (holdersResult.error || roundsResult.error) redirect('/login');

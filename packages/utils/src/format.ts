@@ -2,7 +2,13 @@
 
 /**
  * Format a number as currency.
- * Usage: formatCurrency(50000, 'IQD') -> "IQD 50,000"
+ *
+ * @param amount - The numerical amount to format.
+ * @param currency - The currency code (default: 'USD').
+ * @returns The formatted currency string.
+ *
+ * @example
+ * formatCurrency(50000, 'IQD') // -> "IQD 50,000"
  */
 export function formatCurrency(
   amount: number,
@@ -17,8 +23,10 @@ export function formatCurrency(
 }
 
 /**
- * Format a date string to a readable standard.
- * Usage: formatDate('2026-01-15') -> "Jan 15, 2026"
+ * Format a date string or object to a readable standard.
+ *
+ * @param date - The date to format (string or Date object).
+ * @returns A formatted date string (e.g., "Jan 15, 2026").
  */
 export function formatDate(date: string | Date): string {
   if (!date) return '';
@@ -31,7 +39,12 @@ export function formatDate(date: string | Date): string {
 
 /**
  * Format a number with compact notation.
- * Usage: formatCompactNumber(1500000) -> "1.5M"
+ *
+ * @param number - The number to format.
+ * @returns The compact string representation (e.g., "1.5M").
+ *
+ * @example
+ * formatCompactNumber(1500000) // -> "1.5M"
  */
 export function formatCompactNumber(number: number): string {
   return Intl.NumberFormat('en-US', {

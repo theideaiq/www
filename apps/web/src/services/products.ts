@@ -1,4 +1,6 @@
-// Mock Data (The Marketplace)
+// Mock Data for marketplace products.
+// TODO: Replace with database queries when the backend is ready.
+
 export const PRODUCTS = [
   {
     id: 1,
@@ -74,6 +76,12 @@ export const PRODUCTS = [
   },
 ];
 
+/**
+ * Fetches a list of available products.
+ * Currently returns mock data with a simulated delay.
+ *
+ * @returns A promise resolving to an array of products.
+ */
 export async function getProducts() {
   await new Promise((resolve) => setTimeout(resolve, 500));
   return PRODUCTS;
