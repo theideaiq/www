@@ -37,9 +37,17 @@ const buttonVariants = cva(
 interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
+  /**
+   * If true, displays a loading spinner and hides the button content (except for the spinner).
+   * Automatically disables the button.
+   */
   isLoading?: boolean;
 }
 
+/**
+ * Primary UI button component.
+ * Supports various variants, sizes, and a loading state.
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, isLoading, children, disabled, ...props }, ref) => {
     return (
@@ -50,6 +58,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {/* Hide children when loading to avoid double-icon issues (e.g. spinner + original icon) */}
         {!isLoading && children}
       </button>
     );

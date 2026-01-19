@@ -1,5 +1,13 @@
 import { createClient } from '@/lib/supabase/server';
+import { Logger } from '@repo/utils';
 
+/**
+ * Logs an administrative action to the audit table.
+ *
+ * @param action - The action performed (e.g., 'update_user', 'delete_post').
+ * @param resource - The target resource identifier (e.g., user ID).
+ * @param details - Optional JSON object with additional context.
+ */
 export async function logAdminAction(
   action: string,
   resource: string,
@@ -23,6 +31,11 @@ export async function logAdminAction(
     });
 
     if (error) {
+      // Silently log error to console to prevent disrupting the admin flow
+      Logger.error('Failed to write audit log', error);
     }
-  } catch (_err) {}
+  } catch (err) {
+    // Silently catch exceptions
+    Logger.error('Unexpected error in audit logging', err);
+  }
 }

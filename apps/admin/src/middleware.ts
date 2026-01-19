@@ -2,7 +2,11 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { createMiddlewareClient } from '@/lib/supabase/middleware';
 import type { UserRole } from '@/types/auth';
 
-export async function proxy(request: NextRequest) {
+/**
+ * Global middleware for authentication and rate limiting.
+ * Runs on every request except static assets.
+ */
+export async function middleware(request: NextRequest) {
   const { supabase, response } = await createMiddlewareClient(request);
   const path = request.nextUrl.pathname;
 
@@ -14,9 +18,10 @@ export async function proxy(request: NextRequest) {
     // without a data proxy. Here we rely on Supabase JS client.
     try {
       const now = new Date();
+      // Optimized selection: only need last_request and count
       const { data: limit } = await supabase
         .from('rate_limits')
-        .select('*')
+        .select('last_request, count')
         .eq('key', ip)
         .single();
 
@@ -47,7 +52,9 @@ export async function proxy(request: NextRequest) {
           .from('rate_limits')
           .insert({ key: ip, count: 1, last_request: now.toISOString() });
       }
-    } catch (_e) {}
+    } catch (_e) {
+      // Silently fail rate limiting errors to avoid blocking legitimate users if DB is slow
+    }
   }
 
   // Check auth
@@ -62,6 +69,7 @@ export async function proxy(request: NextRequest) {
 
   if (user) {
     // Check role and banned status
+    // Optimized selection: only need role and banned status
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('role, banned')

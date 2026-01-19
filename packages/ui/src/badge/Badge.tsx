@@ -4,11 +4,20 @@ import type React from 'react';
 type BadgeVariant = 'success' | 'warning' | 'danger' | 'neutral' | 'brand';
 
 interface BadgeProps {
+  /** The content to be displayed inside the badge. */
   children: React.ReactNode;
+  /** The visual style variant of the badge. Defaults to 'neutral'. */
   variant?: BadgeVariant;
-  className?: string; // <--- This was missing!
+  /** Additional CSS classes to apply to the badge. */
+  className?: string;
 }
 
+/**
+ * A small status indicator component.
+ *
+ * @example
+ * <Badge variant="success">Completed</Badge>
+ */
 export function Badge({
   children,
   variant = 'neutral',

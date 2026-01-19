@@ -1,6 +1,9 @@
 import { cn } from '@repo/utils';
 import * as React from 'react';
 
+/**
+ * A container component for grouping related content and actions.
+ */
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
