@@ -11,3 +11,5 @@ export * from './skeleton/Skeleton';
 export * from './spinner/Spinner';
 export * from './table/Table';
 export * from './textarea/Textarea';
+export * from './navbar/Navbar';
+export * from './footer/Footer';

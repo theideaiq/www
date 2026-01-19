@@ -2,5 +2,27 @@
   "name": "@repo/config",
   "version": "0.0.0",
   "private": true,
-  "files": ["biome.json", "tsconfig.json", "postcss.config.mjs"]
+  "exports": {
+    ".": "./src/index.ts",
+    "./navigation": "./src/navigation.ts",
+    "./tsconfig.json": "./tsconfig.json",
+    "./postcss.config.mjs": "./postcss.config.mjs"
+  },
+  "files": [
+    "biome.json",
+    "tsconfig.json",
+    "postcss.config.mjs",
+    "src"
+  ],
+  "scripts": {
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.11",
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
+  }
 }

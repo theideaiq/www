@@ -63,5 +63,32 @@
     "save": "Save Changes",
     "returnInstructions": "Return Instructions",
     "returnText": "Please return this item to our nearest kiosk or mail it back using the prepaid label."
+  },
+  "Footer": {
+    "brand_desc": "Baghdad's premier digital ecosystem. Shopping, Rentals, Education, and Corporate Solutions in one unified platform.",
+    "col_shop": "Shop & Play",
+    "col_services": "Services",
+    "col_support": "Support",
+    "col_legal": "Legal",
+    "links": {
+      "megastore": "Megastore",
+      "plus": "IDEA Plus",
+      "games": "Games",
+      "consoles": "Consoles",
+      "academy": "The Academy",
+      "suite": "IDEA Suite (B2B)",
+      "careers": "Careers",
+      "about": "Our Story",
+      "contact": "Contact Us",
+      "help": "Help Center",
+      "account": "My Account",
+      "admin": "Staff Login",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "refund": "Refund Policy"
+    },
+    "copyright": "© 2026 The IDEA IQ.",
+    "rights": "All content, games titles, trade names and/or trade dress, trademarks, artwork and associated imagery are trademarks and/or copyright material of their respective owners. All rights reserved.",
+    "location": "Iraq (English)"
   }
 }

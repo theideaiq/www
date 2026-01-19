@@ -1,20 +1,24 @@
 import type { Metadata } from 'next';
 import { Cairo, Poppins } from 'next/font/google';
 import '../globals.css';
-import { GoogleTagManager } from '@next/third-parties/google';
-import { webEnv as env } from '@repo/env/web';
-import { notFound } from 'next/navigation';
-// NEW: Imports for translation data
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
-import Footer from '@/components/layout/Footer';
-import Navbar from '@/components/layout/Navbar';
+import { DesktopActions, MobileActions } from '@/components/layout/NavbarActions';
 import SkipLink from '@/components/layout/SkipLink';
 import QueryProvider from '@/components/providers/QueryProvider';
 import ToastProvider from '@/components/providers/ToastProvider';
 import BreadcrumbJsonLd from '@/components/seo/BreadcrumbJsonLd';
 import JsonLd from '@/components/seo/JsonLd';
-import { routing } from '@/i18n/navigation';
+import { Link, routing } from '@/i18n/navigation';
+import { GoogleTagManager } from '@next/third-parties/google';
+import { webNavigation } from '@repo/config/navigation';
+import { webEnv as env } from '@repo/env/web';
+import { SocialIcon } from '@repo/ui';
+import { WebFooter } from '@/components/layout/WebFooter';
+import { WebNavbar } from '@/components/layout/WebNavbar';
+import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations, setRequestLocale } from 'next-intl/server';
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -81,9 +85,96 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   // 2. Fetch the messages (JSON files) for the client side
   const messages = await getMessages();
+  const t = await getTranslations();
 
   const dir = locale === 'ar' ? 'rtl' : 'ltr';
   const baseUrl = env.NEXT_PUBLIC_SITE_URL;
+
+  // Navigation Data
+  const navItems = webNavigation.map((item) => ({
+    label: t(item.labelKey),
+    href: item.href,
+  }));
+
+  // Footer Data
+  const footerBrand = {
+    logo: (
+      <Link href="/" className="relative w-8 h-8 block">
+        <Image
+          src="/icon.svg"
+          alt="IDEA Logo"
+          fill
+          className="object-contain"
+        />
+      </Link>
+    ),
+    description: t('Footer.brand_desc'),
+    socials: (
+      <>
+        <SocialIcon
+          href="/"
+          icon={<Instagram size={18} />}
+          label="Follow us on Instagram"
+        />
+        <SocialIcon
+          href="/"
+          icon={<Twitter size={18} />}
+          label="Follow us on Twitter"
+        />
+        <SocialIcon
+          href="/"
+          icon={<Linkedin size={18} />}
+          label="Follow us on LinkedIn"
+        />
+        <SocialIcon
+          href="/"
+          icon={<Facebook size={18} />}
+          label="Follow us on Facebook"
+        />
+      </>
+    ),
+  };
+
+  const footerColumns = [
+    {
+      title: t('Footer.col_shop'),
+      links: [
+        { label: t('Footer.links.megastore'), href: '/megastore' },
+        { label: t('Footer.links.plus'), href: '/plus' },
+        { label: t('Footer.links.games'), href: '/megastore?filter=Games' },
+        {
+          label: t('Footer.links.consoles'),
+          href: '/megastore?filter=Consoles',
+        },
+      ],
+    },
+    {
+      title: t('Footer.col_services'),
+      links: [
+        { label: t('Footer.links.academy'), href: '/academy' },
+        { label: t('Footer.links.suite'), href: '/suite' },
+        { label: t('Footer.links.careers'), href: '/careers' },
+        { label: t('Footer.links.about'), href: '/about' },
+      ],
+    },
+    {
+      title: t('Footer.col_support'),
+      links: [
+        { label: t('Footer.links.contact'), href: '/contact' },
+        { label: t('Footer.links.help'), href: '/faq' },
+        { label: t('Footer.links.account'), href: '/account' },
+        { label: t('Footer.links.admin'), href: '/admin' },
+      ],
+    },
+    {
+      title: t('Footer.col_legal'),
+      links: [
+        { label: t('Footer.links.terms'), href: '/legal/terms' },
+        { label: t('Footer.links.privacy'), href: '/legal/privacy' },
+        { label: t('Footer.links.refund'), href: '/legal/refund' },
+      ],
+    },
+  ];
 
   return (
     <html lang={locale} dir={dir}>
@@ -101,14 +192,48 @@ export default async function LocaleLayout({ children, params }: Props) {
           <QueryProvider>
             <SkipLink />
             <ToastProvider />
-            <Navbar locale={locale} />
+            <WebNavbar
+              logo={
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 p-2 rounded-lg focus-visible:ring-2 focus-visible:ring-brand-pink focus-visible:ring-offset-2 outline-none"
+                >
+                  <div className="relative w-10 h-10">
+                    <Image
+                      src="/icon.svg"
+                      alt="IDEA Logo"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                  <span className="text-2xl font-black tracking-tighter text-brand-dark">
+                    IDEA<span className="text-brand-yellow">.</span>
+                  </span>
+                </Link>
+              }
+              navItems={navItems}
+              desktopActions={<DesktopActions locale={locale} />}
+              mobileActions={<MobileActions locale={locale} />}
+              labels={{
+                menuOpen: t('Nav.menu_open'),
+                menuClose: t('Nav.menu_close'),
+              }}
+            />
             <main
               id="main-content"
               className={dir === 'rtl' ? 'font-arabic' : 'font-sans'}
             >
               {children}
             </main>
-            <Footer />
+            <WebFooter
+              brand={footerBrand}
+              columns={footerColumns}
+              copyright={{
+                text: t('Footer.copyright'),
+                rights: t('Footer.rights'),
+                location: t('Footer.location'),
+              }}
+            />
           </QueryProvider>
         </NextIntlClientProvider>
       </body>
