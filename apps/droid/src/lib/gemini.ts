@@ -36,7 +36,7 @@ const tools: Tool[] = [
 ];
 
 const model = genAI.getGenerativeModel({
-  model: 'gemini-3.0-flash',
+  model: 'gemini-3-flash',
   tools: tools,
 });
 
