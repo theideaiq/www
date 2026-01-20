@@ -1,8 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createMiddlewareClient } from '@/lib/supabase/middleware';
-import type { UserRole } from '@/types/auth';
-import { ROLES } from '@/lib/constants';
 import { WINDOW_SIZE_MS } from '@/lib/rate-limit';
+import { hasAdminAccess } from '@/lib/auth-checks';
 
 /**
  * Global middleware for authentication and rate limiting.
@@ -95,8 +94,7 @@ export default async function proxy(request: NextRequest) {
       }
     }
 
-    const role = profile.role as UserRole;
-    if (role !== ROLES.ADMIN && role !== ROLES.SUPERADMIN) {
+    if (!hasAdminAccess(profile.role)) {
       if (path !== '/login') {
         return NextResponse.redirect(new URL('/login', request.url));
       }

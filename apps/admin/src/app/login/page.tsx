@@ -5,9 +5,8 @@ import { Lock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { ROLES } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
-import type { UserRole } from '@/types/auth';
+import { hasAdminAccess } from '@/lib/auth-checks';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -59,16 +58,10 @@ export default function LoginPage() {
         throw new Error('Profile not found for this user.');
       }
 
-      const role = profile.role as UserRole;
-      const roleNormalized = role?.toLowerCase();
-
-      if (
-        roleNormalized !== ROLES.ADMIN &&
-        roleNormalized !== ROLES.SUPERADMIN
-      ) {
+      if (!hasAdminAccess(profile.role)) {
         await supabase.auth.signOut();
         throw new Error(
-          `Access Denied: Admin privileges required. Found role: ${role}`,
+          `Access Denied: Admin privileges required. Found role: ${profile.role}`,
         );
       }
 
