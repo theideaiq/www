@@ -54,8 +54,11 @@ export function AppShell({
                   <span className="sr-only">Toggle Sidebar</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-64 bg-brand-deep p-0 text-white border-r-slate-800">
-                 {logo && (
+              <SheetContent
+                side="left"
+                className="w-64 bg-brand-deep p-0 text-white border-r-slate-800"
+              >
+                {logo && (
                   <div className="flex h-16 items-center px-6 border-b border-slate-800 mb-4">
                     {logo}
                   </div>
@@ -65,13 +68,14 @@ export function AppShell({
             </Sheet>
           </div>
 
-          <div className="flex items-center gap-4">
-            {userNav}
-          </div>
+          <div className="flex items-center gap-4">{userNav}</div>
         </header>
 
         {/* Page Content */}
-        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+        <main
+          id="main-content"
+          className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8"
+        >
           {children}
         </main>
       </div>

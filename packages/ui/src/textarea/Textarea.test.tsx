@@ -21,9 +21,19 @@ describe('Textarea', () => {
 
   it('shows error message and error styles', () => {
     render(<Textarea error="Field required" />);
-    expect(screen.getByText('Field required')).toBeInTheDocument();
+    const errorMessage = screen.getByText('Field required');
+    expect(errorMessage).toBeInTheDocument();
+
     const textarea = screen.getByRole('textbox');
     expect(textarea).toHaveClass('border-red-500');
+    expect(textarea).toHaveAttribute('aria-invalid', 'true');
+    expect(textarea).toHaveAttribute('aria-describedby', errorMessage.id);
+  });
+
+  it('shows required indicator', () => {
+    render(<Textarea label="Bio" required />);
+    expect(screen.getByText('*')).toBeInTheDocument();
+    expect(screen.getByText('*')).toHaveClass('text-red-500');
   });
 
   it('applies custom className', () => {

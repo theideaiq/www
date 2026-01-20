@@ -49,7 +49,10 @@ interface ButtonProps
  * Supports various variants, sizes, and a loading state.
  */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, isLoading, children, disabled, ...props }, ref) => {
+  (
+    { className, variant, size, isLoading, children, disabled, ...props },
+    ref,
+  ) => {
     return (
       <button
         className={cn(buttonVariants({ variant, size, className }))}

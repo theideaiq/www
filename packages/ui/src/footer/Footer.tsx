@@ -40,15 +40,11 @@ export function Footer({ brand, columns, copyright, Link }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
-               {brand.logo}
-            </div>
+            <div className="flex items-center gap-2 mb-6">{brand.logo}</div>
             <p className="text-slate-400 text-sm mb-6 max-w-xs">
               {brand.description}
             </p>
-            <div className="flex gap-4">
-              {brand.socials}
-            </div>
+            <div className="flex gap-4">{brand.socials}</div>
           </div>
 
           {/* Links Columns */}
@@ -95,7 +91,11 @@ export function SocialIcon({
   href,
   icon,
   label,
-}: { href: string; icon: React.ReactNode; label: string }) {
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}) {
   return (
     <a
       href={href}
