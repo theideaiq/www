@@ -7,20 +7,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = env.NEXT_PUBLIC_SITE_URL;
 
   // Core routes of your application
+  // Updated to match navigation constants and actual pages
   const routes = [
     '',
-    '/jukebox',
-    '/club',
+    '/plus',
     '/academy',
-    '/business',
+    '/suite',
     '/megastore',
-    '/loyalty',
+    '/contact',
+    '/about',
   ];
 
   return routes.map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: route === '' ? 'yearly' : 'monthly',
+    changeFrequency: route === '' ? 'daily' : 'weekly',
     priority: route === '' ? 1 : 0.8,
   }));
 }
