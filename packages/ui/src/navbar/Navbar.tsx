@@ -49,18 +49,12 @@ export function Navbar({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center">
-             {logo}
-          </div>
+          <div className="flex-shrink-0 flex items-center">{logo}</div>
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-4">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={navLinkClasses}
-              >
+              <Link key={item.href} href={item.href} className={navLinkClasses}>
                 {item.label}
               </Link>
             ))}
@@ -101,9 +95,7 @@ export function Navbar({
               </Link>
             ))}
 
-            <div className="pt-6">
-                {mobileActions}
-            </div>
+            <div className="pt-6">{mobileActions}</div>
           </div>
         </div>
       )}

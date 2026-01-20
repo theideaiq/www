@@ -30,7 +30,7 @@ export function Input({
           htmlFor={inputId}
           className="block text-sm font-medium text-slate-700 mb-1.5"
         >
-          {label}
+          {label} {props.required && <span className="text-red-500">*</span>}
         </label>
       )}
       <div className="relative">

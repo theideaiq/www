@@ -41,4 +41,10 @@ describe('Input Component', () => {
     expect(input).toHaveAttribute('aria-describedby', 'email-error-test-error');
     expect(errorMessage).toHaveAttribute('id', 'email-error-test-error');
   });
+
+  it('shows required indicator', () => {
+    render(<Input label="Email" required />);
+    expect(screen.getByText('*')).toBeInTheDocument();
+    expect(screen.getByText('*')).toHaveClass('text-red-500');
+  });
 });

@@ -11,6 +11,8 @@ interface TextareaProps
 export function Textarea({ label, error, className, ...props }: TextareaProps) {
   const uniqueId = useId();
   const id = props.id || uniqueId;
+  const errorId = `${id}-error`;
+
   return (
     <div className="w-full">
       {label && (
@@ -18,11 +20,13 @@ export function Textarea({ label, error, className, ...props }: TextareaProps) {
           htmlFor={id}
           className="block text-sm font-medium text-slate-700 mb-1.5"
         >
-          {label}
+          {label} {props.required && <span className="text-red-500">*</span>}
         </label>
       )}
       <textarea
         id={id}
+        aria-invalid={!!error}
+        aria-describedby={error ? errorId : undefined}
         className={cn(
           'w-full px-4 py-3 rounded-lg border bg-white transition-all outline-none min-h-[120px] resize-y',
           error
@@ -32,7 +36,11 @@ export function Textarea({ label, error, className, ...props }: TextareaProps) {
         )}
         {...props}
       />
-      {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+      {error && (
+        <p id={errorId} className="mt-1 text-sm text-red-500">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
