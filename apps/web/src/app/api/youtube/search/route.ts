@@ -1,6 +1,6 @@
 import { Logger } from '@repo/utils';
 import { NextResponse } from 'next/server';
-import { searchYouTube } from '@/lib/youtube'; // Import from your new lib
+import { searchYouTube } from '@/services/youtube'; // Import from your new lib
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

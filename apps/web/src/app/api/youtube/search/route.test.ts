@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { searchYouTube } from '@/lib/youtube';
+import { searchYouTube } from '@/services/youtube';
 import { GET } from './route';
 
 // Mock the youtube library
-vi.mock('@/lib/youtube', () => ({
+vi.mock('@/services/youtube', () => ({
   searchYouTube: vi.fn(),
 }));
 
