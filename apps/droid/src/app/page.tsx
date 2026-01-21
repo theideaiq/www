@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Bot, Zap, Globe, Shield, Gamepad2, Send } from 'lucide-react';
 
