@@ -70,7 +70,11 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
       {
         accessorKey: 'full_name',
         header: 'Name',
-        cell: ({ row }) => <span className="font-medium text-slate-900">{row.original.full_name || 'N/A'}</span>,
+        cell: ({ row }) => (
+          <span className="font-medium text-slate-900">
+            {row.original.full_name || 'N/A'}
+          </span>
+        ),
       },
       {
         accessorKey: 'email',
@@ -131,7 +135,14 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => handleEdit(row.original)}
+            onClick={() => {
+              setEditingProfile(row.original);
+              setEditForm({
+                crm_status: row.original.crm_status || CRM_STATUSES.LEAD,
+                crm_tags: row.original.crm_tags?.join(', ') || '',
+              });
+              setIsSheetOpen(true);
+            }}
             className="h-8 w-8 text-slate-500 hover:text-brand-pink"
           >
             <Edit size={16} />
@@ -155,15 +166,6 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
       globalFilter,
     },
   });
-
-  const handleEdit = (profile: Profile) => {
-    setEditingProfile(profile);
-    setEditForm({
-      crm_status: profile.crm_status || CRM_STATUSES.LEAD,
-      crm_tags: profile.crm_tags?.join(', ') || '',
-    });
-    setIsSheetOpen(true);
-  };
 
   const handleSave = async () => {
     if (!editingProfile || !editForm) return;
@@ -193,8 +195,7 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
 
       toast.success('Profile updated');
       setIsSheetOpen(false);
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       toast.error('Failed to update profile');
     }
   };
@@ -263,10 +264,7 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                className="hover:bg-slate-50"
-              >
+              <TableRow key={row.id} className="hover:bg-slate-50">
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

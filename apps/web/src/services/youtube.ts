@@ -45,7 +45,7 @@ export interface FormattedVideo {
  * @returns Array of video objects with normalized duration
  */
 
-export async function searchYouTube(query: string): Promise<FormattedVideo[]> {
+export async function searchYouTube(_query: string): Promise<FormattedVideo[]> {
   // YOUTUBE_API_KEY removed as per request. Returning empty array.
   return [];
 }

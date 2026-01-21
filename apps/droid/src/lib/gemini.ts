@@ -53,17 +53,6 @@ function escapeIlikePattern(value: string): string {
 }
 
 async function searchProducts(query: string) {
-  // biome-ignore lint/suspicious/noConsole: logging is fine
-  const MAX_LOG_QUERY_LENGTH = 100;
-  const rawQuery = String(query);
-  const sanitizedQuery = rawQuery.replace(/[\r\n\t]/g, ' ');
-  const safeQueryForLog =
-    sanitizedQuery.length > MAX_LOG_QUERY_LENGTH
-      ? sanitizedQuery.slice(0, MAX_LOG_QUERY_LENGTH) + '…'
-      : sanitizedQuery;
-  console.log(
-    `Searching products for query (truncated if long): "${safeQueryForLog}"`,
-  );
   const escapedQuery = escapeIlikePattern(query);
   const { data, error } = await supabase
     .from('products')
@@ -72,11 +61,9 @@ async function searchProducts(query: string) {
     .limit(MAX_PRODUCT_SEARCH_RESULTS);
 
   if (error) {
-    // biome-ignore lint/suspicious/noConsole: logging is fine
-    console.error('Supabase search error:', error);
     const maybeErrorObject =
       typeof error === 'object'
-        ? (error as Record<string, unknown>)
+        ? (error as unknown as Record<string, unknown>)
         : null;
     const errorCode =
       maybeErrorObject && typeof maybeErrorObject.code === 'string'
@@ -116,6 +103,15 @@ export async function generateResponse(
       history: history,
       config: {
         tools: tools,
+        systemInstruction:
+          'You are Droid, the official AI assistant for The IDEA (Innovation for Every Aspect of Life). ' +
+          'You are helpful, professional, and knowledgeable about our ecosystem: ' +
+          '1. MegaStore (Gaming & Tech Retail) ' +
+          '2. Plus (Gaming Subscription Service) ' +
+          '3. Academy (Tech Education) ' +
+          '4. Suite (Business Solutions). ' +
+          'Always maintain a polite, modern, and concise tone. ' +
+          "If a user asks about product prices, stock, or availability, you MUST use the 'search_products' tool to find real-time data.",
       },
     });
 
@@ -132,11 +128,6 @@ export async function generateResponse(
             : undefined;
 
         if (!isValidSearchQuery(query)) {
-          // biome-ignore lint/suspicious/noConsole: logging is fine
-          console.error(
-            'Invalid arguments for search_products tool call:',
-            rawArgs,
-          );
           return "I couldn't understand the product you want to search for. Please try again with a clear product name or short description, for example: 'wireless headphones', 'iPhone 15 case', or '4K monitor'.";
         }
 
@@ -163,9 +154,6 @@ export async function generateResponse(
 
     return result.text || '';
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: logging is fine
-    console.error('Gemini Error:', error);
-
     // Derive a more specific, user-safe error message without exposing internal details.
     const err = error as unknown;
     let userMessage =
