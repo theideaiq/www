@@ -181,7 +181,15 @@ export async function getChartOfAccounts(): Promise<ChartOfAccount[]> {
     .select('id, code, name, type, category')
     .order('code');
   if (error) {
-    // Log the underlying error before redirecting for easier debugging
+  if (entryError) {
+    await logAdminAction('create_journal_entry_failed', 'finance', {
+      stage: 'entry_insert',
+      date,
+      description,
+      error: entryError.message ?? String(entryError),
+    });
+    redirect('/login');
+  }
     // biome-ignore lint/suspicious/noConsole: Log critical data fetching error
     console.error('Error fetching chart of accounts:', error);
     redirect('/login');
