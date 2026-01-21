@@ -292,6 +292,9 @@ importers:
       '@repo/env':
         specifier: workspace:*
         version: link:../../packages/env
+      '@repo/payment-engine':
+        specifier: workspace:*
+        version: link:../../packages/payment-engine
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -483,6 +486,19 @@ importers:
         version: 25.0.9
       typescript:
         specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/payment-engine:
+    dependencies:
+      '@repo/wayl':
+        specifier: workspace:*
+        version: link:../wayl
+    devDependencies:
+      '@repo/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: ^5.7.3
         version: 5.9.3
 
   packages/ui:

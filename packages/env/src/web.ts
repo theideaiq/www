@@ -13,6 +13,10 @@ export const webEnv = createEnv({
     WAYL_SECRET_KEY: z.string().min(1),
     /** Wayl Webhook Secret for signature verification */
     WAYL_WEBHOOK_SECRET: z.string().min(1),
+    /** Zain Payment Gateway API Key */
+    ZAIN_SECRET_KEY: z.string().min(1),
+    /** Supabase Service Role Key (Admin) */
+    SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   },
   client: {
     /** Supabase Project URL */
