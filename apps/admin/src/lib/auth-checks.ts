@@ -60,7 +60,7 @@ export async function requireSuperAdmin() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error('Unauthorized');
+    throw new Error('Authentication required: No user session found');
   }
 
   const { data: requester } = await supabase
