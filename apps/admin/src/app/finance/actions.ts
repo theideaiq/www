@@ -21,6 +21,30 @@ interface PnLResult {
   breakdown: Record<string, number>; // Category breakdown
 }
 
+interface LedgerLineWithJoins {
+  debit: number | string | null;
+  credit: number | string | null;
+  chart_of_accounts:
+    | {
+        name: string;
+        type: string;
+        category: string | null;
+      }
+    | Array<{
+        name: string;
+        type: string;
+        category: string | null;
+      }>
+    | null;
+  ledger_entries?:
+    | {
+        transaction_date: string;
+      }
+    | Array<{
+        transaction_date: string;
+      }>;
+}
+
 /**
  * Calculates Profit and Loss for a given period.
  */
@@ -59,7 +83,7 @@ export async function getProfitAndLoss(
   let expenses = 0;
   const breakdown: Record<string, number> = {};
 
-  lines.forEach((line: any) => {
+  lines.forEach((line: LedgerLineWithJoins) => {
     const rawAccount = line.chart_of_accounts;
     const account = Array.isArray(rawAccount) ? rawAccount[0] : rawAccount;
 
