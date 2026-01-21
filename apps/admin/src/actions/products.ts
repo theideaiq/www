@@ -2,10 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from '@/lib/audit';
-import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth-checks';
 
 export async function createProduct(data: any) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
   const { data: product, error } = await supabase
     .from('products')
     .insert(data)
@@ -23,7 +23,7 @@ export async function createProduct(data: any) {
 }
 
 export async function updateProduct(id: string, updates: any) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
   const { error } = await supabase
     .from('products')
     .update(updates)
@@ -39,7 +39,7 @@ export async function updateProduct(id: string, updates: any) {
 }
 
 export async function updateStock(id: string, newCount: number) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
   const { error } = await supabase
     .from('products')
     .update({ stock_count: newCount })
@@ -55,7 +55,7 @@ export async function updateStock(id: string, newCount: number) {
 }
 
 export async function deleteProduct(id: string) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
   const { error } = await supabase.from('products').delete().eq('id', id);
 
   if (error) throw new Error(error.message);

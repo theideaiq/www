@@ -1,14 +1,14 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth-checks';
 import type { CRMStatus } from '@/types/crm';
 
 export async function updateProfile(
   id: string,
   data: { crm_tags?: string[]; crm_status?: CRMStatus },
 ) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
 
   const { error } = await supabase.from('profiles').update(data).eq('id', id);
 

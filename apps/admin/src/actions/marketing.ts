@@ -2,13 +2,13 @@
 
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from '@/lib/audit';
-import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth-checks';
 
 export async function createSegment(
   name: string,
   criteria: Record<string, any>,
 ) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
 
   const { error } = await supabase
     .from('marketing_segments')
@@ -23,7 +23,7 @@ export async function createCampaign(
   segment_id: string,
   body_html: string,
 ) {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
 
   const { data, error } = await supabase
     .from('marketing_campaigns')

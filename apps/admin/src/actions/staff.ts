@@ -2,11 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 import { logAdminAction } from '@/lib/audit';
-import { createClient } from '@/lib/supabase/server';
+import { requireAdmin, requireSuperAdmin } from '@/lib/auth-checks';
 import type { UserRole } from '@/types/auth';
 
 export async function getStaff() {
-  const supabase = await createClient();
+  const { supabase } = await requireAdmin();
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -18,20 +18,7 @@ export async function getStaff() {
 }
 
 export async function updateRole(userId: string, newRole: UserRole) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
-
-  const { data: requester } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-  if (requester?.role !== 'superadmin') {
-    throw new Error('Only Superadmins can change roles');
-  }
+  const { supabase } = await requireSuperAdmin();
 
   const { error } = await supabase
     .from('profiles')
@@ -48,20 +35,7 @@ export async function updateRole(userId: string, newRole: UserRole) {
 }
 
 export async function toggleBan(userId: string, banStatus: boolean) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
-
-  const { data: requester } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-  if (requester?.role !== 'superadmin') {
-    throw new Error('Only Superadmins can ban users');
-  }
+  const { supabase } = await requireSuperAdmin();
 
   const { error } = await supabase
     .from('profiles')
@@ -78,20 +52,7 @@ export async function toggleBan(userId: string, banStatus: boolean) {
 }
 
 export async function addStaff(email: string) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
-
-  const { data: requester } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-  if (requester?.role !== 'superadmin') {
-    throw new Error('Only Superadmins can add staff');
-  }
+  const { supabase } = await requireSuperAdmin();
 
   // Find user by email (in profiles table)
   const { data: target, error: searchError } = await supabase

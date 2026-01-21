@@ -6,33 +6,15 @@ import React from 'react';
 import { Resend } from 'resend';
 import { BrandedTemplate } from '@/emails/BrandedTemplate';
 import { logAdminAction } from '@/lib/audit';
-import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/auth-checks';
 
 const BATCH_SIZE = 50;
 
 export async function sendCampaign(campaignId: string) {
   const resend = new Resend(env.RESEND_API_KEY);
-  const supabase = await createClient();
 
-  // 0. Security Check: Validate User & Role
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error('Unauthorized');
-
-  const { data: requester } = await supabase
-    .from('profiles')
-    .select('role, banned')
-    .eq('id', user.id)
-    .single();
-
-  if (!requester || requester.banned) {
-    throw new Error('Unauthorized: User invalid or banned');
-  }
-
-  if (requester.role !== 'admin' && requester.role !== 'superadmin') {
-    throw new Error('Unauthorized: Insufficient permissions');
-  }
+  // Security Check: Validate Admin Access
+  const { supabase } = await requireAdmin();
 
   // 1. Fetch Campaign & Segment
   const { data: campaign, error: campError } = await supabase
