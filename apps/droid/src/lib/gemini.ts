@@ -46,6 +46,11 @@ function isValidSearchQuery(query: unknown): query is string {
   return typeof query === 'string' && query.trim().length > 0;
 }
 
+function escapeIlikePattern(value: string): string {
+  // Escape backslash first to avoid double-escaping
+  return value.replace(/([\\%_])/g, '\\$1');
+}
+
 async function searchProducts(query: string) {
   // biome-ignore lint/suspicious/noConsole: logging is fine
   const MAX_LOG_QUERY_LENGTH = 100;
@@ -56,10 +61,11 @@ async function searchProducts(query: string) {
       ? sanitizedQuery.slice(0, MAX_LOG_QUERY_LENGTH) + '…'
       : sanitizedQuery;
   console.log(`Searching products for query (truncated if long): "${safeQueryForLog}"`);
+  const escapedQuery = escapeIlikePattern(query);
   const { data, error } = await supabase
     .from('products')
     .select('id, name, description, price, stock_count')
-    .ilike('name', `%${query}%`)
+    .ilike('name', `%${escapedQuery}%`)
     .limit(5);
 
   if (error) {
