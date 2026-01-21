@@ -13,10 +13,18 @@ import { createClient } from '@/lib/supabase/client';
 
 const supabase = createClient();
 
+type RentalCatalogItem = {
+  id: number;
+  title: string;
+  category: string;
+  daily_rate: number;
+  image_url: string | null;
+  description: string | null;
+};
+
 export default function PlusBrowsePage() {
   const router = useRouter();
-  // biome-ignore lint/suspicious/noExplicitAny: migration
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<RentalCatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [rentingId, setRentingId] = useState<number | null>(null);
 
@@ -36,8 +44,7 @@ export default function PlusBrowsePage() {
     fetchCatalog();
   }, [fetchCatalog]);
 
-  // biome-ignore lint/suspicious/noExplicitAny: migration
-  const handleRent = async (item: any) => {
+  const handleRent = async (item: RentalCatalogItem) => {
     setRentingId(item.id);
 
     // 1. Check Login
@@ -59,7 +66,10 @@ export default function PlusBrowsePage() {
     });
 
     if (error) {
-      toast.error('Rental failed. Try again.');
+      Logger.error('Rental creation failed:', error);
+      toast.error(
+        'We were unable to complete your rental request. Please check your details and try again, or try again in a few minutes.'
+      );
     } else {
       toast.success(`🎉 ${item.title} has been requested!`);
     }
@@ -201,7 +211,7 @@ function CategoryRow({ title, items, onRent, rentingId, icon }: any) {
               </h4>
               <div className="flex justify-between items-center mt-2">
                 <span className="text-xs text-brand-yellow font-bold">
-                  {item.daily_rate.toLocaleString()} IQD/day
+                  {item.daily_rate.toLocaleString('en-US', { maximumFractionDigits: 0 })} IQD/day
                 </span>
                 <Badge
                   variant="neutral"
