@@ -89,8 +89,8 @@ Rule: Do not leave flat component files in the root of `packages/ui/src/`. Creat
 **Action:** When rendering lists that can be empty, always include a dedicated empty state component with an icon, explanation, and a call-to-action button.
 
 ### 2025-05-21 - Button Component Loading State
-**Learning:** The `Button` component from `@repo/ui` prepends a spinner when `isLoading` is true but keeps the children visible. For buttons with icons, this results in two icons (spinner + original icon) unless the original icon is manually hidden.
-**Action:** When adding loading states to icon-buttons, conditionally render the original icon: `{!loading && <Icon />}`. Update: The component now often hides children content when `isLoading` is true to reduce clutter.
+**Learning:** Earlier versions of the `Button` component from `@repo/ui` prepended a spinner when `isLoading` was true but kept the children visible. For buttons with icons, this resulted in two icons (spinner + original icon) unless the original icon was manually hidden. The component has since been updated and now typically hides children content when `isLoading` is true to reduce clutter.
+**Action:** Assume that `Button` will hide its children when `isLoading` is true. For icon-only buttons or configurations where children remain visible while loading, avoid duplicate icons by conditionally rendering the original icon (for example, `{!loading && <Icon />}`) or by moving the icon into a dedicated `icon` prop if one is available.
 
 ### 2026-01-20 - Focus Ring Standards
 **Standard:** Interactive elements nested within Input components (e.g., password toggle buttons) must use `focus-visible` ring styles (`ring-2`, `ring-brand-pink`) to ensure accessibility, replacing subtle text color changes.
