@@ -31,6 +31,7 @@ export default function RegisterPage() {
       setLoading(false);
     } else {
       toast.success('Account created! Logging you in...');
+      setLoading(false);
       router.push('/account'); // Send them to their new dashboard
     }
   };
