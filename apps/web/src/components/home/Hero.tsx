@@ -11,7 +11,7 @@ export default function Hero() {
   return (
     <section className="relative px-4 py-20 lg:py-32 overflow-hidden bg-white">
       <div className="max-w-7xl mx-auto relative z-10 text-center">
-        <div className="animate-fade-in-up opacity-0">
+        <div className="animate-fade-in-up">
           <span className="inline-block py-1 px-3 rounded-full bg-brand-pink/10 text-brand-pink text-sm font-bold tracking-wide mb-6">
             {t('badge')}
           </span>
@@ -32,7 +32,7 @@ export default function Hero() {
                 className: 'h-14 px-8 text-lg w-full sm:w-auto',
               })}
             >
-              {t('cta_primary')}{' '}
+              {t('cta_primary')}
               <ArrowRight className="ml-2 rtl:rotate-180" size={20} aria-hidden="true" />
             </Link>
             <Link
