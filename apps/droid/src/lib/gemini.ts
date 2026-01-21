@@ -4,9 +4,22 @@ import { supabase } from './supabase';
 
 const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
 
-// Explicitly typed to satisfy strict TypeScript checks
-// biome-ignore lint/suspicious/noExplicitAny: parametersJsonSchema is missing in types but valid in runtime
-const searchProductsTool: any = {
+interface SearchProductsFunctionDeclaration {
+  name: string;
+  description: string;
+  parametersJsonSchema: {
+    type: 'object';
+    properties: {
+      query: {
+        type: 'string';
+        description: string;
+      };
+    };
+    required: ['query'];
+  };
+}
+
+const searchProductsTool: SearchProductsFunctionDeclaration = {
   name: 'search_products',
   description:
     'Search for products in the catalog by name. Use this when the user asks about product availability, price, or description.',
