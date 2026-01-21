@@ -45,6 +45,30 @@ interface LedgerLineWithJoins {
       }>;
 }
 
+interface LedgerLineWithJoins {
+  debit: number | string | null;
+  credit: number | string | null;
+  chart_of_accounts:
+    | {
+        name: string;
+        type: string;
+        category: string | null;
+      }
+    | Array<{
+        name: string;
+        type: string;
+        category: string | null;
+      }>
+    | null;
+  ledger_entries?:
+    | {
+        transaction_date: string;
+      }
+    | Array<{
+        transaction_date: string;
+      }>;
+}
+
 /**
  * Calculates Profit and Loss for a given period.
  */
@@ -59,7 +83,7 @@ export async function getProfitAndLoss(
     .from('ledger_lines')
     .select(`
       debit,
-      credit,
+  lines.forEach((line: LedgerLineWithJoins) => {
       chart_of_accounts!inner (
         name,
         type,
@@ -156,7 +180,12 @@ export async function getLedgerEntries(): Promise<LedgerTransaction[]> {
         )
       )
     `)
-    .order('transaction_date', { ascending: false });
+  if (error) {
+    // Log the underlying error before redirecting for easier debugging
+    // biome-ignore lint/suspicious/noConsole: Log critical data fetching error
+    console.error('Error fetching chart of accounts:', error);
+    redirect('/login');
+  }
 
   if (error) {
     // biome-ignore lint/suspicious/noConsole: Log critical data fetching error
@@ -181,7 +210,15 @@ export async function getChartOfAccounts(): Promise<ChartOfAccount[]> {
     .select('id, code, name, type, category')
     .order('code');
   if (error) {
-    // Log the underlying error before redirecting for easier debugging
+  if (entryError) {
+    await logAdminAction('create_journal_entry_failed', 'finance', {
+      stage: 'entry_insert',
+      date,
+      description,
+      error: entryError.message ?? String(entryError),
+    });
+    redirect('/login');
+  }
     // biome-ignore lint/suspicious/noConsole: Log critical data fetching error
     console.error('Error fetching chart of accounts:', error);
     redirect('/login');
