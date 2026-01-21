@@ -74,7 +74,7 @@ export default function PlusBrowsePage() {
   const tech = items.filter((i) => i.category === 'Tech');
 
   return (
-    <div className="min-h-screen bg-[#141414] text-white pb-20 font-sans">
+    <div className="min-h-screen bg-brand-deep text-white pb-20 font-sans">
       {/* 1. HERO HEADER (Netflix Style) */}
       <section className="relative h-[70vh] w-full flex items-center justify-start px-4 md:px-12 overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -84,8 +84,8 @@ export default function PlusBrowsePage() {
             fill
             className="object-cover opacity-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#141414] via-[#141414]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-deep via-brand-deep/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-deep via-brand-deep/40 to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-2xl mt-20">
@@ -170,7 +170,7 @@ function CategoryRow({ title, items, onRent, rentingId, icon }: any) {
           <motion.div
             key={item.id}
             whileHover={{ scale: 1.05, y: -5 }}
-            className="min-w-[200px] md:min-w-[240px] bg-[#1f1f1f] rounded-lg overflow-hidden snap-start group relative border border-white/5 hover:border-brand-pink/50 transition-colors"
+            className="min-w-52 md:min-w-60 bg-white/5 rounded-lg overflow-hidden snap-start group relative border border-white/5 hover:border-brand-pink/50 transition-colors"
           >
             {/* Image */}
             <div className="relative h-[300px] w-full">
