@@ -32,7 +32,7 @@ export default function Hero() {
                 className: 'h-14 px-8 text-lg w-full sm:w-auto',
               })}
             >
-              {t('cta_primary')}{' '}
+              {t('cta_primary')}
               <ArrowRight className="ml-2 rtl:rotate-180" size={20} aria-hidden="true" />
             </Link>
             <Link
