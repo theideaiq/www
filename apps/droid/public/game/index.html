@@ -53,7 +53,9 @@
 
         // Input
         document.addEventListener('touchmove', e => {
-            playerX = e.touches[0].clientX;
+            if (e.touches && e.touches.length > 0) {
+                playerX = e.touches[0].clientX;
+            }
         }, { passive: false });
         document.addEventListener('mousemove', e => {
             playerX = e.clientX;
@@ -125,10 +127,14 @@
                         score += 10;
                         energy = Math.min(100, energy + 10);
                         // Trigger Haptic
-                        if(window.Telegram.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback && typeof window.Telegram.WebApp.HapticFeedback.impactOccurred === 'function') {
+                            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                        }
                     } else {
                         energy -= 30;
-                        if(window.Telegram.WebApp) window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+                        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback && typeof window.Telegram.WebApp.HapticFeedback.notificationOccurred === 'function') {
+                            window.Telegram.WebApp.HapticFeedback.notificationOccurred('error');
+                        }
                     }
                     items.splice(i, 1);
                 } else if (item.y > h) {
