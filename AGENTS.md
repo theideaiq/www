@@ -159,7 +159,7 @@ Rule: The root `README.md` must serve as the single source of truth for ALL appl
 
 ### 2025-05-24 - Ghost Environment Variables
 
-Insight: `STRIPE_SECRET_KEY` was present in `apps/admin/.env.example` but unused in the codebase, while `NEXT_PUBLIC_SITE_URL` was required by validation but missing.
+Insight: At this time, `STRIPE_SECRET_KEY` was present in `apps/admin/.env.example` but unused in the codebase, while `NEXT_PUBLIC_SITE_URL` was required by validation but missing. These specific discrepancies have since been corrected; this entry remains to document the incident and its takeaway.
 Rule: Routinely audit `.env.example` files against the strict Zod validation schemas in `packages/env` to prevent "ghost" variables and missing requirements.
 
 ### 2026-01-20 - Code Commenting
