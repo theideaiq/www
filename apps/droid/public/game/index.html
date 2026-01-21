@@ -63,7 +63,7 @@
 
         class Item {
             constructor() {
-                this.x = Math.random() * w;
+                this.x = Math.random() * canvasWidth;
                 this.y = -50;
                 this.type = Math.random() > 0.8 ? 'bug' : 'bulb';
                 this.speed = 3 + Math.random() * 5;
@@ -108,7 +108,7 @@
             ctx.shadowColor = '#facc15';
             ctx.fillStyle = '#fff';
             ctx.beginPath();
-            ctx.arc(playerX, h - 30, 10, 0, Math.PI * 2);
+            ctx.arc(playerX, canvasHeight - 30, 10, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
 
