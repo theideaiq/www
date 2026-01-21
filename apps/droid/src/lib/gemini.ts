@@ -58,13 +58,24 @@ async function searchProducts(query: string) {
   if (error) {
     // biome-ignore lint/suspicious/noConsole: logging is fine
     console.error('Supabase search error:', error);
+    const maybeErrorObject =
+      typeof error === 'object' && error !== null ? (error as Record<string, unknown>) : null;
+    const errorCode =
+      maybeErrorObject && typeof maybeErrorObject.code === 'string'
+        ? maybeErrorObject.code
+        : null;
+    const errorMessage =
+      maybeErrorObject && typeof maybeErrorObject.message === 'string'
+        ? maybeErrorObject.message
+        : String(error);
+
     return {
       error: 'Error searching for products.',
       code: 'SUPABASE_SEARCH_ERROR',
       details: {
         // Limit details to non-sensitive, high-level information
-        code: (error as any).code ?? null,
-        message: (error as any).message ?? String(error),
+        code: errorCode,
+        message: errorMessage,
       },
     };
   }
