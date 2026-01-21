@@ -9,7 +9,7 @@ export function KPICard({
   value: number;
   type?: 'currency' | 'number' | 'percent';
 }) {
-  let formattedValue = value.toString();
+  let formattedValue: string;
   if (type === 'currency') {
     formattedValue = new Intl.NumberFormat('en-US', {
       style: 'currency',
