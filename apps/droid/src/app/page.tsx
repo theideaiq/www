@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Bot, Zap, Globe, Shield, Gamepad2, Send } from 'lucide-react';
 
@@ -182,7 +182,10 @@ function ChatSimulation() {
 
 function GamePreview() {
   return (
-    <div className={`h-full flex flex-col items-center justify-center bg-[url('${GAME_PREVIEW_BG}')] bg-cover bg-center relative group`}>
+    <div
+      className="h-full flex flex-col items-center justify-center bg-cover bg-center relative group"
+      style={{ backgroundImage: `url(${GAME_PREVIEW_BG})` }}
+    >
       <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center">
         <Gamepad2 className="w-16 h-16 text-[#facc15] mb-4 animate-bounce" />
         <h3 className="text-2xl font-bold mb-2">Spark Catcher ⚡</h3>
@@ -204,13 +207,13 @@ function FinancePreview() {
           <span className="text-green-400">+12.5%</span>
         </div>
         <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-          <div className="h-full bg-blue-500 w-[70%] animate-[width_2s_ease-out]" />
+          <div className="h-full bg-blue-500 w-[70%] transition-[width] duration-200 ease-out" />
         </div>
         <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
           <div className="h-full bg-purple-500 w-[45%] transition-[width] duration-200 ease-out" />
         </div>
         <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-          <div className="h-full bg-[#facc15] w-[85%] animate-[width_2s_ease-out_1s]" />
+          <div className="h-full bg-[#facc15] w-[85%] transition-[width] duration-200 ease-out" />
         </div>
         <p className="text-xs text-center text-gray-500 mt-8">Real-time financial modeling via /finance command.</p>
       </div>
