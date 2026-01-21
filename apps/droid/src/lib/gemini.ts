@@ -3,6 +3,7 @@ import { droidEnv as env } from '@repo/env/droid';
 import { supabase } from './supabase';
 
 const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+const MAX_PRODUCT_SEARCH_RESULTS = 5;
 
 interface SearchProductsFunctionDeclaration {
   name: string;
@@ -66,7 +67,7 @@ async function searchProducts(query: string) {
     .from('products')
     .select('id, name, description, price, stock_count')
     .ilike('name', `%${escapedQuery}%`)
-    .limit(5);
+    .limit(MAX_PRODUCT_SEARCH_RESULTS);
 
   if (error) {
     // biome-ignore lint/suspicious/noConsole: logging is fine
@@ -83,7 +84,8 @@ async function searchProducts(query: string) {
         : String(error);
 
     return {
-      error: 'Error searching for products.',
+      error:
+        "We couldn't complete your product search. Please try again shortly or refine your search query.",
       code: 'SUPABASE_SEARCH_ERROR',
       details: {
         // Limit details to non-sensitive, high-level information
@@ -149,7 +151,7 @@ export async function generateResponse(
       }
     }
 
-    return result.text || "";
+    return result.text || "I couldn't generate a response. Please try asking your question again or try rephrasing it.";
   } catch (error) {
     // biome-ignore lint/suspicious/noConsole: logging is fine
     console.error('Gemini Error:', error);
