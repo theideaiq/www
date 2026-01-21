@@ -1,8 +1,39 @@
-'use client';
-
 import { Lightbulb, Target } from 'lucide-react';
+import type { Metadata } from 'next';
+import { setRequestLocale } from 'next-intl/server';
 
-export default function AboutPage() {
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  // In a real app, we would fetch translated metadata here
+  // For now, we use English as default since the content is hardcoded
+  return {
+    title: {
+      absolute: 'About The IDEA - Building the Digital Future of Baghdad',
+    },
+    description: 'The IDEA IQ is an ecosystem designed to bridge the gap between commerce, education, and entertainment for the modern Iraqi citizen.',
+    openGraph: {
+      title: 'About The IDEA - Building the Digital Future of Baghdad',
+      description: 'The IDEA IQ is an ecosystem designed to bridge the gap between commerce, education, and entertainment for the modern Iraqi citizen.',
+      images: [
+        {
+          url: '/about-og.jpg', // Placeholder, but good practice
+          width: 1200,
+          height: 630,
+          alt: 'About The IDEA',
+        },
+      ],
+    },
+  };
+}
+
+export default async function AboutPage({ params }: Props) {
+  const { locale } = await params;
+  // Enable static rendering
+  setRequestLocale(locale);
+
   return (
     <div className="min-h-screen bg-white pt-20">
       {/* Hero Section */}
