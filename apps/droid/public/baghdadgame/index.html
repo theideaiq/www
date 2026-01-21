@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baghdad Opoly</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg: #121212;
+            --board-bg: #1a1a1a;
+            --gold: #facc15;
+            --gold-dim: #ca8a04;
+            --text: #ffffff;
+            --brown: #8D6E63;
+            --blue: #42A5F5;
+            --pink: #EC407A;
+            --orange: #FFA726;
+            --red: #EF5350;
+            --green: #66BB6A;
+            --dark-blue: #3F51B5;
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- THE BOARD (CSS GRID) --- */
+        #game-container {
+            width: 95vmin;
+            height: 95vmin;
+            max-width: 600px;
+            max-height: 600px;
+            position: relative;
+            background: var(--board-bg);
+            border: 2px solid var(--gold);
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 1px;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.2);
+        }
+
+        /* Center Logo */
+        .center-logo {
+            grid-column: 2 / span 6;
+            grid-row: 2 / span 6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #151515;
+            border: 1px solid #333;
+            z-index: 0;
+        }
+
+        .center-logo h1 {
+            margin: 0;
+            font-size: 3vmin;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .center-logo p {
+            font-size: 1.5vmin;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Tiles */
+        .tile {
+            position: relative;
+            background: #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8vmin;
+            text-align: center;
+            border: 0.5px solid #333;
+            overflow: hidden;
+        }
+
+        .tile-color-bar {
+            width: 100%;
+            height: 20%;
+        }
+
+        .tile-name {
+            padding: 2px;
+            font-weight: bold;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-wrap: break-word;
+            line-height: 1.1;
+        }
+
+        .tile-price {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            padding: 1px 0;
+            font-size: 0.7vmin;
+            color: #aaa;
+        }
+
+        /* Corner Tiles */
+        .corner {
+            background: #2a2a2a;
+        }
+
+        .corner-icon {
+            width: 60%;
+            height: 60%;
+            opacity: 0.8;
+            margin: auto;
+        }
+
+        /* --- TOKENS --- */
+        .token {
+            position: absolute;
+            width: 8%; /* Relative to board */
+            height: 8%;
+            z-index: 10;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        /* Ownership Markers (Little dots) */
+        .owner-marker {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            border: 1px solid white;
+        }
+
+        /* --- UI OVERLAYS --- */
+        #controls-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(18, 18, 18, 0.95);
+            border-top: 1px solid #333;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+        }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-info h3 { margin: 0; font-size: 14px; color: var(--gold); }
+        .player-info p { margin: 0; font-size: 12px; color: #aaa; }
+
+        #action-btn {
+            background: var(--gold);
+            color: black;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3);
+            transition: transform 0.1s;
+        }
+
+        #action-btn:active { transform: scale(0.95); }
+        #action-btn:disabled { background: #444; color: #888; box-shadow: none; }
+
+        /* --- MODALS --- */
+        #modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal {
+            background: #222;
+            border: 2px solid var(--gold);
+            padding: 20px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal h2 { margin-top: 0; color: var(--gold); }
+        .modal p { color: #ddd; margin-bottom: 20px; }
+        
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; }
+        .btn-secondary { background: #444; color: white; border: none; padding: 10px 20px; border-radius: 6px; }
+        .btn-primary { background: var(--gold); color: black; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; }
+
+        /* --- DICE --- */
+        #dice-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px;
+            display: none;
+            z-index: 50;
+        }
+
+        .dice {
+            width: 100%; height: 100%;
+            background: white;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            font-weight: bold;
+            font-size: 24px;
+            color: black;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0% { transform: translate(-50%, -50%) rotate(0deg); } 25% { transform: translate(-50%, -50%) rotate(10deg); } 75% { transform: translate(-50%, -50%) rotate(-10deg); } 100% { transform: translate(-50%, -50%) rotate(0deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div class="center-logo">
+            <h1>The IDEA<br>Opoly</h1>
+            <p>Baghdad Edition</p>
+            <div id="dice-container"><div class="dice" id="dice-val">1</div></div>
+        </div>
+        </div>
+
+    <div id="controls-bar">
+        <div class="player-card">
+            <svg id="p1-avatar" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" />
+                <circle cx="7" cy="17" r="2" />
+                <path d="M9 17h6" />
+                <circle cx="17" cy="17" r="2" />
+            </svg>
+            <div class="player-info">
+                <h3 id="p1-name">Player</h3>
+                <p id="p1-cash">IQD 1,500</p>
+            </div>
+        </div>
+        <button id="action-btn" onclick="Game.handleAction()">ROLL DICE</button>
+    </div>
+
+    <div id="modal-overlay">
+        <div class="modal">
+            <h2 id="modal-title">Property Name</h2>
+            <p id="modal-desc">Price: 200 IQD</p>
+            <div class="modal-buttons" id="modal-actions">
+                </div>
+        </div>
+    </div>
+
+<script>
+    // --- ASSETS (SVGS) ---
+    const SVGS = {
+        TUKTUK: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>`,
+        PALM: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22v-9"/><path d="M12 8c0-3-2-5-5-5S2 5 2 8c0 3 2 5 5 5s5-2 5-5z"/><path d="M12 8c0-3 2-5 5-5s5 2 5 5c0 3-2 5-5 5s-5-2-5-5z"/><path d="M12 13c-2 0-3 1-4 3"/><path d="M12 13c2 0 3 1 4 3"/></svg>`,
+        GO: `<svg viewBox="0 0 24 24" fill="none" stroke="#66BB6A" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+        JAIL: `<svg viewBox="0 0 24 24" fill="none" stroke="#EF5350" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 3v18"/><path d="M17 3v18"/><path d="M3 7h18"/><path d="M3 17h18"/></svg>`,
+        PARKING: `<svg viewBox="0 0 24 24" fill="none" stroke="#42A5F5" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>`,
+        POLICE: `<svg viewBox="0 0 24 24" fill="none" stroke="#FFA726" stroke-width="2"><path d="M12 2l-8 4v6c0 5.5 8 10 8 10s8-4.5 8-10V6l-8-4z"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>`
+    };
+
+    // --- GAME DATA (28 TILES FOR 8x8 GRID) ---
+    // Grid Logic: 8x8 = 28 border tiles. 
+    // Top Row: 0-7, Right Col: 8-13, Bottom Row: 14-21, Left Col: 22-27
+    const TILES = [
+        { id: 0, name: "START", type: "GO", icon: SVGS.GO, color: "#333" },
+        { id: 1, name: "Shorja", type: "PROP", price: 60, rent: 10, color: "var(--brown)" },
+        { id: 2, name: "Bab Sharqi", type: "PROP", price: 60, rent: 15, color: "var(--brown)" },
+        { id: 3, name: "CHANCE", type: "CHANCE", color: "#333" },
+        { id: 4, name: "Mutanabbi", type: "PROP", price: 100, rent: 20, color: "var(--blue)" },
+        { id: 5, name: "Al-Rashid", type: "PROP", price: 100, rent: 20, color: "var(--blue)" },
+        { id: 6, name: "Al-Qishla", type: "PROP", price: 120, rent: 25, color: "var(--blue)" },
+        { id: 7, name: "TRAFFIC", type: "JAIL", icon: SVGS.JAIL, color: "#333" }, // Corner Top Right
+        { id: 8, name: "Karrada", type: "PROP", price: 140, rent: 30, color: "var(--pink)" },
+        { id: 9, name: "Jadriyah", type: "PROP", price: 140, rent: 30, color: "var(--pink)" },
+        { id: 10, name: "University", type: "PROP", price: 160, rent: 35, color: "var(--pink)" },
+        { id: 11, name: "14th July", type: "PROP", price: 200, rent: 40, color: "var(--orange)" },
+        { id: 12, name: "Mansour", type: "PROP", price: 180, rent: 40, color: "var(--orange)" },
+        { id: 13, name: "Al-Harthiya", type: "PROP", price: 180, rent: 40, color: "var(--orange)" },
+        { id: 14, name: "CHAI", type: "PARKING", icon: SVGS.PARKING, color: "#333" }, // Corner Bottom Right
+        { id: 15, name: "Yarmouk", type: "PROP", price: 220, rent: 45, color: "var(--red)" },
+        { id: 16, name: "Qadisiya", type: "PROP", price: 220, rent: 45, color: "var(--red)" },
+        { id: 17, name: "Airport", type: "PROP", price: 240, rent: 50, color: "var(--red)" },
+        { id: 18, name: "Zayouna", type: "PROP", price: 260, rent: 55, color: "var(--green)" },
+        { id: 19, name: "Palestine", type: "PROP", price: 260, rent: 55, color: "var(--green)" },
+        { id: 20, name: "Sadr City", type: "PROP", price: 280, rent: 60, color: "var(--green)" },
+        { id: 21, name: "CHECKPOINT", type: "GOTOJAIL", icon: SVGS.POLICE, color: "#333" }, // Corner Bottom Left
+        { id: 22, name: "Dora", type: "PROP", price: 300, rent: 70, color: "var(--dark-blue)" },
+        { id: 23, name: "Doura", type: "PROP", price: 300, rent: 70, color: "var(--dark-blue)" },
+        { id: 24, name: "CHANCE", type: "CHANCE", color: "#333" },
+        { id: 25, name: "Green Zone", type: "PROP", price: 350, rent: 90, color: "var(--gold-dim)" },
+        { id: 26, name: "Palace", type: "PROP", price: 400, rent: 100, color: "var(--gold-dim)" },
+        { id: 27, name: "TAX", type: "TAX", price: 100, color: "#333" }
+    ];
+
+    // --- GAME ENGINE ---
+    const Game = {
+        players: [
+            { id: 0, name: "You", cash: 1500, pos: 0, color: "#facc15", icon: SVGS.TUKTUK, isBot: false, props: [] },
+            { id: 1, name: "Hassan (Bot)", cash: 1500, pos: 0, color: "#42A5F5", icon: SVGS.PALM, isBot: true, props: [] },
+            { id: 2, name: "Zina (Bot)", cash: 1500, pos: 0, color: "#EC407A", icon: SVGS.PALM, isBot: true, props: [] }
+        ],
+        currentPlayerIdx: 0,
+        state: 'IDLE', // IDLE, MOVING, ACTION
+        boardOwnership: {}, // tileId -> playerId
+
+        init() {
+            this.renderBoard();
+            this.renderTokens();
+            this.updateUI();
+            
+            // Telegram Init
+            if (window.Telegram?.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    this.players[0].name = user.first_name;
+                    document.getElementById('p1-name').innerText = user.first_name;
+                }
+            }
+        },
+
+        renderBoard() {
+            const container = document.getElementById('game-container');
+            // Logic to place tiles in a loop
+            // 0-7: Top Row (Left to Right)
+            // 8-13: Right Col (Top to Bottom)
+            // 14-21: Bottom Row (Right to Left)
+            // 22-27: Left Col (Bottom to Top)
+            
+            TILES.forEach((tile, index) => {
+                const el = document.createElement('div');
+                el.className = 'tile ' + (tile.type !== 'PROP' ? 'corner' : '');
+                el.id = `tile-${index}`;
+                
+                // Grid Placement Logic
+                if (index <= 7) { el.style.gridArea = `1 / ${index + 1} / 2 / ${index + 2}`; } // Top
+                else if (index <= 13) { el.style.gridArea = `${index - 6} / 8 / ${index - 5} / 9`; } // Right
+                else if (index <= 21) { el.style.gridArea = `8 / ${22 - index} / 9 / ${23 - index}`; } // Bottom
+                else { el.style.gridArea = `${29 - index} / 1 / ${30 - index} / 2`; } // Left
+
+                let content = '';
+                if (tile.type === 'PROP') {
+                    content = `<div class="tile-color-bar" style="background:${tile.color}"></div>
+                               <div class="tile-name">${tile.name}</div>
+                               <div class="tile-price">${tile.price}</div>`;
+                } else {
+                    content = `<div class="tile-name">${tile.name}</div>
+                               ${tile.icon ? `<div class="corner-icon">${tile.icon}</div>` : ''}`;
+                }
+                
+                el.innerHTML = content;
+                container.appendChild(el);
+            });
+        },
+
+        renderTokens() {
+            const container = document.getElementById('game-container');
+            this.players.forEach(p => {
+                const el = document.createElement('div');
+                el.className = 'token';
+                el.id = `token-${p.id}`;
+                el.style.color = p.color;
+                el.innerHTML = p.icon;
+                container.appendChild(el);
+                this.updateTokenPos(p);
+            });
+        },
+
+        updateTokenPos(player) {
+            const tile = document.getElementById(`tile-${player.pos}`);
+            const token = document.getElementById(`token-${player.id}`);
+            if (tile && token) {
+                // Add some random offset so tokens don't stack perfectly
+                const rect = tile.getBoundingClientRect();
+                const parentRect = document.getElementById('game-container').getBoundingClientRect();
+                
+                // Calculate position relative to container in %
+                // This is a simplified positioning logic, ideally we use grid logic
+                // But CSS transforms are smoother
+                const top = tile.offsetTop + (tile.offsetHeight * 0.2) + (player.id * 5);
+                const left = tile.offsetLeft + (tile.offsetWidth * 0.2) + (player.id * 5);
+                
+                token.style.top = top + 'px';
+                token.style.left = left + 'px';
+            }
+        },
+
+        handleAction() {
+            if (this.state !== 'IDLE') return;
+            const player = this.players[this.currentPlayerIdx];
+            
+            // 1. Roll Dice
+            this.state = 'MOVING';
+            const roll = Math.floor(Math.random() * 6) + 1;
+            this.showDice(roll);
+
+            setTimeout(() => {
+                // 2. Move
+                this.movePlayer(player, roll);
+            }, 1000);
+        },
+
+        showDice(val) {
+            const dice = document.getElementById('dice-container');
+            const valEl = document.getElementById('dice-val');
+            dice.style.display = 'block';
+            dice.style.animation = 'shake 0.5s';
+            valEl.innerText = val;
+            setTimeout(() => { dice.style.display = 'none'; }, 1000);
+        },
+
+        movePlayer(player, steps) {
+            let stepsLeft = steps;
+            const interval = setInterval(() => {
+                player.pos = (player.pos + 1) % TILES.length;
+                this.updateTokenPos(player);
+                
+                if (player.pos === 0) { // Passed GO
+                    player.cash += 200;
+                    this.log(`${player.name} passed Start. +200 IQD`);
+                }
+
+                stepsLeft--;
+                if (stepsLeft <= 0) {
+                    clearInterval(interval);
+                    this.handleLanding(player);
+                }
+            }, 200); // Speed of hop
+        },
+
+        handleLanding(player) {
+            const tile = TILES[player.pos];
+            this.log(`${player.name} landed on ${tile.name}`);
+
+            // Logic Tree
+            if (tile.type === 'PROP') {
+                const ownerId = this.boardOwnership[tile.id];
+                if (ownerId === undefined) {
+                    // Unowned -> Buy?
+                    if (player.isBot) {
+                        this.botDecision(player, tile);
+                    } else {
+                        this.showBuyModal(player, tile);
+                    }
+                } else if (ownerId !== player.id) {
+                    // Owned -> Pay Rent
+                    this.payRent(player, this.players[ownerId], tile.rent);
+                    this.endTurn();
+                } else {
+                    this.endTurn();
+                }
+            } else if (tile.type === 'GOTOJAIL') {
+                player.pos = 7; // Traffic
+                this.updateTokenPos(player);
+                this.log(`${player.name} stuck in Traffic!`);
+                this.endTurn();
+            } else if (tile.type === 'TAX') {
+                player.cash -= tile.price;
+                this.log(`${player.name} paid Generator Tax.`);
+                this.endTurn();
+            } else {
+                this.endTurn();
+            }
+        },
+
+        showBuyModal(player, tile) {
+            const modal = document.getElementById('modal-overlay');
+            const title = document.getElementById('modal-title');
+            const desc = document.getElementById('modal-desc');
+            const btns = document.getElementById('modal-actions');
+            
+            title.innerText = tile.name;
+            title.style.color = tile.color;
+            desc.innerText = `Price: ${tile.price} IQD\nRent: ${tile.rent} IQD`;
+            
+            btns.innerHTML = `
+                <button class="btn-secondary" onclick="Game.closeModal(false)">Pass</button>
+                <button class="btn-primary" onclick="Game.closeModal(true, ${tile.id})">Buy</button>
+            `;
+            
+            modal.style.display = 'flex';
+        },
+
+        closeModal(didBuy, tileId) {
+            document.getElementById('modal-overlay').style.display = 'none';
+            if (didBuy) {
+                this.buyProperty(this.players[0], TILES[tileId]);
+            }
+            this.endTurn();
+        },
+
+        buyProperty(player, tile) {
+            if (player.cash >= tile.price) {
+                player.cash -= tile.price;
+                this.boardOwnership[tile.id] = player.id;
+                player.props.push(tile.id);
+                
+                // Add marker
+                const tileEl = document.getElementById(`tile-${tile.id}`);
+                const marker = document.createElement('div');
+                marker.className = 'owner-marker';
+                marker.style.background = player.color;
+                tileEl.appendChild(marker);
+                
+                this.log(`${player.name} bought ${tile.name}`);
+            }
+            this.updateUI();
+        },
+
+        payRent(payer, owner, amount) {
+            payer.cash -= amount;
+            owner.cash += amount;
+            this.log(`${payer.name} paid ${amount} IQD to ${owner.name}`);
+            this.updateUI();
+        },
+
+        botDecision(bot, tile) {
+            // Simple Bot: Always buy if cash > price + 100
+            if (bot.cash > tile.price + 50) {
+                this.buyProperty(bot, tile);
+            }
+            this.endTurn();
+        },
+
+        endTurn() {
+            this.updateUI();
+            this.currentPlayerIdx = (this.currentPlayerIdx + 1) % this.players.length;
+            this.state = 'IDLE';
+
+            const nextPlayer = this.players[this.currentPlayerIdx];
+            
+            // UI Update for Turn
+            document.getElementById('action-btn').innerText = nextPlayer.isBot ? `${nextPlayer.name}'s Turn...` : "ROLL DICE";
+            document.getElementById('action-btn').disabled = nextPlayer.isBot;
+
+            if (nextPlayer.isBot) {
+                setTimeout(() => this.handleAction(), 1500);
+            }
+        },
+
+        updateUI() {
+            // Update Human Stats
+            const p1 = this.players[0];
+            document.getElementById('p1-cash').innerText = `IQD ${p1.cash}`;
+            
+            // Check Bankruptcy
+            if (p1.cash < 0) {
+                alert("Game Over! You went bankrupt.");
+                location.reload();
+            }
+        },
+
+        log(msg) {
+            console.log(msg); // For debug, or add a toast later
+        }
+    };
+
+    // Start Game
+    window.onload = () => {
+        Game.init();
+        
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            Game.players.forEach(p => Game.updateTokenPos(p));
+        });
+    };
+</script>
+</body>
+</html>
