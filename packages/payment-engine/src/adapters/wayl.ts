@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { type Link, WaylClient } from '@repo/wayl';
 import type {
   OrderData,
@@ -47,12 +48,35 @@ export class WaylAdapter implements PaymentProvider {
 
   async verifyWebhook(
     payload: unknown,
-    _signature?: string,
+    signature?: string,
   ): Promise<WebhookEvent> {
-    // In a real implementation, we would verify the signature using this.webhookSecret
-    // For now, we trust the payload structure and map it.
+    if (typeof payload !== 'string') {
+      throw new Error('Webhook payload must be a raw string for verification');
+    }
 
-    const data = payload as Link; // Assuming the webhook payload is the Link object
+    if (!this.webhookSecret) {
+      throw new Error('Webhook secret is not configured');
+    }
+
+    if (!signature) {
+      throw new Error('Signature is missing');
+    }
+
+    const hmac = crypto.createHmac('sha256', this.webhookSecret);
+    hmac.update(payload);
+    const calculatedSignature = hmac.digest('hex');
+
+    const calculatedBuffer = Buffer.from(calculatedSignature);
+    const signatureBuffer = Buffer.from(signature);
+
+    if (
+      calculatedBuffer.length !== signatureBuffer.length ||
+      !crypto.timingSafeEqual(calculatedBuffer, signatureBuffer)
+    ) {
+      throw new Error('Invalid signature');
+    }
+
+    const data = JSON.parse(payload) as Link;
 
     let type: WebhookEvent['type'] = 'payment.failed';
     if (data.status === 'Complete' || data.status === 'Delivered') {
