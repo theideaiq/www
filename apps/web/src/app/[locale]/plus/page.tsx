@@ -6,9 +6,7 @@ import {
   BookOpen,
   Check,
   Crown,
-  Film,
   Gamepad2,
-  Music,
   Zap,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -217,6 +215,7 @@ export default function PlusHome() {
               <ul className="flex-1 space-y-4 mb-8">
                 {tier.features.map((feature, f) => (
                   <li
+                    // biome-ignore lint/suspicious/noArrayIndexKey: static list
                     key={f}
                     className="flex items-start gap-3 text-sm text-slate-300"
                   >
