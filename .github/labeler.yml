@@ -2,48 +2,48 @@
 # https://github.com/actions/labeler
 
 # Area Labels
-'area: admin':
+area: admin:
   - changed-files:
       - any-glob-to-any-file: 'apps/admin/**/*'
 
-'area: web':
+area: web:
   - changed-files:
       - any-glob-to-any-file: 'apps/web/**/*'
 
-'area: droid':
+area: droid:
   - changed-files:
       - any-glob-to-any-file: 'apps/droid/**/*'
 
-'area: docs':
+area: docs:
   - changed-files:
       - any-glob-to-any-file: '**/*.md'
       - any-glob-to-any-file: 'docs/**/*'
 
-'area: ci':
+area: ci:
   - changed-files:
       - any-glob-to-any-file: '.github/**/*'
 
-'area: infra':
+area: infra:
   - changed-files:
       - any-glob-to-any-file: 'infrastructure/**/*'
       - any-glob-to-any-file: 'docker-compose.yml'
 
-'area: packages':
+area: packages:
   - changed-files:
       - any-glob-to-any-file: 'packages/**/*'
 
 # Type Labels
-'type: feat':
+type: feat:
   - head-branch: ['^feat/.*', '^feature/.*']
 
-'type: fix':
+type: fix:
   - head-branch: ['^fix/.*', '^bug/.*', '^hotfix/.*']
 
-'type: chore':
+type: chore:
   - head-branch: ['^chore/.*']
 
-'type: refactor':
+type: refactor:
   - head-branch: ['^refactor/.*']
 
-'type: test':
+type: test:
   - head-branch: ['^test/.*']
