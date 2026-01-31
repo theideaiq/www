@@ -1,6 +1,6 @@
 'use client';
 
-import { NotFoundScreen } from '@/components/ui/NotFoundScreen';
+import { NotFoundScreen } from '@/components/layout/NotFoundScreen';
 
 export default function NotFound() {
   return <NotFoundScreen />;
