@@ -1,7 +1,20 @@
-import { decodeHtmlEntities, slugify } from '@repo/utils';
+import { decodeHtmlEntities, sanitizeJsonLd, slugify } from '@repo/utils';
 import { describe, expect, it } from 'vitest';
 
 describe('String Utils (@repo/utils)', () => {
+  describe('sanitizeJsonLd', () => {
+    it('should stringify object and escape HTML tags', () => {
+      const data = { name: '<script>alert(1)</script>' };
+      const result = sanitizeJsonLd(data);
+      expect(result).toContain('\\u003cscript>');
+      expect(result).not.toContain('<script>');
+    });
+
+    it('should handle undefined', () => {
+      expect(sanitizeJsonLd(undefined)).toBe('');
+    });
+  });
+
   describe('slugify', () => {
     it('should convert text to a url-friendly slug', () => {
       expect(slugify('Hello World!')).toBe('hello-world');
