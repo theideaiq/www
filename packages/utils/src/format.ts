@@ -66,3 +66,20 @@ export function formatCompactNumber(number: number): string {
     maximumFractionDigits: 1,
   }).format(number);
 }
+
+/**
+ * Format a number as IQD (Iraqi Dinar).
+ * Returns a string like "50,000".
+ * Does NOT include the currency symbol/code (IQD) as it is often styled separately.
+ * Use formatCurrency(amount, 'IQD') if you need the symbol.
+ *
+ * @param amount - The numerical amount to format.
+ * @returns The formatted number string.
+ */
+export function formatIQD(amount: number): string {
+  return new Intl.NumberFormat('en-IQ', {
+    style: 'decimal',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
