@@ -1,13 +1,12 @@
 'use client';
 
-import { Button, Input } from '@repo/ui';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Chrome, ArrowRight, Mail, Lock, User, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { Button } from '@repo/ui';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Chrome, Loader2, Lock, Mail, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useId, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 const supabase = createClient();
 
@@ -20,6 +19,11 @@ export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+
+  // Generate unique IDs for accessibility
+  const fullNameId = useId();
+  const emailId = useId();
+  const passwordId = useId();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,8 +50,9 @@ export default function AuthPage() {
         toast.success('Account created! Please check your email.');
         setMode('login');
       }
-    } catch (err: any) {
-      toast.error(err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -102,6 +107,7 @@ export default function AuthPage() {
 
           {/* Social Auth */}
           <Button
+            type="button"
             onClick={handleGoogle}
             className="w-full h-12 bg-white text-black hover:bg-slate-200 border-none font-bold flex items-center justify-center gap-3"
           >
@@ -128,7 +134,10 @@ export default function AuthPage() {
                   className="overflow-hidden"
                 >
                   <div className="mb-4">
-                    <label className="text-sm text-slate-400 mb-1 block">
+                    <label
+                      htmlFor={fullNameId}
+                      className="text-sm text-slate-400 mb-1 block"
+                    >
                       Full Name
                     </label>
                     <div className="relative">
@@ -137,6 +146,7 @@ export default function AuthPage() {
                         size={18}
                       />
                       <input
+                        id={fullNameId}
                         type="text"
                         required={mode === 'register'}
                         value={fullName}
@@ -151,7 +161,10 @@ export default function AuthPage() {
             </AnimatePresence>
 
             <div>
-              <label className="text-sm text-slate-400 mb-1 block">
+              <label
+                htmlFor={emailId}
+                className="text-sm text-slate-400 mb-1 block"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -160,6 +173,7 @@ export default function AuthPage() {
                   size={18}
                 />
                 <input
+                  id={emailId}
                   type="email"
                   required
                   value={email}
@@ -171,7 +185,10 @@ export default function AuthPage() {
             </div>
 
             <div>
-              <label className="text-sm text-slate-400 mb-1 block">
+              <label
+                htmlFor={passwordId}
+                className="text-sm text-slate-400 mb-1 block"
+              >
                 Password
               </label>
               <div className="relative">
@@ -180,6 +197,7 @@ export default function AuthPage() {
                   size={18}
                 />
                 <input
+                  id={passwordId}
                   type="password"
                   required
                   value={password}
@@ -212,6 +230,7 @@ export default function AuthPage() {
                 ? "Don't have an account? "
                 : 'Already have an account? '}
               <button
+                type="button"
                 onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
                 className="text-brand-yellow hover:underline font-bold"
               >

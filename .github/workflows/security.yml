@@ -10,6 +10,7 @@ on:
 
 jobs:
   gitleaks:
+    if: false # Disabled due to missing license for org
     name: Gitleaks
     runs-on: ubuntu-latest
     steps:
