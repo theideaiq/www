@@ -41,9 +41,6 @@ export async function getProducts(limit = 20): Promise<Product[]> {
   const supabase = createClient();
 
   try {
-    // Force fallback for UI verification
-    if (true) throw new Error("Force fallback for verification");
-
     const { data, error } = await supabase
       .from('products')
       .select('*, reviews(rating)')
