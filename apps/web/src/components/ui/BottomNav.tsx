@@ -1,11 +1,11 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { Home, Search, ShoppingCart, User } from 'lucide-react';
-import { useUIStore } from '@/stores/ui-store';
-import { useCartStore } from '@/stores/cart-store';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useCartStore } from '@/stores/cart-store';
+import { useUIStore } from '@/stores/ui-store';
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -17,20 +17,7 @@ export function BottomNav() {
     setMounted(true);
   }, []);
 
-  const navItems = [
-    { label: 'Home', icon: Home, href: '/' },
-    { label: 'Browse', icon: Search, href: '/megastore' },
-    // Cart is special
-    { label: 'Profile', icon: User, href: '/account' },
-  ];
-
-  // Helper to check active state
-  // Basic check: if href is '/' check exact match, else check startsWith
   const isActive = (href: string) => {
-    // Remove locale prefix if present for comparison logic roughly
-    // Or just check if pathname contains it.
-    // For '/' it's tricky with locale.
-    // Let's just assume simple includes for now.
     if (href === '/')
       return pathname === '/' || pathname?.match(/^\/[a-z]{2}$/);
     return pathname?.includes(href);
@@ -39,7 +26,6 @@ export function BottomNav() {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-xl border-t border-white/10 pb-safe md:hidden">
       <div className="flex justify-around items-center h-16">
-        {/* Standard Links */}
         <Link
           href="/"
           className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${

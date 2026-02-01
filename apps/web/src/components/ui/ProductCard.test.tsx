@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { ProductCard } from './ProductCard';
 import type { Product } from '@/services/products';
+import { ProductCard } from './ProductCard';
 
 // Mock Product
 const mockProduct: Product = {
@@ -30,13 +30,17 @@ vi.mock('next/image', () => ({
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock('framer-motion', () => ({
   motion: {
     // biome-ignore lint/suspicious/noExplicitAny: Mock component
-    div: ({ children, className }: any) => <div className={className}>{children}</div>,
+    div: ({ children, className }: any) => (
+      <div className={className}>{children}</div>
+    ),
   },
 }));
 
