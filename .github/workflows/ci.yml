@@ -59,7 +59,7 @@ jobs:
           WAYL_SECRET_KEY: "dummy"
           WAYL_WEBHOOK_SECRET: "dummy"
           WEB_APP_URL: "dummy"
-          NEXT_PUBLIC_SUPABASE_URL: "dummy"
+          NEXT_PUBLIC_SUPABASE_URL: "https://dummy.supabase.co"
           NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy"
           ZAIN_SECRET_KEY: "dummy"
           RESEND_API_KEY: "dummy"
