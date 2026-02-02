@@ -14,9 +14,15 @@ export function NewJournalEntryModal({
   accounts: ChartOfAccount[];
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0] || '');
   const [description, setDescription] = useState('');
-  const [lines, setLines] = useState([{ accountId: '', debit: 0, credit: 0 }]);
+  const [lines, setLines] = useState([
+    { accountId: '', debit: 0, credit: 0 } as {
+      accountId: string;
+      debit: number;
+      credit: number;
+    },
+  ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -28,10 +34,20 @@ export function NewJournalEntryModal({
     setLines(lines.filter((_, i) => i !== index));
   };
 
-  const handleLineChange = (index: number, field: string, value: any) => {
-    const newLines = [...lines];
-    newLines[index] = { ...newLines[index], [field]: value };
-    setLines(newLines);
+  const handleLineChange = (
+    index: number,
+    field: 'accountId' | 'debit' | 'credit',
+    value: string | number,
+  ) => {
+    setLines((prev) => {
+      const newLines = [...prev];
+      if (newLines[index]) {
+        // biome-ignore lint/suspicious/noExplicitAny: <Reason>
+        const entry: any = newLines[index];
+        entry[field] = value;
+      }
+      return newLines;
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
