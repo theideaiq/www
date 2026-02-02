@@ -128,7 +128,7 @@ export default function AuthPage() {
                   className="overflow-hidden"
                 >
                   <div className="mb-4">
-                    <label className="text-sm text-slate-400 mb-1 block">
+                    <label className="text-sm text-slate-400 mb-1 block" htmlFor="full-name">
                       Full Name
                     </label>
                     <div className="relative">
@@ -137,6 +137,7 @@ export default function AuthPage() {
                         size={18}
                       />
                       <input
+                        id="full-name"
                         type="text"
                         required={mode === 'register'}
                         value={fullName}
@@ -151,7 +152,7 @@ export default function AuthPage() {
             </AnimatePresence>
 
             <div>
-              <label className="text-sm text-slate-400 mb-1 block">
+              <label className="text-sm text-slate-400 mb-1 block" htmlFor="email">
                 Email Address
               </label>
               <div className="relative">
@@ -160,6 +161,7 @@ export default function AuthPage() {
                   size={18}
                 />
                 <input
+                  id="email"
                   type="email"
                   required
                   value={email}
@@ -171,7 +173,7 @@ export default function AuthPage() {
             </div>
 
             <div>
-              <label className="text-sm text-slate-400 mb-1 block">
+              <label className="text-sm text-slate-400 mb-1 block" htmlFor="password">
                 Password
               </label>
               <div className="relative">
@@ -180,6 +182,7 @@ export default function AuthPage() {
                   size={18}
                 />
                 <input
+                  id="password"
                   type="password"
                   required
                   value={password}
