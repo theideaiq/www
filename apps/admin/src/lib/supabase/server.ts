@@ -1,4 +1,5 @@
 import type { Database } from '@repo/database/types';
+import 'server-only';
 import { adminEnv } from '@repo/env/admin';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
