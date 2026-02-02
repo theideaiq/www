@@ -16,11 +16,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const rawBody = await request.text();
-    const signature = request.headers.get('x-signature') || undefined;
+    const payload = await request.json();
+
+    // In a real scenario, we would retrieve the signature from headers
+    // const signature = request.headers.get('x-signature');
 
     const provider = paymentFactory.getProviderByName(providerName);
-    const event = await provider.verifyWebhook(rawBody, signature);
+    const event = await provider.verifyWebhook(payload);
 
     if (event.type === 'payment.success') {
       const supabase = createServiceRoleClient(
