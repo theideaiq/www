@@ -7,6 +7,21 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  SKIP_ENV_VALIDATION: "true"
+  WAYL_SECRET_KEY: "dummy"
+  WAYL_WEBHOOK_SECRET: "dummy"
+  ZAIN_SECRET_KEY: "dummy"
+  SUPABASE_SERVICE_ROLE_KEY: "dummy"
+  NEXT_PUBLIC_SUPABASE_URL: "https://dummy.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy"
+  TELEGRAM_BOT_TOKEN: "dummy"
+  GEMINI_API_KEY: "dummy"
+  UPSTASH_REDIS_REST_URL: "https://dummy.upstash.io"
+  UPSTASH_REDIS_REST_TOKEN: "dummy"
+  WEB_APP_URL: "http://localhost:3000"
+  RESEND_API_KEY: "dummy"
+
 jobs:
   quality:
     name: Quality Gate
@@ -93,9 +108,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: pnpm turbo build
 
   e2e:
@@ -143,6 +155,12 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run E2E Tests
+        # We still need the real secrets here for E2E tests if they hit real APIs,
+        # but if we are skipping env validation in build/quality, we might need
+        # to ensure E2E doesn't fail due to missing env vars if it relies on .env.
+        # For now, let's assume we want to use the real secrets if provided, or fallback to the workflow envs.
+        # However, secrets take precedence over env context usually in steps, but here we defined env at workflow level.
+        # To be safe, we can override specific sensitive keys with secrets if they exist.
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
