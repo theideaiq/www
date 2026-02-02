@@ -20,8 +20,8 @@ export interface CartItem {
 /**
  * Gets the current user's active cart or creates one.
  */
-// biome-ignore lint/suspicious/noExplicitAny: supabase client type
 async function getOrCreateCartId(
+  // biome-ignore lint/suspicious/noExplicitAny: supabase client type
   supabase: any,
   userId: string,
 ): Promise<string | null> {

@@ -37,6 +37,7 @@ export interface Database {
         Update: {
           // ...
           // biome-ignore lint/complexity/noBannedTypes: placeholder
+          // biome-ignore lint/suspicious/noEmptyInterface: placeholder
         } & {};
       };
       product_variants: {
