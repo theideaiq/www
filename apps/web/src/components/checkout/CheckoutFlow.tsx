@@ -63,12 +63,7 @@ export function CheckoutFlow() {
               </h3>
             </div>
             {step > 1 && (
-              <button
-                type="button"
-                className="text-sm text-brand-yellow font-medium"
-              >
-                Edit
-              </button>
+              <span className="text-sm text-brand-yellow font-medium">Edit</span>
             )}
           </div>
 
@@ -91,6 +86,7 @@ export function CheckoutFlow() {
                         </label>
                         <input
                           id="fullName"
+                          name="fullName"
                           required
                           value={address.fullName}
                           onChange={(e) =>
@@ -106,6 +102,7 @@ export function CheckoutFlow() {
                         </label>
                         <input
                           id="phoneNumber"
+                          name="phoneNumber"
                           required
                           value={address.phone}
                           onChange={(e) =>
@@ -121,6 +118,7 @@ export function CheckoutFlow() {
                       <label htmlFor="city" className="text-xs text-slate-400">City</label>
                       <select
                         id="city"
+                        name="city"
                         value={address.city}
                         onChange={(e) =>
                           setAddress({ ...address, city: e.target.value })
@@ -140,6 +138,7 @@ export function CheckoutFlow() {
                       </label>
                       <textarea
                         id="details"
+                        name="details"
                         required
                         value={address.street}
                         onChange={(e) =>
