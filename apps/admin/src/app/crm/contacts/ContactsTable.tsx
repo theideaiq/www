@@ -17,6 +17,7 @@ import {
   TableRow,
   Textarea,
 } from '@repo/ui';
+import Image from 'next/image';
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -57,13 +58,15 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
         accessorKey: 'avatar_url',
         header: '',
         cell: ({ row }) => (
-          <img
+          <Image
             src={
               row.original.avatar_url ||
               `https://ui-avatars.com/api/?name=${encodeURIComponent(row.original.email)}`
             }
             alt="Avatar"
-            className="w-8 h-8 rounded-full bg-slate-200"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-full bg-slate-200 object-cover"
           />
         ),
       },
@@ -306,13 +309,15 @@ export function ContactsTable({ initialData }: ContactsTableProps) {
           {editingProfile && editForm && (
             <div className="space-y-6 mt-6">
               <div className="flex items-center gap-4">
-                <img
+                <Image
                   src={
                     editingProfile.avatar_url ||
                     `https://ui-avatars.com/api/?name=${encodeURIComponent(editingProfile.email)}`
                   }
                   alt="Avatar"
-                  className="w-16 h-16 rounded-full bg-slate-200"
+                  width={64}
+                  height={64}
+                  className="w-16 h-16 rounded-full bg-slate-200 object-cover"
                 />
                 <div>
                   <h3 className="font-bold text-lg text-slate-900">
