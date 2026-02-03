@@ -66,7 +66,11 @@ jobs:
         if: matrix.language == 'java-kotlin'
         run: |
           # 1. Restore Secrets (Generates google-services.json)
+          # Use npm run secrets:restore from root if possible or use full path
+          # But for now, just ensure we are at root for chmod
+
           cd apps/web && npm run secrets:restore
+          cd ../.. # Return to root
           
           # 2. Grant Permission
           chmod +x apps/web/android/gradlew
@@ -82,6 +86,7 @@ jobs:
         run: |
           # 1. Restore Secrets (Generates GoogleService-Info.plist)
           cd apps/web && npm run secrets:restore
+          cd ../.. # Return to root
           
           # 2. Determine Build Type (CocoaPods vs SPM)
           if [ -f "apps/web/ios/App/Podfile" ]; then
@@ -91,6 +96,7 @@ jobs:
           else
               echo "⚠️ No Podfile found. Assuming Swift Package Manager (SPM)."
               echo "Resolving Dependencies..."
+              # Use absolute or relative path from root
               xcodebuild -resolvePackageDependencies -project apps/web/ios/App/App.xcodeproj -scheme App
               BUILD_TARGET="-project apps/web/ios/App/App.xcodeproj"
           fi
