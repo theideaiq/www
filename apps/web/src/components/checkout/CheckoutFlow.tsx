@@ -1,11 +1,11 @@
 'use client';
 
+import { Button, Card, Input } from '@repo/ui';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, CreditCard, Loader2, Lock } from 'lucide-react';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Lock, CreditCard, Loader2 } from 'lucide-react';
-import { Button, Input, Card } from '@repo/ui';
-import { useCartStore } from '@/stores/cart-store';
 import { toast } from 'react-hot-toast';
+import { useCartStore } from '@/stores/cart-store';
 
 export function CheckoutFlow() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -47,6 +47,9 @@ export function CheckoutFlow() {
           <div
             className="p-6 flex items-center justify-between cursor-pointer"
             onClick={() => setStep(1)}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setStep(1)}
+            role="button"
+            tabIndex={0}
           >
             <div className="flex items-center gap-4">
               <div
@@ -61,7 +64,10 @@ export function CheckoutFlow() {
               </h3>
             </div>
             {step > 1 && (
-              <button className="text-sm text-brand-yellow font-medium">
+              <button
+                type="button"
+                className="text-sm text-brand-yellow font-medium"
+              >
                 Edit
               </button>
             )}
@@ -83,62 +89,64 @@ export function CheckoutFlow() {
                       <div className="space-y-1">
                         <label className="text-xs text-slate-400">
                           Full Name
-                        </label>
-                        <input
-                          required
+                          <input
+                            required
                           value={address.fullName}
                           onChange={(e) =>
                             setAddress({ ...address, fullName: e.target.value })
                           }
-                          className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none"
-                          placeholder="John Doe"
-                        />
+                            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none"
+                            placeholder="John Doe"
+                          />
+                        </label>
                       </div>
                       <div className="space-y-1">
                         <label className="text-xs text-slate-400">
                           Phone Number
-                        </label>
-                        <input
-                          required
+                          <input
+                            required
                           value={address.phone}
                           onChange={(e) =>
                             setAddress({ ...address, phone: e.target.value })
                           }
-                          className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none"
-                          placeholder="07xxxxxxxxx"
-                        />
+                            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none"
+                            placeholder="07xxxxxxxxx"
+                          />
+                        </label>
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-xs text-slate-400">City</label>
-                      <select
-                        value={address.city}
+                      <label className="text-xs text-slate-400">
+                        City
+                        <select
+                          value={address.city}
                         onChange={(e) =>
                           setAddress({ ...address, city: e.target.value })
                         }
-                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none appearance-none"
-                      >
-                        <option value="Baghdad">Baghdad</option>
-                        <option value="Basra">Basra</option>
-                        <option value="Erbil">Erbil</option>
-                        {/* ... other cities */}
-                      </select>
+                          className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none appearance-none"
+                        >
+                          <option value="Baghdad">Baghdad</option>
+                          <option value="Basra">Basra</option>
+                          <option value="Erbil">Erbil</option>
+                          {/* ... other cities */}
+                        </select>
+                      </label>
                     </div>
 
                     <div className="space-y-1">
                       <label className="text-xs text-slate-400">
                         Address Details
-                      </label>
-                      <textarea
-                        required
+                        <textarea
+                          required
                         value={address.street}
                         onChange={(e) =>
                           setAddress({ ...address, street: e.target.value })
                         }
-                        className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none min-h-[100px]"
-                        placeholder="Street name, Building No., Landmark..."
-                      />
+                          className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow outline-none min-h-[100px]"
+                          placeholder="Street name, Building No., Landmark..."
+                        />
+                      </label>
                     </div>
 
                     <div className="flex justify-end pt-4">

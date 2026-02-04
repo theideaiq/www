@@ -36,6 +36,7 @@ export interface Database {
         };
         Update: {
           // ...
+          [key: string]: any;
         };
       };
       product_variants: {

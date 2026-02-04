@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Star, Share2, Heart, CheckCircle2 } from 'lucide-react';
 import { Button } from '@repo/ui';
+import { motion } from 'framer-motion';
+import { CheckCircle2, Heart, Star } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { VariantSelector } from '@/components/ui/VariantSelector';
 import type { Product, ProductVariant } from '@/services/products';
 import { useCartStore } from '@/stores/cart-store';
 import { useUIStore } from '@/stores/ui-store';
-import { toast } from 'react-hot-toast';
 
 interface ProductViewProps {
   product: Product;
@@ -92,7 +92,7 @@ export function ProductView({ product }: ProductViewProps) {
         {/* LEFT: Gallery */}
         <div className="space-y-4">
           {/* Main Image */}
-          <div className="relative aspect-square bg-[#1a1a1a] rounded-3xl overflow-hidden border border-white/5">
+          <div className="relative aspect-square bg-brand-surface rounded-3xl overflow-hidden border border-white/5">
             <Image
               src={selectedImage}
               alt={product.title}
