@@ -1,21 +1,68 @@
-area: web:
+# This is a configuration file for the `actions/labeler` action.
+# It allows you to automatically label pull requests based on the files that are modified.
+
+# Area: Web
+"area: web":
   - changed-files:
       - any-glob-to-any-file: 'apps/web/**/*'
 
-area: admin:
+# Area: Admin
+"area: admin":
   - changed-files:
       - any-glob-to-any-file: 'apps/admin/**/*'
 
-area: droid:
+# Area: Droid
+"area: droid":
   - changed-files:
       - any-glob-to-any-file: 'apps/droid/**/*'
 
-area: core:
+# Area: Payment Engine
+"area: payment-engine":
   - changed-files:
-      - any-glob-to-any-file: 'packages/**/*'
+      - any-glob-to-any-file: 'packages/payment-engine/**/*'
 
-area: ops:
+# Area: UI
+"area: ui":
+  - changed-files:
+      - any-glob-to-any-file: 'packages/ui/**/*'
+
+# Area: Database
+"area: database":
+  - changed-files:
+      - any-glob-to-any-file: 'packages/database/**/*'
+
+# Area: Env
+"area: env":
+  - changed-files:
+      - any-glob-to-any-file: 'packages/env/**/*'
+
+# Area: Utils
+"area: utils":
+  - changed-files:
+      - any-glob-to-any-file: 'packages/utils/**/*'
+
+# Area: Config
+"area: config":
+  - changed-files:
+      - any-glob-to-any-file: 'packages/config/**/*'
+
+# Area: Documentation
+"area: docs":
+  - changed-files:
+      - any-glob-to-any-file: '**/*.md'
+      - any-glob-to-any-file: 'docs/**/*'
+
+# Type: CI/CD
+"type: ci":
   - changed-files:
       - any-glob-to-any-file: '.github/**/*'
+
+# Type: Config
+"type: config":
+  - changed-files:
       - any-glob-to-any-file: 'turbo.json'
       - any-glob-to-any-file: 'package.json'
+      - any-glob-to-any-file: 'pnpm-workspace.yaml'
+      - any-glob-to-any-file: '.npmrc'
+      - any-glob-to-any-file: 'tsconfig.json'
+      - any-glob-to-any-file: 'biome.json'
