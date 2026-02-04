@@ -29,6 +29,20 @@ export function formatCurrency(
 }
 
 /**
+ * Format a price for display in IQD (Iraqi Dinar).
+ * Uses 'en-IQ' locale, decimal style, and zero fraction digits.
+ *
+ * @param amount - The price amount.
+ * @returns The formatted price string (e.g., "1,250").
+ */
+export function formatPrice(amount: number): string {
+  return new Intl.NumberFormat('en-IQ', {
+    style: 'decimal',
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+/**
  * Format a date string or object to a readable standard.
  * Uses 'en-US' locale with 'MMM D, YYYY' format.
  *

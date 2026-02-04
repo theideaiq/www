@@ -5,6 +5,7 @@ import { ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/services/products';
+import { formatPrice } from '@repo/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -18,10 +19,7 @@ export function ProductCard({
   priority = false,
 }: ProductCardProps) {
   // Format price
-  const price = new Intl.NumberFormat('en-IQ', {
-    style: 'decimal',
-    maximumFractionDigits: 0,
-  }).format(product.price);
+  const price = formatPrice(product.price);
 
   return (
     <Link href={`/product/${product.slug}`} className="group block h-full">
@@ -30,7 +28,7 @@ export function ProductCard({
         className="relative h-full bg-white/5 border border-white/5 rounded-2xl overflow-hidden hover:border-brand-yellow/30 hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] transition-all duration-300 flex flex-col"
       >
         {/* Image Container */}
-        <div className="relative aspect-square bg-[#1a1a1a] overflow-hidden">
+        <div className="relative aspect-square bg-brand-surface overflow-hidden">
           {product.image ? (
             <Image
               src={product.image}
@@ -68,7 +66,7 @@ export function ProductCard({
               e.stopPropagation();
               onAddToCart?.(e);
             }}
-            className="absolute bottom-3 right-3 p-3 bg-brand-yellow text-brand-dark rounded-full shadow-lg translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-black z-10"
+            className="absolute bottom-3 right-3 p-3 bg-brand-yellow text-brand-dark rounded-full shadow-lg translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:translate-y-0 transition-all duration-300 hover:bg-white hover:text-black z-10"
             aria-label="Add to cart"
           >
             <ShoppingCart size={20} />
