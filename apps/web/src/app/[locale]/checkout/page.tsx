@@ -1,8 +1,5 @@
 import { CheckoutFlow } from '@/components/checkout/CheckoutFlow';
-import { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
-import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Checkout | The IDEA',
