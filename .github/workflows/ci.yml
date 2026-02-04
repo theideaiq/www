@@ -53,6 +53,7 @@ jobs:
           SKIP_ENV_VALIDATION: "true"
           NEXT_PUBLIC_SUPABASE_URL: "https://example.com"
           NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-key"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy-service-role-key"
           # Telegram Bot Token required by grammY in droid even if skipping
           TELEGRAM_BOT_TOKEN: "dummy-token"
         run: pnpm turbo check typecheck test
@@ -103,6 +104,7 @@ jobs:
           SKIP_ENV_VALIDATION: "true"
           NEXT_PUBLIC_SUPABASE_URL: "https://example.com"
           NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-key"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy-service-role-key"
           # Telegram Bot Token required by grammY in droid even if skipping
           TELEGRAM_BOT_TOKEN: "dummy-token"
         run: pnpm turbo build
