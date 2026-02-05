@@ -1,0 +1,3 @@
+## 2025-02-18 - Tests Excluded from Build
+Discovery: The `tsconfig.json` in `apps/web` excludes `**/*.test.ts`. This caused the tests in `cart-store.test.ts` to rot silently, as they were testing a string-based implementation while the actual code used objects. TypeScript did not report errors in the test file because it was excluded from compilation.
+Strategy: Ensure that test files are either included in a separate `tsconfig.test.json` or check that they are valid by running the test runner (which usually compiles them) frequently. Always verify that tests match the current implementation's types.
