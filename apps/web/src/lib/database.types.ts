@@ -34,7 +34,9 @@ export interface Database {
           name: string;
           // ... (omitting insert types for brevity as we primarily read in frontend)
         };
-        Update: Record<string, never>;
+        Update: {
+          // ...
+        };
       };
       product_variants: {
         Row: {
