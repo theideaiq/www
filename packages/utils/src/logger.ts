@@ -24,7 +24,7 @@ export class Logger {
   static log(message: string, meta?: Record<string, unknown>) {
     if (process.env.NODE_ENV !== 'test') {
       // biome-ignore lint/suspicious/noConsole: Centralized logging
-      console.log(this.sanitize(message), meta);
+      console.log('%s', this.sanitize(message), meta);
     }
   }
 
@@ -42,7 +42,7 @@ export class Logger {
   ) {
     if (process.env.NODE_ENV !== 'test') {
       // biome-ignore lint/suspicious/noConsole: Centralized logging
-      console.error(this.sanitize(message), error, meta);
+      console.error('%s', this.sanitize(message), error, meta);
     }
   }
 
@@ -55,7 +55,7 @@ export class Logger {
   static warn(message: string, meta?: Record<string, unknown>) {
     if (process.env.NODE_ENV !== 'test') {
       // biome-ignore lint/suspicious/noConsole: Centralized logging
-      console.warn(this.sanitize(message), meta);
+      console.warn('%s', this.sanitize(message), meta);
     }
   }
 }
