@@ -115,6 +115,7 @@ jobs:
           WAYL_WEBHOOK_SECRET: "dummy-wayl-webhook-secret"
           ZAIN_SECRET_KEY: "dummy-zain-secret"
           TELEGRAM_BOT_TOKEN: "123456789:DUMMY_TELEGRAM_BOT_TOKEN_FOR_CI_TESTING"
+          GEMINI_API_KEY: "dummy-gemini-api-key"
         run: pnpm turbo build
 
   e2e:
