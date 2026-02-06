@@ -1,21 +1,31 @@
-area: web:
+# .github/labeler.yml
+
+# Area: Web
+"area: web":
   - changed-files:
       - any-glob-to-any-file: 'apps/web/**/*'
 
-area: admin:
+# Area: Admin
+"area: admin":
   - changed-files:
       - any-glob-to-any-file: 'apps/admin/**/*'
 
-area: droid:
+# Area: Droid
+"area: droid":
   - changed-files:
       - any-glob-to-any-file: 'apps/droid/**/*'
 
-area: core:
+# Area: Packages
+"area: packages":
   - changed-files:
       - any-glob-to-any-file: 'packages/**/*'
 
-area: ops:
+# Area: CI/CD
+"area: ci":
   - changed-files:
       - any-glob-to-any-file: '.github/**/*'
-      - any-glob-to-any-file: 'turbo.json'
-      - any-glob-to-any-file: 'package.json'
+
+# Area: Documentation
+"area: docs":
+  - changed-files:
+      - any-glob-to-any-file: '**/*.md'

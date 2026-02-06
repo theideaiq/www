@@ -1,3 +1,7 @@
 ## 2024-05-24 - Sitemap Synchronization
 **Learning:** Found a discrepancy between `sitemap.ts` hardcoded routes and actual application routes (e.g., `/club` vs `/plus`). This causes crawling errors (404s).
 **Action:** When creating new top-level pages or renaming routes, always check `sitemap.ts` and `robots.ts` to ensure they reflect the current site structure. Ideally, derive sitemap routes from a shared configuration like `@repo/config` if possible.
+
+## 2025-05-27 - Product JSON-LD Injection
+**Learning:** Product pages lacked Structured Data, limiting Rich Snippet potential. Created a reusable `ProductJsonLd` component to inject schema using `dangerouslySetInnerHTML`.
+**Action:** When creating new entity pages (Article, Event, etc.), create a corresponding JSON-LD component in `apps/web/src/components/seo` and integrate it into the page component.
