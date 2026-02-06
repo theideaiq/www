@@ -9,20 +9,32 @@ export async function POST(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const providerName = searchParams.get('provider');
 
-    if (!providerName) {
+    // Allowlist valid providers to prevent using arbitrary strings in factory lookup
+    // Explicitly mapping the string breaks the taint flow for CodeQL
+    let safeProviderName: string;
+    if (providerName === 'wayl') {
+      safeProviderName = 'wayl';
+    } else if (providerName === 'zain-direct') {
+      safeProviderName = 'zain-direct';
+    } else {
       return NextResponse.json(
-        { error: 'Missing provider param' },
+        { error: 'Invalid or missing provider param' },
         { status: 400 },
       );
     }
 
-    const payload = await request.json();
+    const rawBody = await request.text();
+    let payload;
+    try {
+      payload = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    }
 
-    // In a real scenario, we would retrieve the signature from headers
-    // const signature = request.headers.get('x-signature');
+    const signature = request.headers.get('x-signature') || '';
 
-    const provider = paymentFactory.getProviderByName(providerName);
-    const event = await provider.verifyWebhook(payload);
+    const provider = paymentFactory.getProviderByName(safeProviderName);
+    const event = await provider.verifyWebhook(payload, signature, rawBody);
 
     if (event.type === 'payment.success') {
       const supabase = createServiceRoleClient(
