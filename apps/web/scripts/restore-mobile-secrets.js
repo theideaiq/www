@@ -26,8 +26,7 @@ function restoreSecret(envVar, destPath, platformName) {
         errorMessage = error.message;
       } else {
         const errorType =
-          error &&
-          error.constructor &&
+          error?.constructor &&
           typeof error.constructor.name === 'string'
             ? error.constructor.name
             : 'UnknownErrorType';

@@ -2,7 +2,7 @@ import { Logger } from '@repo/utils';
 import { createClient } from '@/lib/supabase/client';
 import type { Database } from '@/lib/database.types';
 
-type CartItemRow = Database['public']['Tables']['cart_items']['Row'];
+// type CartItemRow = Database['public']['Tables']['cart_items']['Row'];
 type ProductRow = Database['public']['Tables']['products']['Row'];
 
 export interface CartItem {

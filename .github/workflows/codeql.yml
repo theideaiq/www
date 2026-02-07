@@ -60,6 +60,23 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
 
       # ----------------------------------------------------------------
+      # PREPARE: Dependencies & Capacitor (All Platforms)
+      # ----------------------------------------------------------------
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Capacitor Sync
+        run: |
+          cd apps/web
+          npx cap sync android
+          npx cap sync ios
+
+      # ----------------------------------------------------------------
       # MANUAL BUILD: Java (Android)
       # ----------------------------------------------------------------
       - name: Manual Build (Android)
