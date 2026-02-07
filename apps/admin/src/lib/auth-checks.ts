@@ -1,6 +1,21 @@
 import { ROLES } from '@/lib/constants';
-import 'server-only';
 import { createClient } from '@/lib/supabase/server';
+
+/**
+ * Checks if the provided role has administrative privileges (Admin or Superadmin).
+ * Is case-insensitive.
+ *
+ * @param role - The user role string to check.
+ * @returns True if the role is Admin or Superadmin, false otherwise.
+ */
+export function hasAdminAccess(role?: string | null): boolean {
+  if (!role) return false;
+  const normalizedRole = role.toLowerCase();
+  return (
+    normalizedRole === ROLES.ADMIN.toLowerCase() ||
+    normalizedRole === ROLES.SUPERADMIN.toLowerCase()
+  );
+}
 
 /**
  * Verifies that the current user is authenticated, not banned, and has Admin or Superadmin role.
@@ -33,8 +48,7 @@ export async function requireAdmin() {
     throw new Error('Unauthorized: User invalid or banned');
   }
 
-  // Use local helper to avoid importing from client-safe file if not needed
-  if (!checkAdminAccess(requester.role)) {
+  if (!hasAdminAccess(requester.role)) {
     throw new Error('Unauthorized: Insufficient permissions');
   }
 
@@ -81,14 +95,4 @@ export async function requireSuperAdmin() {
   }
 
   return { supabase, user, requester };
-}
-
-// Local helper to avoid importing from client-safe file if not needed
-function checkAdminAccess(role?: string | null): boolean {
-  if (!role) return false;
-  const normalizedRole = role.toLowerCase();
-  return (
-    normalizedRole === ROLES.ADMIN.toLowerCase() ||
-    normalizedRole === ROLES.SUPERADMIN.toLowerCase()
-  );
 }
