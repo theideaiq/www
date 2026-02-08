@@ -10,11 +10,11 @@
   - changed-files:
       - any-glob-to-any-file: 'apps/droid/**/*'
 
-area: core:
+"area: core":
   - changed-files:
       - any-glob-to-any-file: 'packages/**/*'
 
-area: ops:
+"area: ops":
   - changed-files:
       - any-glob-to-any-file: '.github/**/*'
       - any-glob-to-any-file: 'turbo.json'
