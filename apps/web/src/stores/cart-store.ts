@@ -30,6 +30,7 @@ export const useCartStore = create<CartState>()(
       addItem: (newItem) => {
         set((state) => {
           const existing = state.items.find((i) => i.id === newItem.id);
+          // biome-ignore lint/suspicious/noImplicitAnyLet: Type inferred from usage below
           let updatedItems;
           if (existing) {
             updatedItems = state.items.map((i) =>
