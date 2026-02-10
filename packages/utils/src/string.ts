@@ -31,13 +31,13 @@ export function decodeHtmlEntities(text: string): string {
 
     // Handle numeric entities (decimal)
     const numericMatch = NUMERIC_ENTITY_REGEX.exec(match);
-    if (numericMatch) {
+    if (numericMatch?.[1]) {
       return String.fromCodePoint(Number.parseInt(numericMatch[1], 10));
     }
 
     // Handle hex entities
     const hexMatch = HEX_ENTITY_REGEX.exec(match);
-    if (hexMatch) {
+    if (hexMatch?.[1]) {
       return String.fromCodePoint(Number.parseInt(hexMatch[1], 16));
     }
 
