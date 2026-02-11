@@ -58,6 +58,11 @@ jobs:
           WAYL_SECRET_KEY: "dummy_key"
           WAYL_WEBHOOK_SECRET: "dummy_secret"
           ZAIN_SECRET_KEY: "dummy_key"
+          UPSTASH_REDIS_REST_URL: "https://dummy.upstash.io"
+          UPSTASH_REDIS_REST_TOKEN: "dummy_token"
+          WEB_APP_URL: "http://localhost:3000"
+          NEXT_PUBLIC_SUPABASE_URL: "http://localhost:54321"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy_anon_key"
         run: pnpm turbo check typecheck test
 
   build:
@@ -111,8 +116,11 @@ jobs:
           WAYL_SECRET_KEY: "dummy_key"
           WAYL_WEBHOOK_SECRET: "dummy_secret"
           ZAIN_SECRET_KEY: "dummy_key"
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          UPSTASH_REDIS_REST_URL: "https://dummy.upstash.io"
+          UPSTASH_REDIS_REST_TOKEN: "dummy_token"
+          WEB_APP_URL: "http://localhost:3000"
+          NEXT_PUBLIC_SUPABASE_URL: "http://localhost:54321"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy_anon_key"
         run: pnpm turbo build
 
   e2e:
@@ -169,6 +177,9 @@ jobs:
           WAYL_SECRET_KEY: "dummy_key"
           WAYL_WEBHOOK_SECRET: "dummy_secret"
           ZAIN_SECRET_KEY: "dummy_key"
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          UPSTASH_REDIS_REST_URL: "https://dummy.upstash.io"
+          UPSTASH_REDIS_REST_TOKEN: "dummy_token"
+          WEB_APP_URL: "http://localhost:3000"
+          NEXT_PUBLIC_SUPABASE_URL: "http://localhost:54321"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy_anon_key"
         run: pnpm turbo e2e

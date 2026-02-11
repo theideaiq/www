@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ProductCard } from './ProductCard';
 import type { Product } from '@/services/products';
+import { ProductCard } from './ProductCard';
 
 // Mock Next.js Link
 vi.mock('next/link', () => ({
