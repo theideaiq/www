@@ -1,5 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import { PaymentFactory, WaylAdapter, ZainDirectAdapter } from '@repo/payment-engine';
+import {
+  PaymentFactory,
+  WaylAdapter,
+  ZainDirectAdapter,
+} from '@repo/payment-engine';
+import { describe, expect, it } from 'vitest';
 
 describe('PaymentFactory', () => {
   const config = {
@@ -60,7 +64,10 @@ describe('PaymentFactory', () => {
 
     it('should default to WaylAdapter for unknown names', () => {
       // Act
-      const provider = PaymentFactory.getProviderByName('unknown-provider', config);
+      const provider = PaymentFactory.getProviderByName(
+        'unknown-provider',
+        config,
+      );
 
       // Assert
       expect(provider).toBeInstanceOf(WaylAdapter);
