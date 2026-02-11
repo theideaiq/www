@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Star, Share2, Heart, CheckCircle2 } from 'lucide-react';
 import { Button } from '@repo/ui';
+import { motion } from 'framer-motion';
+import { CheckCircle2, Heart, Star } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 import { VariantSelector } from '@/components/ui/VariantSelector';
-import type { Product, ProductVariant } from '@/services/products';
+import type { Product } from '@/services/products';
 import { useCartStore } from '@/stores/cart-store';
 import { useUIStore } from '@/stores/ui-store';
-import { toast } from 'react-hot-toast';
 
 interface ProductViewProps {
   product: Product;
@@ -17,19 +17,14 @@ interface ProductViewProps {
 
 export function ProductView({ product }: ProductViewProps) {
   const [selectedImage, setSelectedImage] = useState(product.image);
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
+  const [_selectedVariant, _setSelectedVariant] = useState<string | null>(null);
   const { addItem } = useCartStore();
   const { openCart } = useUIStore();
 
   // Helper to extract options from variants
-  // This assumes a simple structure where variants differentiate by 1 attribute for now
-  // or we just list all variants.
-  // For simplicity given the time, if variants exist, we just show "Option" selector
-  // In a real complex app we'd cross-reference attributes.
-
   const hasVariants = product.variants && product.variants.length > 0;
 
-  // Extract unique attributes (e.g. Color, Size)
+  // Extract unique attributes
   const attributes: Record<string, string[]> = {};
   if (hasVariants) {
     product.variants.forEach((v) => {
@@ -40,22 +35,19 @@ export function ProductView({ product }: ProductViewProps) {
     });
   }
 
-  // State for selections
   const [selections, setSelections] = useState<Record<string, string>>({});
 
   const handleAttributeChange = (key: string, value: string) => {
     setSelections((prev) => ({ ...prev, [key]: value }));
-    // Try to find matching image
     const matchingVariant = product.variants.find(
       (v) => v.attributes[key] === value,
     );
-    if (matchingVariant && matchingVariant.image) {
+    if (matchingVariant?.image) {
       setSelectedImage(matchingVariant.image);
     }
   };
 
   const handleAddToCart = () => {
-    // Validate selections if needed
     if (
       hasVariants &&
       Object.keys(attributes).length > Object.keys(selections).length
@@ -64,8 +56,6 @@ export function ProductView({ product }: ProductViewProps) {
       return;
     }
 
-    // Construct Cart Item
-    // In a real app we'd map selection to variant ID. For now using a composite ID.
     const variantId = hasVariants
       ? `${product.id}-${Object.values(selections).join('-')}`
       : undefined;
@@ -74,7 +64,7 @@ export function ProductView({ product }: ProductViewProps) {
       id: variantId || product.id,
       productId: product.id,
       variantId,
-      title: product.title,
+      title: product.name,
       price: product.price,
       image: selectedImage,
       attributes: selections,
@@ -91,33 +81,36 @@ export function ProductView({ product }: ProductViewProps) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* LEFT: Gallery */}
         <div className="space-y-4">
-          {/* Main Image */}
           <div className="relative aspect-square bg-[#1a1a1a] rounded-3xl overflow-hidden border border-white/5">
             <Image
               src={selectedImage}
-              alt={product.title}
+              alt={product.name}
               fill
               className="object-contain p-8 hover:scale-105 transition-transform duration-500"
               priority
             />
             <div className="absolute top-4 left-4">
-              {product.condition === 'new' ? (
+              {product.isNew ? (
                 <span className="bg-brand-yellow text-brand-dark font-black px-3 py-1 rounded text-xs uppercase tracking-widest">
                   New
                 </span>
               ) : (
                 <span className="bg-white/10 backdrop-blur text-white font-bold px-3 py-1 rounded text-xs uppercase tracking-widest border border-white/10">
-                  {product.condition}
+                  Used
                 </span>
               )}
             </div>
           </div>
 
-          {/* Thumbnails (Scrollable on mobile) */}
           <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
             <button
+              type="button"
               onClick={() => setSelectedImage(product.image)}
-              className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === product.image ? 'border-brand-yellow' : 'border-transparent opacity-50 hover:opacity-100'}`}
+              className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
+                selectedImage === product.image
+                  ? 'border-brand-yellow'
+                  : 'border-transparent opacity-50 hover:opacity-100'
+              }`}
             >
               <Image
                 src={product.image}
@@ -128,9 +121,15 @@ export function ProductView({ product }: ProductViewProps) {
             </button>
             {product.images?.map((img, i) => (
               <button
+                type="button"
+                // biome-ignore lint/suspicious/noArrayIndexKey: Static images list
                 key={i}
                 onClick={() => setSelectedImage(img)}
-                className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-brand-yellow' : 'border-transparent opacity-50 hover:opacity-100'}`}
+                className={`relative w-20 h-20 flex-shrink-0 rounded-xl overflow-hidden border-2 transition-all ${
+                  selectedImage === img
+                    ? 'border-brand-yellow'
+                    : 'border-transparent opacity-50 hover:opacity-100'
+                }`}
               >
                 <Image
                   src={img}
@@ -148,9 +147,12 @@ export function ProductView({ product }: ProductViewProps) {
           <div>
             <div className="flex items-center justify-between mb-2">
               <h1 className="text-3xl md:text-5xl font-black text-white leading-tight">
-                {product.title}
+                {product.name}
               </h1>
-              <button className="text-slate-500 hover:text-brand-pink transition-colors">
+              <button
+                type="button"
+                className="text-slate-500 hover:text-brand-pink transition-colors"
+              >
                 <Heart size={28} />
               </button>
             </div>
@@ -160,7 +162,8 @@ export function ProductView({ product }: ProductViewProps) {
                 {product.rating}
               </span>
               <span>•</span>
-              <span>{product.seller}</span>
+              {/* Placeholder for seller as it might not be in Product type yet */}
+              <span>Verified Seller</span>
               {product.isVerified && (
                 <CheckCircle2 size={16} className="text-blue-500" />
               )}
@@ -172,7 +175,6 @@ export function ProductView({ product }: ProductViewProps) {
             <span className="text-lg font-medium text-slate-500">IQD</span>
           </div>
 
-          {/* Variants */}
           {hasVariants && (
             <div className="space-y-6 pt-6 border-t border-white/10">
               {Object.entries(attributes).map(([key, options]) => (
@@ -187,7 +189,6 @@ export function ProductView({ product }: ProductViewProps) {
             </div>
           )}
 
-          {/* Description */}
           <div className="prose prose-invert prose-sm max-w-none text-slate-400">
             <p>
               {product.description ||
@@ -195,7 +196,6 @@ export function ProductView({ product }: ProductViewProps) {
             </p>
           </div>
 
-          {/* Desktop Actions */}
           <div className="hidden md:flex gap-4 pt-8 border-t border-white/10">
             <Button
               onClick={handleAddToCart}
@@ -207,7 +207,6 @@ export function ProductView({ product }: ProductViewProps) {
         </div>
       </div>
 
-      {/* Mobile Sticky Actions */}
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}

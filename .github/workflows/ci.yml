@@ -11,6 +11,15 @@ jobs:
   quality:
     name: Quality Gate
     runs-on: ubuntu-latest
+    env:
+      SKIP_ENV_VALIDATION: "true"
+      TELEGRAM_BOT_TOKEN: "123456:dummy"
+      SUPABASE_SERVICE_ROLE_KEY: "dummy"
+      GEMINI_API_KEY: "dummy"
+      RESEND_API_KEY: "dummy"
+      WAYL_SECRET_KEY: "dummy"
+      WAYL_WEBHOOK_SECRET: "dummy"
+      ZAIN_SECRET_KEY: "dummy"
     steps:
       - uses: actions/checkout@v6
 
@@ -55,6 +64,15 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: []
+    env:
+      SKIP_ENV_VALIDATION: "true"
+      TELEGRAM_BOT_TOKEN: "123456:dummy"
+      SUPABASE_SERVICE_ROLE_KEY: "dummy"
+      GEMINI_API_KEY: "dummy"
+      RESEND_API_KEY: "dummy"
+      WAYL_SECRET_KEY: "dummy"
+      WAYL_WEBHOOK_SECRET: "dummy"
+      ZAIN_SECRET_KEY: "dummy"
     steps:
       - uses: actions/checkout@v6
 

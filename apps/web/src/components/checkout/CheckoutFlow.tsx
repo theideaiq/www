@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Lock, CreditCard, Loader2 } from 'lucide-react';
-import { Button, Input, Card } from '@repo/ui';
+import { Button } from '@repo/ui';
+
 import { useCartStore } from '@/stores/cart-store';
 import { toast } from 'react-hot-toast';
 
@@ -44,6 +45,8 @@ export function CheckoutFlow() {
         <div
           className={`rounded-3xl border transition-all overflow-hidden ${step === 1 ? 'bg-white/5 border-brand-yellow/50 shadow-[0_0_20px_rgba(250,204,21,0.1)]' : 'bg-black/40 border-white/5'}`}
         >
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents: Step navigation */}
+          {/* biome-ignore lint/a11y/noStaticElementInteractions: Step navigation */}
           <div
             className="p-6 flex items-center justify-between cursor-pointer"
             onClick={() => setStep(1)}
@@ -61,7 +64,7 @@ export function CheckoutFlow() {
               </h3>
             </div>
             {step > 1 && (
-              <button className="text-sm text-brand-yellow font-medium">
+              <button type="button" className="text-sm text-brand-yellow font-medium">
                 Edit
               </button>
             )}

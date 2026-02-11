@@ -1,201 +1,143 @@
 import { Logger } from '@repo/utils';
 import { createClient } from '@/lib/supabase/client';
-import type { Database, Json } from '@/lib/database.types';
+// import type { Database, Json } from '@/lib/database.types';
 
-type DBProduct = Database['public']['Tables']['products']['Row'] & {
-  reviews?: { rating: number }[];
-  product_variants?: Database['public']['Tables']['product_variants']['Row'][];
-};
+// type DBProduct = Database['public']['Tables']['products']['Row'] & {
+//   details: Json;
+// };
 
 export interface ProductVariant {
   id: string;
-  sku: string;
+  name: string;
   price: number;
+  sku: string;
   stock: number;
-  attributes: Record<string, string>;
-  image: string;
 }
 
 export interface Product {
   id: string;
-  title: string;
-  slug: string;
+  name: string;
   price: number;
-  category: string;
-  condition: string;
-  seller: string;
-  rating: number;
-  image: string;
+  compareAtPrice?: number;
+  currency: string;
   images: string[];
+  category: string;
+  tags: string[];
+  rating: number;
+  reviewCount: number;
+  isNew: boolean;
+  isFeatured: boolean;
   isVerified: boolean;
   description: string;
+  // biome-ignore lint/suspicious/noExplicitAny: Flexible JSON structure
   details: Record<string, any>;
   variants: ProductVariant[];
   stock: number;
 }
 
-/**
- * Fetches a list of available products from Supabase.
- */
-export async function getProducts(limit = 20): Promise<Product[]> {
+export async function getProducts(
+  category?: string,
+  featured?: boolean,
+): Promise<Product[]> {
   const supabase = createClient();
+  let query = supabase.from('products').select(`
+      *,
+      product_variants (*)
+    `);
 
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*, reviews(rating)')
-      .gt('stock_count', 0)
-      .limit(limit);
-
-    if (error) {
-      Logger.error('Error fetching products:', error);
-      return [];
-    }
-
-    if (!data) return [];
-
-    return (data as unknown as DBProduct[]).map(mapDBProductToUI);
-  } catch (err) {
-    Logger.error('Unexpected error fetching products:', err);
-    // Fallback for verification/demo if DB is not connected
-    return [
-      {
-        id: '1',
-        title: 'Logitech G Pro X Superlight',
-        slug: 'logitech-g-pro-x-superlight',
-        price: 150000,
-        category: 'Gaming',
-        condition: 'new',
-        seller: 'The IDEA Official',
-        rating: 4.8,
-        image:
-          'https://images.unsplash.com/photo-1615663245857-acda5b2b15d5?auto=format&fit=crop&q=80&w=1600',
-        images: [],
-        isVerified: true,
-        description: 'The best gaming mouse.',
-        details: {},
-        variants: [],
-        stock: 10,
-      },
-      {
-        id: '2',
-        title: 'Sony PlayStation 5 Pro',
-        slug: 'ps5-pro',
-        price: 850000,
-        category: 'Gaming',
-        condition: 'new',
-        seller: 'The IDEA Official',
-        rating: 5.0,
-        image:
-          'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&q=80&w=1600',
-        images: [],
-        isVerified: true,
-        description: 'The most powerful console ever.',
-        details: {},
-        variants: [],
-        stock: 5,
-      },
-    ];
+  if (category && category !== 'all') {
+    query = query.eq('category_id', category);
   }
-}
 
-/**
- * Fetches a single product by slug, including variants.
- */
-export async function getProductBySlug(slug: string): Promise<Product | null> {
-  const supabase = createClient();
+  if (featured) {
+    query = query.eq('is_featured', true);
+  }
 
-  try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*, reviews(rating), product_variants(*)')
-      .eq('slug', slug)
-      .single();
+  const { data, error } = await query;
 
-    if (error) {
-      Logger.error(`Error fetching product [${slug}]:`, error);
-      return null;
-    }
+  if (error) {
+    Logger.error('Error fetching products:', error);
+    return [];
+  }
 
-    if (!data) return null;
+  return data.map((item) => {
+    // Transform variants
+    const variants =
+      // biome-ignore lint/suspicious/noExplicitAny: Joined data type
+      (item.product_variants as any[])?.map((v) => ({
+        id: v.id,
+        name: v.name,
+        price: v.price,
+        sku: v.sku,
+        stock: v.stock_count,
+      })) || [];
 
-    return mapDBProductToUI(data as unknown as DBProduct);
-  } catch (err) {
-    Logger.error(`Unexpected error fetching product [${slug}]:`, err);
-    // Fallback
     return {
-      id: '1',
-      title: 'Logitech G Pro X Superlight',
-      slug: slug,
-      price: 150000,
-      category: 'Gaming',
-      condition: 'new',
-      seller: 'The IDEA Official',
-      rating: 4.8,
-      image:
-        'https://images.unsplash.com/photo-1615663245857-acda5b2b15d5?auto=format&fit=crop&q=80&w=1600',
-      images: [],
-      isVerified: true,
-      description: 'The best gaming mouse.',
-      details: {},
-      variants: [
-        {
-          id: 'v1',
-          sku: 'BLK',
-          price: 150000,
-          stock: 5,
-          attributes: { Color: 'Black' },
-          image: '',
-        },
-        {
-          id: 'v2',
-          sku: 'WHT',
-          price: 150000,
-          stock: 5,
-          attributes: { Color: 'White' },
-          image: '',
-        },
-      ],
-      stock: 10,
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      compareAtPrice: item.compare_at_price || undefined,
+      currency: 'IQD',
+      images: [item.image_url, ...(item.gallery_urls || [])].filter(Boolean),
+      category: item.category_id, // You might want to fetch category name
+      tags: item.tags || [],
+      rating: 4.5, // Placeholder as DB might not have ratings yet
+      reviewCount: 0,
+      isNew:
+        new Date(item.created_at) >
+        new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      isFeatured: item.is_featured,
+      isVerified: item.is_verified,
+      description: item.description || '',
+      // biome-ignore lint/suspicious/noExplicitAny: Casting JSONB
+      details: (item.details as Record<string, any>) || {},
+      variants,
+      stock: item.stock_count,
     };
-  }
+  });
 }
 
-/**
- * Maps Database Product Row to UI Product Object
- */
-function mapDBProductToUI(item: DBProduct): Product {
-  const ratings = item.reviews?.map((r) => r.rating) || [];
-  const avgRating =
-    ratings.length > 0
-      ? ratings.reduce((a, b) => a + b, 0) / ratings.length
-      : 0;
+export async function getProduct(id: string): Promise<Product | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('products')
+    .select(`
+      *,
+      product_variants (*)
+    `)
+    .eq('id', id)
+    .single();
 
-  // Map variants
-  const variants: ProductVariant[] = (item.product_variants || []).map((v) => ({
-    id: v.id,
-    sku: v.sku || '',
-    price: v.price_override ?? item.price,
-    stock: v.stock_count ?? 0,
-    attributes: (v.attributes as Record<string, string>) || {},
-    image: v.image_url || item.image_url || '',
-  }));
+  if (error || !data) return null;
+
+  const variants =
+    // biome-ignore lint/suspicious/noExplicitAny: Joined data type
+    (data.product_variants as any[])?.map((v) => ({
+      id: v.id,
+      name: v.name,
+      price: v.price,
+      sku: v.sku,
+      stock: v.stock_count,
+    })) || [];
 
   return {
-    id: item.id,
-    title: item.name,
-    slug: item.slug || item.id, // Fallback to ID if slug missing
-    price: Number(item.price),
-    category: item.category,
-    condition: item.condition,
-    seller: item.seller,
-    rating: Number(avgRating.toFixed(1)),
-    image: item.image_url || '',
-    images: item.images || (item.image_url ? [item.image_url] : []),
-    isVerified: item.is_verified,
-    description: item.description || '',
-    details: (item.details as Record<string, any>) || {},
+    id: data.id,
+    name: data.name,
+    price: data.price,
+    compareAtPrice: data.compare_at_price || undefined,
+    currency: 'IQD',
+    images: [data.image_url, ...(data.gallery_urls || [])].filter(Boolean),
+    category: data.category_id,
+    tags: data.tags || [],
+    rating: 4.5,
+    reviewCount: 0,
+    isNew: false,
+    isFeatured: data.is_featured,
+    isVerified: data.is_verified,
+    description: data.description || '',
+    // biome-ignore lint/suspicious/noExplicitAny: Casting JSONB
+    details: (data.details as Record<string, any>) || {},
     variants,
-    stock: item.stock_count,
+    stock: data.stock_count,
   };
 }
