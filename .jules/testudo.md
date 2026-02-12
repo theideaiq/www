@@ -1,0 +1,3 @@
+## 2025-02-17 - [Supabase Query Builder Mocking]
+Discovery: [Mocking the Supabase client's fluent API (`from().select().eq().single()` vs `from().insert()`) is complex because some chains end with a Promise-resolving method (`single`) while others are awaited directly (`insert`, `update`).]
+Strategy: [Create a mock query builder that is both chainable (returns `this`) and thenable (has a `then` method resolving to the desired result). This allows `await builder.insert(...)` to work alongside `await builder.select().single()`. Use `vi.fn().mockResolvedValue(result)` for terminal methods like `single`.]
