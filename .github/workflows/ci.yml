@@ -9,7 +9,7 @@ on:
 
 env:
   SKIP_ENV_VALIDATION: "true"
-  TELEGRAM_BOT_TOKEN: "123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11"
+  TELEGRAM_BOT_TOKEN: "123456:dummy-telegram-token"
   SUPABASE_SERVICE_ROLE_KEY: "dummy-service-role-key"
   GEMINI_API_KEY: "dummy-gemini-key"
   RESEND_API_KEY: "re_123456789"
