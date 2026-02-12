@@ -1,7 +1,7 @@
 'use client';
 
 // UI Kit
-import { Badge, Button, Input } from '@repo/ui';
+import { Badge, Button } from '@repo/ui';
 import { motion } from 'framer-motion';
 import { Book, Gamepad2, Laptop, Search, Smartphone, Zap } from 'lucide-react';
 import Image from 'next/image';
@@ -26,7 +26,7 @@ export default function MegastorePage() {
   // Force cast to fix build error
   const products = (data as unknown as Product[]) || [];
   const addItem = useCartStore((s) => s.addItem);
-  const { openCart } = useUIStore();
+  const openCart = useUIStore((s) => s.openCart);
 
   const handleQuickAdd = (e: React.MouseEvent, product: any) => {
     e.preventDefault(); // Prevent navigation

@@ -21,7 +21,7 @@ interface WebNavbarProps {
 export function WebNavbar({ navItems, logo }: WebNavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
-  const { toggleCart } = useUIStore();
+  const toggleCart = useUIStore((s) => s.toggleCart);
   const cartItems = useCartStore((s) => s.items);
   const [mounted, setMounted] = useState(false);
 
