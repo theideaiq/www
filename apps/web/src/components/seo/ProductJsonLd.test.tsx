@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
-import { ProductJsonLd } from './ProductJsonLd';
+import { describe, expect, it, vi } from 'vitest';
 import type { Product } from '@/services/products';
+import { ProductJsonLd } from './ProductJsonLd';
 
 // Mock webEnv
 vi.mock('@repo/env/web', () => ({

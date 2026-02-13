@@ -1,8 +1,8 @@
-import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getProductBySlug } from '@/services/products';
-import { ProductView } from '@/components/store/ProductView';
+import { notFound } from 'next/navigation';
 import { ProductJsonLd } from '@/components/seo/ProductJsonLd';
+import { ProductView } from '@/components/store/ProductView';
+import { getProductBySlug } from '@/services/products';
 
 type Props = {
   params: Promise<{ slug: string; locale: string }>;
