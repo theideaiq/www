@@ -43,7 +43,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
 
       # Required for Android Gradle Build
       - name: Setup Java
@@ -51,6 +51,16 @@ jobs:
         with:
           java-version: 17
           distribution: 'temurin'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install dependencies
+        # Install deps to ensure Capacitor/React Native environment is correct if build relies on it
+        # Relax engine strictness to avoid failure on older environments
+        run: npm_config_engine_strict=false pnpm install
 
       # Initialize CodeQL (Defines what languages to scan)
       - name: Initialize CodeQL
@@ -66,10 +76,15 @@ jobs:
         if: matrix.language == 'java-kotlin'
         run: |
           # 1. Restore Secrets (Generates google-services.json)
-          npm run secrets:restore --workspace=apps/web
+          # Run node script directly to avoid npm workspace resolution issues
+          node apps/web/scripts/restore-mobile-secrets.js
           
           # 2. Grant Permission
           chmod +x apps/web/android/gradlew
+
+          # 2.5 Ensure web assets exist (dummy if needed) for Capacitor sync
+          mkdir -p apps/web/out
+          npx cap sync android
           
           # 3. Build Debug APK (Sufficient for analysis)
           cd apps/web/android && ./gradlew assembleDebug --no-daemon
@@ -81,7 +96,12 @@ jobs:
         if: matrix.language == 'swift'
         run: |
           # 1. Restore Secrets (Generates GoogleService-Info.plist)
-          npm run secrets:restore --workspace=apps/web
+          # Run node script directly to avoid npm workspace resolution issues
+          node apps/web/scripts/restore-mobile-secrets.js
+
+          # 1.5 Ensure web assets exist (dummy if needed) for Capacitor sync
+          mkdir -p apps/web/out
+          npx cap sync ios
           
           # 2. Determine Build Type (CocoaPods vs SPM)
           if [ -f "apps/web/ios/App/Podfile" ]; then
