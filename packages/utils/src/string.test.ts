@@ -1,4 +1,4 @@
-import { decodeHtmlEntities, slugify } from '@repo/utils';
+import { decodeHtmlEntities, slugify } from './string';
 import { describe, expect, it } from 'vitest';
 
 describe('String Utils (@repo/utils)', () => {
@@ -39,6 +39,12 @@ describe('String Utils (@repo/utils)', () => {
     it('should handle mixed content', () => {
       expect(decodeHtmlEntities('Tom &amp; Jerry')).toBe('Tom & Jerry');
       expect(decodeHtmlEntities('1 &lt; 2')).toBe('1 < 2');
+    });
+
+    it('should ignore invalid numeric entities', () => {
+      expect(decodeHtmlEntities('&#a;')).toBe('&#a;'); // Missing 'x' prefix
+      expect(decodeHtmlEntities('&#xG;')).toBe('&#xG;'); // Invalid hex char
+      expect(decodeHtmlEntities('&#;')).toBe('&#;'); // Empty
     });
 
     it('should handle empty or null input', () => {
