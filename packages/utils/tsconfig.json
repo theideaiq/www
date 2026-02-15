@@ -10,7 +10,6 @@
     "node_modules",
     "vitest.config.mts",
     "vitest.config.ts",
-    "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
