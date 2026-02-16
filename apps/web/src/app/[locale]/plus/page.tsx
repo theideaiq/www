@@ -8,8 +8,6 @@ import {
   Gamepad2,
   Zap,
   Crown,
-  Film,
-  Music,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { type ReactNode, useState } from 'react';
@@ -217,7 +215,7 @@ export default function PlusHome() {
               <ul className="flex-1 space-y-4 mb-8">
                 {tier.features.map((feature, f) => (
                   <li
-                    key={f}
+                    key={`${tier.id}-feature-${f}`}
                     className="flex items-start gap-3 text-sm text-slate-300"
                   >
                     <div

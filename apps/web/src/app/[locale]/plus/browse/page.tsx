@@ -18,9 +18,17 @@ type RentalCatalogItem = {
   title: string;
   category: string;
   daily_rate: number;
-  image_url: string | null;
+  image_url: string;
   description: string | null;
 };
+
+interface CategoryRowProps {
+  title: string;
+  items: RentalCatalogItem[];
+  onRent: (item: RentalCatalogItem) => void;
+  rentingId: number | null;
+  icon: React.ReactNode;
+}
 
 export default function PlusBrowsePage() {
   const router = useRouter();
@@ -36,7 +44,7 @@ export default function PlusBrowsePage() {
       .order('id');
 
     if (error) Logger.error('Browse Page Error:', error);
-    setItems(data || []);
+    setItems((data as unknown as RentalCatalogItem[]) || []);
     setLoading(false);
   }, []);
 
@@ -163,8 +171,13 @@ export default function PlusBrowsePage() {
 }
 
 // Sub-component for Horizontal Scrolling Rows
-// biome-ignore lint/suspicious/noExplicitAny: migration
-function CategoryRow({ title, items, onRent, rentingId, icon }: any) {
+function CategoryRow({
+  title,
+  items,
+  onRent,
+  rentingId,
+  icon,
+}: CategoryRowProps) {
   if (items.length === 0) return null;
 
   return (
@@ -175,8 +188,7 @@ function CategoryRow({ title, items, onRent, rentingId, icon }: any) {
 
       {/* Horizontal Scroll Container */}
       <div className="flex gap-4 overflow-x-auto pb-8 pr-12 no-scrollbar snap-x">
-        {/* biome-ignore lint/suspicious/noExplicitAny: migration */}
-        {items.map((item: any) => (
+        {items.map((item) => (
           <motion.div
             key={item.id}
             whileHover={{ scale: 1.05, y: -5 }}

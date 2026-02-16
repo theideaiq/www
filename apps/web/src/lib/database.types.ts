@@ -16,14 +16,14 @@ export interface Database {
           description: string | null;
           price: number;
           image_url: string | null;
-          type: 'sale' | 'rental' | 'auction'; // inferred from context
-          category: string; // inferred
+          type: 'sale' | 'rental' | 'auction';
+          category: string;
           stock_count: number;
           rental_tier: string | null;
           created_at: string;
           updated_at: string;
           details: Json;
-          condition: 'new' | 'used' | 'refurbished' | 'open_box'; // inferred
+          condition: 'new' | 'used' | 'refurbished' | 'open_box';
           seller: string;
           is_verified: boolean;
           slug: string | null;
@@ -32,11 +32,10 @@ export interface Database {
         Insert: {
           id?: string;
           name: string;
-          // ... (omitting insert types for brevity as we primarily read in frontend)
-        };
-        Update: {
           // ...
         };
+        Update: Record<string, never>;
+        Relationships: [];
       };
       product_variants: {
         Row: {
@@ -45,9 +44,22 @@ export interface Database {
           sku: string | null;
           stock_count: number | null;
           price_override: number | null;
-          attributes: Json; // e.g., { color: "Red", size: "L" }
+          attributes: Json;
           image_url: string | null;
         };
+        Insert: {
+          product_id: string;
+          // ...
+        };
+        Update: Record<string, never>;
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey";
+            columns: ["product_id"];
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       cart_items: {
         Row: {
@@ -56,12 +68,39 @@ export interface Database {
           product_id: string;
           quantity: number;
         };
+        Insert: {
+          cart_id: string;
+          product_id: string;
+          quantity: number;
+        };
+        Update: {
+          quantity?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_cart_id_fkey";
+            columns: ["cart_id"];
+            referencedRelation: "carts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey";
+            columns: ["product_id"];
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       carts: {
         Row: {
           id: string;
           user_id: string | null;
         };
+        Insert: {
+          user_id: string;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
       };
       orders: {
         Row: {
@@ -76,6 +115,9 @@ export interface Database {
           gateway_provider: string | null;
           gateway_metadata: Json | null;
         };
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
       };
       profiles: {
         Row: {
@@ -83,8 +125,10 @@ export interface Database {
           email: string | null;
           full_name: string | null;
           avatar_url: string | null;
-          // ... other fields
         };
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
       };
       rentals: {
         Row: {
@@ -96,6 +140,27 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
+        Insert: {
+          user_id: string;
+          item_name: string;
+          status: string;
+          amount: number;
+        };
+        Update: Record<string, never>;
+        Relationships: [];
+      };
+      rental_catalog: {
+        Row: {
+          id: number;
+          title: string;
+          category: string;
+          daily_rate: number;
+          image_url: string | null;
+          description: string | null;
+        };
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [];
       };
     };
     Views: {

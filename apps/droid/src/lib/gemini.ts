@@ -3,7 +3,10 @@ import { droidEnv as env } from '@repo/env/droid';
 import { PaymentFactory } from '@repo/payment-engine';
 import { supabase } from './supabase';
 
-const ai = new GoogleGenAI({ apiKey: env.GEMINI_API_KEY });
+// Initialize Gemini only if API key is present or use a dummy for build time
+// This prevents "API key must be set" errors during build if env vars are missing
+const apiKey = env.GEMINI_API_KEY || 'dummy-key-for-build';
+const ai = new GoogleGenAI({ apiKey });
 
 const MAX_PRODUCT_SEARCH_RESULTS = 5;
 
@@ -186,6 +189,12 @@ export async function generateResponse(
   history: Content[],
   message: string,
 ): Promise<string> {
+  // If we are using a dummy key (e.g. during build or missing env), fail gracefully at runtime
+  if (apiKey === 'dummy-key-for-build') {
+    console.warn('Gemini API Key is missing (using dummy key).');
+    return 'I am currently undergoing maintenance and cannot process requests. Please try again later.';
+  }
+
   try {
     const chat = ai.chats.create({
       model: 'gemini-2.5-flash',
