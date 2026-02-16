@@ -103,6 +103,7 @@ export function WebNavbar({ navItems, logo }: WebNavbarProps) {
             type="button"
             onClick={toggleCart}
             className="relative text-white hover:text-brand-yellow transition-colors"
+            aria-label="Open cart"
           >
             <ShoppingCart size={20} />
             {mounted && cartItems.length > 0 && (
