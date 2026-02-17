@@ -1,22 +1,28 @@
-name: "CodeQL"
+name: "CodeQL Advanced"
 
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
   schedule:
-    - cron: "29 20 * * 0"
+    - cron: '30 1 * * 0'
 
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
+    # Use macOS for Swift (iOS), Ubuntu for everything else
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
+
     permissions:
+      security-events: write
       actions: read
       contents: read
-      security-events: write
+
+    # Global Env: Inject secrets so the restore script can generate the missing files
+    env:
+      ANDROID_GOOGLE_SERVICES_BASE64: ${{ secrets.ANDROID_GOOGLE_SERVICES_BASE64 }}
+      IOS_GOOGLE_SERVICE_INFO_BASE64: ${{ secrets.IOS_GOOGLE_SERVICE_INFO_BASE64 }}
 
     strategy:
       fail-fast: false
@@ -25,7 +31,7 @@ jobs:
           - language: javascript-typescript
             build-mode: none
           - language: java-kotlin
-            build-mode: none # Changed from manual to none to avoid build complexity
+            build-mode: manual
           - language: swift
             build-mode: manual
 
@@ -33,46 +39,75 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      # Required for 'npm run secrets:restore'
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+
+      # Required for Android Gradle Build
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      # Initialize CodeQL (Defines what languages to scan)
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      # Build setup for Swift (Manual Build Mode)
-      - if: matrix.build-mode == 'manual' && matrix.language == 'swift'
-        name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - if: matrix.build-mode == 'manual' && matrix.language == 'swift'
-        name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - if: matrix.build-mode == 'manual' && matrix.language == 'swift'
-        name: Install Dependencies
-        run: npm_config_engine_strict=false pnpm install --frozen-lockfile
-
-      - if: matrix.build-mode == 'manual' && matrix.language == 'swift'
-        name: Build Swift
-        env:
-          SKIP_ENV_VALIDATION: true
-          IOS_GOOGLE_SERVICE_INFO_BASE64: ${{ secrets.IOS_GOOGLE_SERVICE_INFO_BASE64 }}
+      # ----------------------------------------------------------------
+      # MANUAL BUILD: Java (Android)
+      # ----------------------------------------------------------------
+      - name: Manual Build (Android)
+        if: matrix.language == 'java-kotlin'
         run: |
-          # 1. Restore Secrets
-          pnpm --filter web secrets:restore
+          # 1. Restore Secrets (Generates google-services.json)
+          npm run secrets:restore --workspace=apps/web
+
+          # 2. Grant Permission
+          chmod +x apps/web/android/gradlew
+
+          # 3. Build Debug APK (Sufficient for analysis)
+          cd apps/web/android && ./gradlew assembleDebug --no-daemon
+
+      # ----------------------------------------------------------------
+      # MANUAL BUILD: Swift (iOS)
+      # ----------------------------------------------------------------
+      - name: Manual Build (Swift)
+        if: matrix.language == 'swift'
+        run: |
+          # 1. Restore Secrets (Generates GoogleService-Info.plist)
+          npm run secrets:restore --workspace=apps/web
           
-          # 2. Build (Simulator)
+          # 2. Determine Build Type (CocoaPods vs SPM)
           if [ -f "apps/web/ios/App/Podfile" ]; then
+              echo "✅ Podfile found. Installing CocoaPods..."
               cd apps/web/ios/App && pod install --repo-update && cd -
-              xcodebuild build -workspace apps/web/ios/App/App.xcworkspace -scheme App -destination 'generic/platform=iOS Simulator,name=iPhone 15' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+              BUILD_TARGET="-workspace apps/web/ios/App/App.xcworkspace"
           else
+              echo "⚠️ No Podfile found. Assuming Swift Package Manager (SPM)."
+              echo "Resolving Dependencies..."
               xcodebuild -resolvePackageDependencies -project apps/web/ios/App/App.xcodeproj -scheme App
-              xcodebuild build -project apps/web/ios/App/App.xcodeproj -scheme App -destination 'generic/platform=iOS Simulator,name=iPhone 15' CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+              BUILD_TARGET="-project apps/web/ios/App/App.xcodeproj"
           fi
 
+          # 3. Build for Simulator (No Signing Required)
+          echo "Building Project..."
+          xcodebuild build \
+            $BUILD_TARGET \
+            -scheme App \
+            -destination 'generic/platform=iOS Simulator,name=iPhone 15' \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      # ----------------------------------------------------------------
+      # ANALYZE
+      # ----------------------------------------------------------------
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:${{ matrix.language }}"
+          category: "/language:${{matrix.language}}"
