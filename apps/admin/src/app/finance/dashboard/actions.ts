@@ -46,8 +46,10 @@ export async function getCashFlowData(year: number) {
     const monthIndex = date.getMonth();
     const month = monthNames[monthIndex];
 
-    if (!monthlyData[month]) {
-      monthlyData[month] = { revenue: 0, expenses: 0 };
+    // biome-ignore lint/style/noNonNullAssertion: month is guaranteed to be valid
+    if (!monthlyData[month!]) {
+      // biome-ignore lint/style/noNonNullAssertion: month is guaranteed to be valid
+      monthlyData[month!] = { revenue: 0, expenses: 0 };
     }
 
     const debit = Number(line.debit) || 0;
@@ -55,9 +57,11 @@ export async function getCashFlowData(year: number) {
     const type = line.chart_of_accounts.type;
 
     if (type === 'revenue') {
-      monthlyData[month].revenue += credit - debit;
+      // biome-ignore lint/style/noNonNullAssertion: month is guaranteed to be valid
+      monthlyData[month!]!.revenue += credit - debit;
     } else if (type === 'expense') {
-      monthlyData[month].expenses += debit - credit;
+      // biome-ignore lint/style/noNonNullAssertion: month is guaranteed to be valid
+      monthlyData[month!]!.expenses += debit - credit;
     }
   });
 
