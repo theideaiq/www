@@ -43,7 +43,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install dependencies
+        # Install explicit dev deps like @capacitor/cli which are needed for build scripts
+        run: npm_config_engine_strict=false pnpm install
 
       # Required for Android Gradle Build
       - name: Setup Java
@@ -66,13 +75,14 @@ jobs:
         if: matrix.language == 'java-kotlin'
         run: |
           # 1. Restore Secrets (Generates google-services.json)
-          npm run secrets:restore --workspace=apps/web
+          # Use cd strategy to run in correct context without relying on workspace flags if they fail
+          cd apps/web && npm run secrets:restore
           
-          # 2. Grant Permission
-          chmod +x apps/web/android/gradlew
+          # 2. Grant Permission (Assuming root is context)
+          chmod +x android/gradlew
           
           # 3. Build Debug APK (Sufficient for analysis)
-          cd apps/web/android && ./gradlew assembleDebug --no-daemon
+          cd android && ./gradlew assembleDebug --no-daemon
 
       # ----------------------------------------------------------------
       # MANUAL BUILD: Swift (iOS)
@@ -81,22 +91,33 @@ jobs:
         if: matrix.language == 'swift'
         run: |
           # 1. Restore Secrets (Generates GoogleService-Info.plist)
-          npm run secrets:restore --workspace=apps/web
+          cd apps/web && npm run secrets:restore
           
           # 2. Determine Build Type (CocoaPods vs SPM)
-          if [ -f "apps/web/ios/App/Podfile" ]; then
+          if [ -f "ios/App/Podfile" ]; then
               echo "✅ Podfile found. Installing CocoaPods..."
-              cd apps/web/ios/App && pod install --repo-update && cd -
-              BUILD_TARGET="-workspace apps/web/ios/App/App.xcworkspace"
+              cd ios/App && pod install --repo-update && cd -
+              BUILD_TARGET="-workspace ios/App/App.xcworkspace"
           else
               echo "⚠️ No Podfile found. Assuming Swift Package Manager (SPM)."
               echo "Resolving Dependencies..."
-              xcodebuild -resolvePackageDependencies -project apps/web/ios/App/App.xcodeproj -scheme App
-              BUILD_TARGET="-project apps/web/ios/App/App.xcodeproj"
+              xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+              BUILD_TARGET="-project ios/App/App.xcodeproj"
           fi
           
           # 3. Build for Simulator (No Signing Required)
           echo "Building Project..."
+          # Note: Paths are relative to apps/web now because of cd?
+          # No, the previous cd was inside the if block or for secrets:restore.
+          # Let's be explicit with paths relative to repo root to avoid confusion.
+
+          cd ../.. # Go back to root if we were in apps/web (actually run commands are separate shell instances usually, unless implied block)
+          # GitHub Actions 'run' blocks share shell state only within the same step? No, typically one shell per step.
+          # So previous step's cd doesn't persist.
+
+          # Re-verify paths:
+          # apps/web/ios/App/App.xcodeproj
+
           xcodebuild build \
             $BUILD_TARGET \
             -scheme App \
