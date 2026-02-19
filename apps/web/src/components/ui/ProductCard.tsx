@@ -68,7 +68,7 @@ export function ProductCard({
               e.stopPropagation();
               onAddToCart?.(e);
             }}
-            className="absolute bottom-3 right-3 p-3 bg-brand-yellow text-brand-dark rounded-full shadow-lg translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-black z-10"
+            className="absolute bottom-3 right-3 p-3 bg-brand-yellow text-brand-dark rounded-full shadow-lg translate-y-0 opacity-100 lg:translate-y-12 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:text-black z-10"
             aria-label="Add to cart"
           >
             <ShoppingCart size={20} />
@@ -97,9 +97,15 @@ export function ProductCard({
               </div>
             </div>
             {product.rating > 0 && (
-              <div className="flex items-center gap-1 text-xs text-slate-300 bg-white/5 px-2 py-1 rounded-md">
-                <span className="text-brand-yellow">★</span>
-                {product.rating}
+              <div
+                className="flex items-center gap-1 text-xs text-slate-300 bg-white/5 px-2 py-1 rounded-md"
+                aria-label={`Rated ${product.rating} out of 5 stars`}
+                role="img"
+              >
+                <span className="text-brand-yellow" aria-hidden="true">
+                  ★
+                </span>
+                <span aria-hidden="true">{product.rating}</span>
               </div>
             )}
           </div>
