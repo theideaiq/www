@@ -1,6 +1,6 @@
 'use client';
 
-import { Badge, Button } from '@repo/ui';
+import { Badge } from '@repo/ui';
 import { motion } from 'framer-motion';
 import {
   BookOpen,
