@@ -1,9 +1,9 @@
-name: Label
+name: PR Labeler
 on: pull_request
 
 jobs:
   label:
-    name: Label PRs
+    name: Label PRs (Fix)
     runs-on: ubuntu-latest
     permissions:
       contents: read
