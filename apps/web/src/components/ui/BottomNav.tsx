@@ -17,13 +17,6 @@ export function BottomNav() {
     setMounted(true);
   }, []);
 
-  const navItems = [
-    { label: 'Home', icon: Home, href: '/' },
-    { label: 'Browse', icon: Search, href: '/megastore' },
-    // Cart is special
-    { label: 'Profile', icon: User, href: '/account' },
-  ];
-
   // Helper to check active state
   // Basic check: if href is '/' check exact match, else check startsWith
   const isActive = (href: string) => {
@@ -47,7 +40,7 @@ export function BottomNav() {
           }`}
         >
           <Home size={20} />
-          <span className="text-[10px] font-medium">Home</span>
+          <span className="text-xxs font-medium">Home</span>
         </Link>
 
         <Link
@@ -57,7 +50,7 @@ export function BottomNav() {
           }`}
         >
           <Search size={20} />
-          <span className="text-[10px] font-medium">Browse</span>
+          <span className="text-xxs font-medium">Browse</span>
         </Link>
 
         {/* Cart Button */}
@@ -74,7 +67,7 @@ export function BottomNav() {
               </span>
             )}
           </div>
-          <span className="text-[10px] font-medium">Cart</span>
+          <span className="text-xxs font-medium">Cart</span>
         </button>
 
         <Link
@@ -84,7 +77,7 @@ export function BottomNav() {
           }`}
         >
           <User size={20} />
-          <span className="text-[10px] font-medium">Profile</span>
+          <span className="text-xxs font-medium">Profile</span>
         </Link>
       </div>
     </div>

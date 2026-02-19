@@ -44,7 +44,7 @@ export function WebNavbar({ navItems, logo }: WebNavbarProps) {
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 border-b ${
         isScrolled
-          ? 'bg-black/70 backdrop-blur-xl border-white/10 py-3'
+          ? 'bg-black/80 backdrop-blur-xl border-white/10 py-3'
           : 'bg-transparent border-transparent py-5'
       }`}
     >
