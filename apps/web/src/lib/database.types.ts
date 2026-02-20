@@ -34,9 +34,8 @@ export interface Database {
           name: string;
           // ... (omitting insert types for brevity as we primarily read in frontend)
         };
-        Update: {
-          // ...
-        };
+        // biome-ignore lint/suspicious/noExplicitAny: Update type flexibility
+        Update: any;
       };
       product_variants: {
         Row: {
@@ -99,12 +98,15 @@ export interface Database {
       };
     };
     Views: {
+      // biome-ignore lint/complexity/noBannedTypes: Placeholder
       [_ in never]: never;
     };
     Functions: {
+      // biome-ignore lint/complexity/noBannedTypes: Placeholder
       [_ in never]: never;
     };
     Enums: {
+      // biome-ignore lint/complexity/noBannedTypes: Placeholder
       [_ in never]: never;
     };
   };

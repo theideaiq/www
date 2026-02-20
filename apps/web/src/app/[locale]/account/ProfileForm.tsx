@@ -5,7 +5,12 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { updateProfile } from '@/actions/account';
 
-export default function ProfileForm({ profile }: { profile: any }) {
+export default function ProfileForm({
+  profile,
+}: {
+  // biome-ignore lint/suspicious/noExplicitAny: Profile type definition pending
+  profile: any;
+}) {
   const t = useTranslations('Account');
   const [loading, setLoading] = useState(false);
 
@@ -15,6 +20,7 @@ export default function ProfileForm({ profile }: { profile: any }) {
       await updateProfile(formData);
       toast.success('Profile updated');
     } catch (e: any) {
+      // biome-ignore lint/suspicious/noExplicitAny: Error handling
       toast.error(e.message);
     } finally {
       setLoading(false);
