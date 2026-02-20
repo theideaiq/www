@@ -13,7 +13,8 @@ const ENTITIES: Record<string, string> = {
 
 // Pre-compiled regex for performance (avoids recompilation in loops).
 const ENTITY_REGEX = /&[a-zA-Z0-9#]+;/g;
-const NUMERIC_ENTITY_REGEX = /^&#\d+;$/;
+// Update regex to handle hex entities (e.g. &#x41;) and decimal (e.g. &#65;)
+const NUMERIC_ENTITY_REGEX = /^&#[xX]?([0-9a-fA-F]+);$/;
 
 /**
  * Decodes HTML entities in a string to their corresponding characters.
@@ -29,9 +30,12 @@ export function decodeHtmlEntities(text: string): string {
     if (ENTITIES[match]) return ENTITIES[match];
 
     // Handle numeric entities
-    if (NUMERIC_ENTITY_REGEX.test(match)) {
-      // Use fromCodePoint for Emoji/Astral support
-      return String.fromCodePoint(Number.parseInt(match.slice(2, -1), 10));
+    const numericMatch = match.match(NUMERIC_ENTITY_REGEX);
+    if (numericMatch) {
+      const isHex = match[2] === 'x' || match[2] === 'X'; // This check is fragile with match, let's use radix
+      const value = numericMatch[1];
+      const radix = match.toLowerCase().includes('&#x') ? 16 : 10;
+      return String.fromCodePoint(Number.parseInt(value!, radix));
     }
 
     return match;
@@ -47,7 +51,8 @@ export function decodeHtmlEntities(text: string): string {
  * @example
  * slugify("Hello World!") // -> "hello-world"
  */
-export function slugify(text: string): string {
+export function slugify(text: string | null | undefined): string {
+  if (!text) return '';
   return text
     .toString()
     .toLowerCase()
@@ -55,4 +60,16 @@ export function slugify(text: string): string {
     .replace(/\s+/g, '-') // Replace spaces with -
     .replace(/[^\w-]+/g, '') // Remove all non-word chars
     .replace(/--+/g, '-'); // Replace multiple - with single -
+}
+
+/**
+ * Safely stringifies a JSON object for use in a script tag.
+ * Escapes HTML characters to prevent XSS (Cross-Site Scripting).
+ *
+ * @param json - The JSON object to stringify.
+ * @returns The safe JSON string.
+ */
+// biome-ignore lint/suspicious/noExplicitAny: JSON can be any type
+export function safeJsonLdStringify(json: any): string {
+  return JSON.stringify(json).replace(/</g, '\u003c').replace(/>/g, '\u003e');
 }
