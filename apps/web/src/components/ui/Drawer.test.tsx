@@ -1,13 +1,13 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { Drawer } from './Drawer';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import { Drawer } from './Drawer';
 
 describe('Drawer', () => {
   it('renders when isOpen is true', () => {
     render(
       <Drawer isOpen={true} onClose={() => {}}>
         <div>Drawer Content</div>
-      </Drawer>
+      </Drawer>,
     );
     expect(screen.getByText('Drawer Content')).toBeInTheDocument();
   });
@@ -16,7 +16,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={false} onClose={() => {}}>
         <div>Drawer Content</div>
-      </Drawer>
+      </Drawer>,
     );
     expect(screen.queryByText('Drawer Content')).not.toBeInTheDocument();
   });
@@ -26,7 +26,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={true} onClose={() => {}} title={title}>
         <div>Drawer Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     const dialog = screen.getByRole('dialog');
@@ -43,7 +43,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={true} onClose={() => {}}>
         <div>Drawer Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     const closeButton = screen.getByRole('button', { name: /close drawer/i });
@@ -55,7 +55,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={true} onClose={onClose}>
         <div>Drawer Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     fireEvent.keyDown(window, { key: 'Escape', code: 'Escape' });
