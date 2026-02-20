@@ -1,7 +1,6 @@
 'use client';
 
 // UI Kit
-import { Badge, Button, Input } from '@repo/ui';
 import { motion } from 'framer-motion';
 import { Book, Gamepad2, Laptop, Search, Smartphone, Zap } from 'lucide-react';
 import Image from 'next/image';
@@ -12,6 +11,7 @@ import { ProductCard } from '@/components/ui/ProductCard';
 import { useUIStore } from '@/stores/ui-store';
 import { toast } from 'react-hot-toast';
 import type { Product } from '@/services/products';
+import { Badge, Button } from '@repo/ui';
 
 const CATEGORIES = [
   { name: 'Gaming', icon: <Gamepad2 size={18} /> },
@@ -28,6 +28,7 @@ export default function MegastorePage() {
   const addItem = useCartStore((s) => s.addItem);
   const { openCart } = useUIStore();
 
+  // biome-ignore lint/suspicious/noExplicitAny: product type
   const handleQuickAdd = (e: React.MouseEvent, product: any) => {
     e.preventDefault(); // Prevent navigation
     addItem({
