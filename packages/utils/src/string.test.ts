@@ -1,10 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { safeJsonLdStringify } from './string';
 
 describe('safeJsonLdStringify', () => {
   it('should serialize simple objects', () => {
     const data = { name: 'Test Product', price: 100 };
-    expect(safeJsonLdStringify(data)).toBe('{"name":"Test Product","price":100}');
+    expect(safeJsonLdStringify(data)).toBe(
+      '{"name":"Test Product","price":100}',
+    );
   });
 
   it('should escape script tags', () => {
@@ -15,7 +17,7 @@ describe('safeJsonLdStringify', () => {
   });
 
   it('should escape HTML entities', () => {
-    const data = { name: 'Ben & Jerry\'s' };
+    const data = { name: "Ben & Jerry's" };
     const result = safeJsonLdStringify(data);
     expect(result).not.toContain('&');
     // JSON.stringify escapes " to \" automatically, but we want to ensure < > & are handled if they appear
