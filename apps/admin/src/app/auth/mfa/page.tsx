@@ -3,7 +3,7 @@
 import { Button, Card, Input } from '@repo/ui';
 import { useRouter } from 'next/navigation';
 import QRCode from 'qrcode';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { createClient } from '@/lib/supabase/client';
 
@@ -16,11 +16,22 @@ export default function MFAPage() {
   const supabase = createClient();
   const router = useRouter();
 
-  useEffect(() => {
-    checkStatus();
-  }, [checkStatus]);
+  const startEnrollment = useCallback(async () => {
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: 'totp',
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
 
-  async function checkStatus() {
+    setFactorId(data.id);
+    QRCode.toDataURL(data.totp.uri, (err, url) => {
+      if (!err) setQr(url);
+    });
+  }, [supabase]);
+
+  const checkStatus = useCallback(async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -38,22 +49,11 @@ export default function MFAPage() {
       const factor = factors.all.find((f) => f.factor_type === 'totp');
       if (factor) setFactorId(factor.id);
     }
-  }
+  }, [router, supabase, startEnrollment]);
 
-  async function startEnrollment() {
-    const { data, error } = await supabase.auth.mfa.enroll({
-      factorType: 'totp',
-    });
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-
-    setFactorId(data.id);
-    QRCode.toDataURL(data.totp.uri, (err, url) => {
-      if (!err) setQr(url);
-    });
-  }
+  useEffect(() => {
+    checkStatus();
+  }, [checkStatus]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

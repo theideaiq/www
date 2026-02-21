@@ -1,5 +1,4 @@
 import { Logger } from '@repo/utils';
-import type { Database } from '@/lib/database.types';
 import { createClient } from '@/lib/supabase/client';
 
 export interface CartItem {
