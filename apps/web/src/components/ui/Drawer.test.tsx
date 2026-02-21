@@ -1,6 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { Drawer } from './Drawer';
-import { vi, describe, it, expect } from 'vitest';
 
 // Mock framer-motion since it uses requestAnimationFrame which can be tricky in jsdom
 // However, simple mounting should be fine. If not, we can mock it.
@@ -11,7 +11,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={true} onClose={() => {}} title="Test Drawer">
         <div>Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={false} onClose={() => {}} title="Test Drawer">
         <div>Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
@@ -34,7 +34,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={true} onClose={onClose} title="Test Drawer">
         <div>Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     fireEvent.keyDown(window, { key: 'Escape' });
@@ -45,7 +45,7 @@ describe('Drawer', () => {
     render(
       <Drawer isOpen={true} onClose={() => {}} title="Test Drawer">
         <div>Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     const dialog = screen.getByRole('dialog');
@@ -64,10 +64,10 @@ describe('Drawer', () => {
   });
 
   it('focuses the drawer content on open', () => {
-     render(
+    render(
       <Drawer isOpen={true} onClose={() => {}} title="Test Drawer">
         <div>Content</div>
-      </Drawer>
+      </Drawer>,
     );
 
     const dialog = screen.getByRole('dialog');
