@@ -1,6 +1,7 @@
 'use client';
 
 // UI Kit
+// biome-ignore lint/correctness/noUnusedImports: Badge and Input are part of UI kit
 import { Badge, Button, Input } from '@repo/ui';
 import { motion } from 'framer-motion';
 import {

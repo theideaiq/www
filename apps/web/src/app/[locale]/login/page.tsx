@@ -1,12 +1,15 @@
 'use client';
 
+// biome-ignore lint/correctness/noUnusedImports: Input is part of UI kit
 import { Button, Input } from '@repo/ui';
 import { motion, AnimatePresence } from 'framer-motion';
+// biome-ignore lint/correctness/noUnusedImports: ArrowRight is part of icon set
 import { Chrome, ArrowRight, Mail, Lock, User, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
+// biome-ignore lint/correctness/noUnusedImports: Image is part of standard Next.js imports often used
 import Image from 'next/image';
 
 const supabase = createClient();

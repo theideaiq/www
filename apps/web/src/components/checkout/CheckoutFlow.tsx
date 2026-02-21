@@ -3,9 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Lock, CreditCard, Loader2 } from 'lucide-react';
-// biome-ignore lint/correctness/noUnusedImports: Icons are used in JSX
 import { Button } from '@repo/ui';
-// biome-ignore lint/correctness/noUnusedImports: Toast is used in callbacks
 import { useCartStore } from '@/stores/cart-store';
 import { toast } from 'react-hot-toast';
 

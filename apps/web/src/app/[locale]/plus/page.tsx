@@ -1,5 +1,6 @@
 'use client';
 
+// biome-ignore lint/correctness/noUnusedImports: Badge is part of UI kit
 import { Badge, Button } from '@repo/ui';
 import { motion } from 'framer-motion';
 import { BookOpen, Check, Gamepad2, Zap, Crown } from 'lucide-react';
