@@ -49,6 +49,21 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Quality Checks
+        env:
+          SKIP_ENV_VALIDATION: "true"
+          # Dummy values to pass validation if SKIP_ENV_VALIDATION is missed by some tools
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.com"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-key"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy-service-key"
+          WAYL_SECRET_KEY: "dummy-wayl-key"
+          WAYL_WEBHOOK_SECRET: "dummy-wayl-webhook"
+          ZAIN_SECRET_KEY: "dummy-zain-key"
+          RESEND_API_KEY: "dummy-resend-key"
+          TELEGRAM_BOT_TOKEN: "dummy-telegram-token"
+          GEMINI_API_KEY: "dummy-gemini-key"
+          UPSTASH_REDIS_REST_URL: "https://example.upstash.io"
+          UPSTASH_REDIS_REST_TOKEN: "dummy-redis-token"
+          WEB_APP_URL: "https://example.com"
         run: pnpm turbo check typecheck test
 
   build:
@@ -94,8 +109,19 @@ jobs:
 
       - name: Build
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SKIP_ENV_VALIDATION: "true"
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.com"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-key"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy-service-key"
+          WAYL_SECRET_KEY: "dummy-wayl-key"
+          WAYL_WEBHOOK_SECRET: "dummy-wayl-webhook"
+          ZAIN_SECRET_KEY: "dummy-zain-key"
+          RESEND_API_KEY: "dummy-resend-key"
+          TELEGRAM_BOT_TOKEN: "dummy-telegram-token"
+          GEMINI_API_KEY: "dummy-gemini-key"
+          UPSTASH_REDIS_REST_URL: "https://example.upstash.io"
+          UPSTASH_REDIS_REST_TOKEN: "dummy-redis-token"
+          WEB_APP_URL: "https://example.com"
         run: pnpm turbo build
 
   e2e:
@@ -144,6 +170,7 @@ jobs:
 
       - name: Run E2E Tests
         env:
+          SKIP_ENV_VALIDATION: "true"
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: pnpm turbo e2e
