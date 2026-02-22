@@ -5,7 +5,6 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { updateProfile } from '@/actions/account';
 
-// biome-ignore lint/suspicious/noExplicitAny: Profile type is complex
 export default function ProfileForm({ profile }: { profile: any }) {
   const t = useTranslations('Account');
   const [loading, setLoading] = useState(false);
@@ -15,9 +14,8 @@ export default function ProfileForm({ profile }: { profile: any }) {
     try {
       await updateProfile(formData);
       toast.success('Profile updated');
-    } catch (e: unknown) {
-      // biome-ignore lint/suspicious/noExplicitAny: Error handling
-      toast.error((e as any).message);
+    } catch (e: any) {
+      toast.error(e.message);
     } finally {
       setLoading(false);
     }
