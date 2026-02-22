@@ -7,5 +7,4 @@ const adapter = new WaylAdapter({
   webhookSecret: adminEnv.WAYL_WEBHOOK_SECRET,
 });
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export const waylClient: any = adapter.client;
+export const waylClient = adapter.client;
