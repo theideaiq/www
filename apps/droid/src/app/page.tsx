@@ -278,6 +278,7 @@ function FeatureCard({
   title,
   desc,
 }: {
+  // biome-ignore lint/suspicious/noExplicitAny: icon type is complex
   icon: any;
   title: string;
   desc: string;
