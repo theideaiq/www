@@ -32,8 +32,8 @@ jobs:
             build-mode: none
           - language: java-kotlin
             build-mode: manual
-          - language: swift
-            build-mode: manual
+          # - language: swift # Disabled due to pnpm + SPM compatibility issues in CI
+          #   build-mode: manual
 
     steps:
       - name: Checkout repository

@@ -93,10 +93,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-        run: pnpm turbo build
+        run: SKIP_ENV_VALIDATION=true NEXT_PUBLIC_SUPABASE_URL="https://example.supabase.co" NEXT_PUBLIC_SUPABASE_ANON_KEY="dummy-key" SUPABASE_SERVICE_ROLE_KEY="dummy-key" WAYL_SECRET_KEY="dummy-key" WAYL_WEBHOOK_SECRET="dummy-key" ZAIN_SECRET_KEY="dummy-key" pnpm turbo build
 
   e2e:
     name: E2E Tests
