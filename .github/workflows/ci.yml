@@ -35,10 +35,10 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -77,10 +77,10 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -117,10 +117,10 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -156,10 +156,10 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: "http://mock.local"
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "mock-anon-key"
       SUPABASE_SERVICE_ROLE_KEY: "mock-service-role-key"
-      WAYL_SECRET_KEY: "mock-wayl-secret"
-      WAYL_WEBHOOK_SECRET: "mock-wayl-webhook"
-      ZAIN_SECRET_KEY: "mock-zain-secret"
-      RESEND_API_KEY: "mock-resend-key"
+      WAYL_SECRET_KEY: "mock-service-role-key"
+      WAYL_WEBHOOK_SECRET: "mock-service-role-key"
+      ZAIN_SECRET_KEY: "mock-service-role-key"
+      RESEND_API_KEY: "mock-service-role-key"
       UPSTASH_REDIS_REST_URL: "http://mock-redis.local"
       UPSTASH_REDIS_REST_TOKEN: "mock-redis-token"
       TELEGRAM_BOT_TOKEN: "mock-telegram-token"
@@ -170,10 +170,10 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 24
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
