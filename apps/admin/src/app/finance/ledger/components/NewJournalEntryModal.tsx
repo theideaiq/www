@@ -14,7 +14,9 @@ export function NewJournalEntryModal({
   accounts: ChartOfAccount[];
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(
+    new Date().toISOString().split('T')[0] ?? '',
+  );
   const [description, setDescription] = useState('');
   const [lines, setLines] = useState([{ accountId: '', debit: 0, credit: 0 }]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,8 +30,14 @@ export function NewJournalEntryModal({
     setLines(lines.filter((_, i) => i !== index));
   };
 
-  const handleLineChange = (index: number, field: string, value: any) => {
+  const handleLineChange = (
+    index: number,
+    field: keyof (typeof lines)[0],
+    // biome-ignore lint/suspicious/noExplicitAny: value can be string or number
+    value: any,
+  ) => {
     const newLines = [...lines];
+    // @ts-ignore - TS struggles with dynamic assignment here but types are safe
     newLines[index] = { ...newLines[index], [field]: value };
     setLines(newLines);
   };
